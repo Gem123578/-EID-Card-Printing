@@ -28,6 +28,8 @@ builder.Services.AddScoped<IDateRange, DateRange>();
 
 builder.Services.AddScoped<IApplicantServices, ApplicantServices>();
 
+builder.Services.AddScoped<IOfficeServices, OfficeServices>();
+
 
 
 builder.Services.AddHttpContextAccessor();

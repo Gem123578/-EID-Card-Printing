@@ -12,12 +12,14 @@ namespace EIDCardPrint.Controllers
         private readonly ILoginUserServices _service;
         private readonly IDateRange _dateRangeService;
         private readonly IApplicantServices _applicantService;
+        private readonly IOfficeServices _officeService;
 
-        public HomeController(ILoginUserServices service , IDateRange dateRangeService , IApplicantServices applicantService)
+        public HomeController(ILoginUserServices service , IDateRange dateRangeService, IApplicantServices applicantService, IOfficeServices officeService)
         {
             _service = service;
             _dateRangeService = dateRangeService;
             _applicantService = applicantService;
+            _officeService = officeService;
         }
         public IActionResult Login()
         {
@@ -105,6 +107,18 @@ namespace EIDCardPrint.Controllers
                 Applicants = applicants 
             };
             return View(viewModel);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOfficesAsync()
+        {
+            var token = HttpContext.Session.GetString("ApiToken");
+            if (string.IsNullOrEmpty(token)) { return RedirectToAction("Login"); }
+
+            // Office API ကို token နဲ့ ခေါ်မယ့် service
+            var result = await _officeService.GetOffices(token);
+
+            return Json(result);
         }
 
         [HttpGet]

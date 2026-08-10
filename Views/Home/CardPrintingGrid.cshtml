@@ -16,9 +16,10 @@
         </div>
 
         <div class="col-md-3">
-            <label asp-for="OfficeName" class="form-label text-color fw-bold">ရုံးအမည် (Office)</label>
-            <select asp-for="OfficeName" asp-items="Model.OfficeList" class="form-select animated-input">
-                <option value="">-- ရုံးအမည် ရွေးပါ --</option>
+            <label asp-for="OfficeName" class="form-label text-color fw-bold">Office Stations</label>
+            <select asp-for="OfficeName" asp-items="Model.OfficeList"
+                    id="officeSelect" class="form-select animated-input">
+                <option value="">-- Office Stations ရွေးပါ --</option>
             </select>
         </div>
 

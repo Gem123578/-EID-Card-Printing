@@ -45,6 +45,45 @@
 
 });
 
+//Office Select
+async function fetchOffices() {
+
+    try {
+
+        const response = await fetch('/Home/GetOffices');
+
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const officeSelect =
+            document.getElementById('officeSelect');
+
+        officeSelect.innerHTML =
+            '<option value="">-- Office Stations ရွေးပါ --</option>';
+
+        data.offices.forEach(function (office) {
+
+            const option = document.createElement("option");
+
+            option.value = office.station_code;
+            option.textContent = office.station_name;
+
+            officeSelect.appendChild(option);
+
+        });
+
+    } catch (error) {
+
+        console.error("Office API Error:", error);
+
+    }
+}
+
+fetchOffices();
+
 // Print Preview button animation 
 document.querySelectorAll(".print-btn").forEach(function (button)
 {
@@ -55,3 +94,4 @@ document.querySelectorAll(".print-btn").forEach(function (button)
         if (icon) { icon.className = "fa-solid fa-spinner fa-spin me-1"; }
     });
 });
+

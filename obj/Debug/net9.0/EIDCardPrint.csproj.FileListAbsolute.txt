@@ -119,4 +119,5 @@ D:\$uper\EIDCardPrint\bin\Debug\net9.0\runtimes\unix\lib\net6.0\System.Drawing.C
 D:\$uper\EIDCardPrint\bin\Debug\net9.0\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 D:\$uper\EIDCardPrint\bin\Debug\net9.0\log4net.config
 D:\$uper\EIDCardPrint\obj\Debug\net9.0\compressed\talglp32qw-uajtnx0jdr.gz
-D:\$uper\EIDCardPrint\obj\Debug\net9.0\compressed\7r7mqrs99j-czhywdk4x9.gz
+D:\$uper\EIDCardPrint\obj\Debug\net9.0\EIDCardPrint.sourcelink.json
+D:\$uper\EIDCardPrint\obj\Debug\net9.0\compressed\7r7mqrs99j-8sf4tif64x.gz
