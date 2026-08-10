@@ -1,0 +1,134 @@
+﻿@model EIDCardPrint.Models.EIDCardPrintViewModel
+
+@{
+    ViewData["Title"] = "NRC Preview";
+    Layout = "_layout";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.2.3/css/flag-icons.min.css"/>
+<link href="~/css/EIDCard.css" rel="stylesheet" />
+    
+<div class="page-index-center">
+    
+    @using (Html.BeginForm("EIDCardPrint", "CardPrint", FormMethod.Post))
+        {
+    <div class="nrc-wrapper">
+
+        <div class="card-header">
+                <div class="header-left">
+                    <img src="~/images/myanmar-flag.svg" class="flag" />
+                <div>
+                    <h5 class="mb-0 fw-bold">ပြည်ထောင်စုသမ္မတမြန်မာနိုင်ငံတော်</h5>
+                    <small class="text-muted fw-bold d-block">Republic of the Union of Myanmar</small>
+                </div>
+                </div>
+
+                <div class="header-right">
+                
+                    <h2 class="text-color mb-0 fw-bold">
+                        IDENTITY CARD
+                    </h2>
+                </div>
+        </div>
+
+        
+            <div class="card-body">
+
+                <div class="card-content">
+
+                    <!-- Photo -->
+                    <div class="photo-section">
+
+                        <img src="~/images/ID.jpg"
+                             class="photo"
+                             alt="Profile" />
+
+                    </div>
+
+                    <!-- Information -->
+                    <div class="info-section">
+
+                        <div class="field">
+                            <label>အမည်</label>
+                            <span>
+                                @(string.IsNullOrEmpty(Model?.MName) ? "ပွင့်ဖြူသန်း" : Model.MName)
+                            </span>
+                        </div>
+
+                        <div class="field">
+                            <label>Name</label>
+                            <span>
+                                @(string.IsNullOrEmpty(Model?.EName) ? "PWINT PHYU THAN" : Model.EName)
+                            </span>
+                        </div>
+
+                        <div class="field">
+                            <label>Sex</label>
+                            <span>
+                                @(string.IsNullOrEmpty(Model?.Sex) ? "Female" : Model.Sex)
+                            </span>
+                        </div>
+
+                        <div class="field">
+                            <label>Date of Birth</label>
+                            <span>15-06-1996</span>
+                        </div>
+
+                        <div class="field">
+                            <label>UID No.</label>
+                            <span>6989091498</span>
+                        </div>
+
+                        <div class="field">
+                            <label>Date of Expiry</label>
+                            <span>19-12-2036</span>
+                        </div>
+
+                    </div>
+
+                    <!-- QR -->
+                    <div class="qr-section">
+
+                        <img src="~/images/qrcode-27.png"
+                             class="qr-photo"
+                             alt="QR" />
+
+                        <div class="nrc-field">
+
+                            <label class="text-color">
+                                နိုင်ငံသားစီစစ်ရေးကတ်အမှတ်
+                            </label>
+
+                            <span>
+                                @(string.IsNullOrEmpty(Model?.NRC) ? "၈/တတန(နိုင်)၁၂၃၄၅၆" : Model.NRC)
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+      
+    </div>
+      }
+
+</div>
+<footer class="border-top footer text-muted py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3 d-print-none" style="max-width: 300px;">
+        <!-- Back Button -->
+        <a href="@Url.Action("CardPrintingGrid", "Home")" class="btn btn-outline-secondary btn-sm px-3 fw-bold">
+            <i class="fa-solid fa-arrow-left me-1"></i> နောက်သို့ (Back)
+        </a>
+
+        
+        <!-- Print Button -->
+        <div class="print-button">
+            <button type="button" class="btn btn-primary btn-sm px-3 fw-bold" onclick="window.print()">
+                <i class="fa-solid fa-print me-1"></i> Print Card
+            </button>
+        </div>
+        
+    </div>
+</footer>

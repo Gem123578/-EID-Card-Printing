@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37516.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EIDCardPrint", "EIDCardPrint.csproj", "{AFE3D1D9-E719-43F5-89FC-4982715333DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AFE3D1D9-E719-43F5-89FC-4982715333DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE3D1D9-E719-43F5-89FC-4982715333DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE3D1D9-E719-43F5-89FC-4982715333DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE3D1D9-E719-43F5-89FC-4982715333DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4DF7AFAB-66A6-46B3-A48E-B8FA30E875A6}
+	EndGlobalSection
+EndGlobal

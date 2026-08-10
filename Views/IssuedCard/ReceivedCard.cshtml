@@ -1,0 +1,61 @@
+﻿@model EIDCardPrint.Models.IssuedCardViewModel
+@{
+    ViewData["Title"] = "ReceivingCard";
+    Layout = "_layout";
+}
+
+<style>
+    .animated-card {
+        animation: fadeInSlideUp 0.5s ease-out forwards;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .animated-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+    .animated-input {
+        border-radius: 0.5rem;
+        transition: all 0.25s ease-in-out;
+    }
+
+        .animated-input:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            transform: scale(1.01);
+        }
+
+    @@keyframes fadeInSlideUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 animated-card p-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-4 font-weight-bold text-primary">Receiving Card</h5>
+                    <div class="mb-3">
+                        <label for="OfficeName" class="form-label text-muted fw-semibold">Read QR Code</label>
+                        @Html.TextBoxFor(m => m.OfficeName, new {
+                        @class = "form-control form-control-lg animated-input",
+                                                @placeholder = "Scan QR Code..."
+                                                })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

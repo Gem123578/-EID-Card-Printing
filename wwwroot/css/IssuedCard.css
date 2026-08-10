@@ -1,0 +1,16 @@
+﻿.text-color {
+    color: #005B96;
+}
+
+.photo {
+    width: 100%; 
+    max-width: 160px; 
+    aspect-ratio: 3 / 4; 
+    height: auto;
+    object-fit: cover; 
+    border: 1px solid #000;
+    border-radius: 6px;
+    background: #fdfdfd;
+    display: block;
+    margin: 0 auto; 
+}
