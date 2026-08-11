@@ -16,7 +16,7 @@
         public string Gender { get; set; }
         public string BloodType { get; set; }
         public DateTime DOE { get; set; }
-        public byte Photo { get; set; }
+        public string Photo { get; set; }
         public string OfficeName { get; set; }
 
         public RepresentativeViewModel RepPeople { get; set; }

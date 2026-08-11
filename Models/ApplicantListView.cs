@@ -1,4 +1,6 @@
-﻿namespace EIDCardPrint.Models
+﻿using EIDCardPrint.Models.DTO.Offices;
+
+namespace EIDCardPrint.Models
 {
     public class ApplicantListView
     {
@@ -26,5 +28,15 @@
         public DateTime? FromDate { get; set; }
 
         public DateTime? ToDate { get; set; }
+
+        public string? SelectedDate { get; set; }
+
+        //Office Filter
+        public string? SearchTerm { get; set; }
+
+        public string? OfficeName { get; set; }
+
+        public string? OfficeCode { get; set; }
+
     }
 }

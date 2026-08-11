@@ -1,80 +1,10 @@
-2026-08-10 10:45:41,615 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 10:45:43,496 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 404
-2026-08-10 10:45:43,523 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/applicants
-Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: <. Path '', line 0, position 0.
-   at Newtonsoft.Json.JsonTextReader.ParseValue()
-   at Newtonsoft.Json.JsonTextReader.Read()
-   at Newtonsoft.Json.JsonReader.ReadAndMoveToContent()
-   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
-   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
-   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
-   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
-   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
-   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
-   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
-   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 79
-2026-08-10 10:45:43,617 ERROR EIDCardPrint.Utils.APIAccessHelper - Error in GetApplicants: Unexpected character encountered while parsing value: <. Path '', line 0, position 0.
-2026-08-10 10:49:54,208 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 10:50:07,552 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 10:59:38,647 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 10:59:48,654 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:00:53,070 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:00:57,033 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:01:12,373 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:02:45,082 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:04:02,751 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:04:11,959 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:04:23,764 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:04:28,054 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:04:42,482 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:04:45,326 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:04:54,640 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:17:21,122 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:17:40,175 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:18:20,971 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:19:19,942 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 11:19:23,143 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:06:51,445 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:07:00,406 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:09:13,905 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:09:24,775 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:10:49,667 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:10:53,260 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:13:13,476 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:13:13,491 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:13:13,492 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Body: {"response_status":200,"success":true,"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4xMy4yMjU6ODAwMS9hcGkvYXV0aGVudGljYXRlLXBlcnNvIiwiaWF0IjoxNzg2MzQ0MTkyLCJleHAiOjE3ODY0MzA1OTIsIm5iZiI6MTc4NjM0NDE5MiwianRpIjoiVkp0SFE0UGR4QUlzb1I5ciIsInN1YiI6IjQ5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.rtFFjKVRHm6xzPKI-b8nucfJCIUjCJuZ_XX0r4gWCj4","last_login_time":"2026-08-10 13:13:12","last_password_changed":null,"user":{"employee_id":"U_00011","display_name":"Applicant Officer","role_level":null,"role_name":"Super Admin","station_name":"\u1000\u1031\u102c\u1037\u1019\u103e\u1030\u1038","office_code":"KMX","phone_no":"09876678978","permissions":["user-management","settings"],"created_date":"2026-08-10 13:10:48","email":"applicant@gmail.com","status":null}}
-2026-08-10 13:13:17,398 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:13:17,399 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:13:17,399 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Body: {"driver":"mysql","url":null,"host":"localhost","port":"3306","database":"eid_demo","username":"swd_admin","password":"$wd@dm!n","unix_socket":"","charset":"utf8mb4","collation":"utf8mb4_unicode_ci","prefix":"","prefix_indexes":true,"strict":true,"engine":null,"options":[]}
-2026-08-10 13:17:35,297 INFO  EIDCardPrint.Utils.APIAccessHelper - Request URL: http://192.168.13.225:8001/api/authenticate-perso
-2026-08-10 13:17:35,312 INFO  EIDCardPrint.Utils.APIAccessHelper - Request Body: {"name":"applicant_officer","password":"1234567890"}
-2026-08-10 13:17:35,312 INFO  EIDCardPrint.Utils.APIAccessHelper - Has Token: False
-2026-08-10 13:17:35,743 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:17:35,743 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:17:35,743 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Body: {"response_status":200,"success":true,"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTkyLjE2OC4xMy4yMjU6ODAwMS9hcGkvYXV0aGVudGljYXRlLXBlcnNvIiwiaWF0IjoxNzg2MzQ0NDU0LCJleHAiOjE3ODY0MzA4NTQsIm5iZiI6MTc4NjM0NDQ1NCwianRpIjoidHp2UUliNWE2T1k4UFNWMSIsInN1YiI6IjQ5IiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.DJP73Jin6KyomMw9Z8fsR6-20iWSTpA9440q-HLNm7k","last_login_time":"2026-08-10 13:17:34","last_password_changed":null,"user":{"employee_id":"U_00011","display_name":"Applicant Officer","role_level":null,"role_name":"Super Admin","station_name":"\u1000\u1031\u102c\u1037\u1019\u103e\u1030\u1038","office_code":"KMX","phone_no":"09876678978","permissions":["user-management","settings"],"created_date":"2026-08-10 13:13:12","email":"applicant@gmail.com","status":null}}
-2026-08-10 13:17:41,472 INFO  EIDCardPrint.Utils.APIAccessHelper - Request URL: http://192.168.13.225:8001/api/search-applicant-infos
-2026-08-10 13:17:41,472 INFO  EIDCardPrint.Utils.APIAccessHelper - Request Body: {"CurrentPageNumber":1,"ApplicantPerPage":10,"OfficeCode":"KMX","IsPrinted":null,"FromDate":null,"ToDate":null}
-2026-08-10 13:17:41,472 INFO  EIDCardPrint.Utils.APIAccessHelper - Has Token: True
-2026-08-10 13:17:42,289 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:17:42,289 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:17:42,289 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Body: {"driver":"mysql","url":null,"host":"localhost","port":"3306","database":"eid_demo","username":"swd_admin","password":"$wd@dm!n","unix_socket":"","charset":"utf8mb4","collation":"utf8mb4_unicode_ci","prefix":"","prefix_indexes":true,"strict":true,"engine":null,"options":[]}
-2026-08-10 13:26:47,037 INFO  EIDCardPrint.Utils.APIAccessHelper - Request URL: http://192.168.13.225:8001/api/authenticate-perso
-2026-08-10 13:26:47,053 INFO  EIDCardPrint.Utils.APIAccessHelper - Request Body: {"name":"applicant_officer","password":"1234567890"}
-2026-08-10 13:26:47,053 INFO  EIDCardPrint.Utils.APIAccessHelper - Has Token: False
-2026-08-10 13:26:47,518 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:26:47,544 WARN  EIDCardPrint.Utils.APIAccessHelper - API Response does NOT contain 'data'.
-2026-08-10 13:26:56,432 INFO  EIDCardPrint.Utils.APIAccessHelper - Request URL: http://192.168.13.225:8001/api/search-applicant-infos
-2026-08-10 13:26:56,433 INFO  EIDCardPrint.Utils.APIAccessHelper - Request Body: {"current_page_number":1,"applicant_per_page":10,"office_code":"KMX","is_printed":null,"from_date":null,"to_date":null}
-2026-08-10 13:26:56,433 INFO  EIDCardPrint.Utils.APIAccessHelper - Has Token: True
-2026-08-10 13:26:57,274 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:26:57,332 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response contains 'data'.
-2026-08-10 13:26:57,332 INFO  EIDCardPrint.Utils.APIAccessHelper - API data count: 10
-2026-08-10 13:26:58,128 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/search-applicant-infos
-Newtonsoft.Json.JsonReaderException: Could not convert string to integer: A260000641. Path 'data[0].application_id', line 1, position 79.
-   at Newtonsoft.Json.JsonReader.ReadInt32String(String s)
-   at Newtonsoft.Json.JsonTextReader.FinishReadQuotedNumber(ReadType readType)
-   at Newtonsoft.Json.JsonTextReader.ReadNumberValue(ReadType readType)
-   at Newtonsoft.Json.JsonTextReader.ReadAsInt32()
+2026-08-11 10:05:27,012 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/search-applicant-infos
+System.FormatException: The input is not a valid Base-64 string as it contains a non-base 64 character, more than two padding characters, or an illegal character among the padding characters.
+   at System.Convert.FromBase64CharPtr(Char* inputPtr, Int32 inputLength)
+   at System.Convert.FromBase64CharArray(Char[] inArray, Int32 offset, Int32 length)
+   at Newtonsoft.Json.JsonTextReader.ParseReadString(Char quote, ReadType readType)
+   at Newtonsoft.Json.JsonTextReader.ParseString(Char quote, ReadType readType)
+   at Newtonsoft.Json.JsonTextReader.ReadAsBytes()
    at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
    at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.PopulateObject(Object newObject, JsonReader reader, JsonObjectContract contract, JsonProperty member, String id)
    at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateObject(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
@@ -92,16 +22,5 @@ Newtonsoft.Json.JsonReaderException: Could not convert string to integer: A26000
    at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
    at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
    at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value)
-   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 105
-2026-08-10 13:26:58,226 ERROR EIDCardPrint.Utils.APIAccessHelper - Error in GetApplicants: Could not convert string to integer: A260000641. Path 'data[0].application_id', line 1, position 79.
-2026-08-10 13:28:58,517 INFO  EIDCardPrint.Utils.APIAccessHelper - Request URL: http://192.168.13.225:8001/api/authenticate-perso
-2026-08-10 13:28:58,529 INFO  EIDCardPrint.Utils.APIAccessHelper - Request Body: {"name":"applicant_officer","password":"1234567890"}
-2026-08-10 13:28:58,530 INFO  EIDCardPrint.Utils.APIAccessHelper - Has Token: False
-2026-08-10 13:28:58,971 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:28:58,999 WARN  EIDCardPrint.Utils.APIAccessHelper - API Response does NOT contain 'data'.
-2026-08-10 13:29:05,645 INFO  EIDCardPrint.Utils.APIAccessHelper - Request URL: http://192.168.13.225:8001/api/search-applicant-infos
-2026-08-10 13:29:05,645 INFO  EIDCardPrint.Utils.APIAccessHelper - Request Body: {"current_page_number":1,"applicant_per_page":10,"office_code":"KMX","is_printed":null,"from_date":null,"to_date":null}
-2026-08-10 13:29:05,645 INFO  EIDCardPrint.Utils.APIAccessHelper - Has Token: True
-2026-08-10 13:29:08,513 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response Status: 200
-2026-08-10 13:29:08,545 INFO  EIDCardPrint.Utils.APIAccessHelper - API Response contains 'data'.
-2026-08-10 13:29:08,546 INFO  EIDCardPrint.Utils.APIAccessHelper - API data count: 10
+   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 77
+2026-08-11 10:05:27,214 ERROR EIDCardPrint.Utils.APIAccessHelper - Error in GetApplicants: The input is not a valid Base-64 string as it contains a non-base 64 character, more than two padding characters, or an illegal character among the padding characters.

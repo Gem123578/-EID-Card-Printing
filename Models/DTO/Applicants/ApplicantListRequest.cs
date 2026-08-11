@@ -13,7 +13,7 @@ namespace EIDCardPrint.Models.DTO.Applicants
 
 
         [JsonProperty("office_code")]
-        public string OfficeCode { get; set; } = string.Empty;
+        public string OfficeCode { get; set; }
 
 
         [JsonProperty("is_printed")]
@@ -26,5 +26,6 @@ namespace EIDCardPrint.Models.DTO.Applicants
 
         [JsonProperty("to_date")]
         public string? ToDate { get; set; }
+        public string? SearchTerm { get; set; }
     }
 }

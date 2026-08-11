@@ -6,7 +6,7 @@ namespace EIDCardPrint.Models.DTO.Offices
 {
     public class OfficeDataRes
     {
-        [JsonProperty("response_Status")]
+        [JsonProperty("response_status")]
         public int ResponseStatus { get; set; }
 
 
@@ -19,6 +19,6 @@ namespace EIDCardPrint.Models.DTO.Offices
 
 
         [JsonProperty("offices")]
-        public List<OfficeStationData> Offices { get; set; } = new List<OfficeStationData>();
+        public List<OfficeStationData> OfficeStationDatas { get; set; } 
     }
 }

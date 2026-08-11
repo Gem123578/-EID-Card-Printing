@@ -59,20 +59,30 @@ async function fetchOffices() {
         const data = await response.json();
 
         const officeSelect =
-            document.getElementById('officeSelect');
+            $('#officeSelect');
 
-        officeSelect.innerHTML =
-            '<option value="">-- Office Stations ရွေးပါ --</option>';
+        officeSelect.empty();
 
-        data.offices.forEach(function (office) {
+        officeSelect.append(
+            new Option('-- Office Stations ရွေးပါ --', '')
+        );
 
-            const option = document.createElement("option");
+        data.forEach(function (office) {
 
-            option.value = office.station_code;
-            option.textContent = office.station_name;
+            officeSelect.append(
+                new Option(
+                    office.stationName,
+                    office.stationCode
+                )
+            );
 
-            officeSelect.appendChild(option);
+        });
 
+        // Searchable dropdown
+        officeSelect.select2({
+            placeholder: '-- Office Stations ရွေးပါ --',
+            allowClear: true,
+            width: '100%'
         });
 
     } catch (error) {
@@ -84,14 +94,22 @@ async function fetchOffices() {
 
 fetchOffices();
 
+
 // Print Preview button animation 
-document.querySelectorAll(".print-btn").forEach(function (button)
-{
-    button.addEventListener("click", function ()
-    {
+document.querySelectorAll(".print-btn").forEach(function (button) {
+    button.addEventListener("click", function () {
         this.classList.add("loading");
+        ထ
         const icon = this.querySelector("i");
-        if (icon) { icon.className = "fa-solid fa-spinner fa-spin me-1"; }
+
+        if (icon) {
+            icon.className =
+                "fa-solid fa-spinner fa-spin me-1";
+        }
     });
 });
 
+$('form').on('submit', function () {
+    const officeCode = $('#officeSelect').val();
+    $('#officeSelect').trigger('change');
+});

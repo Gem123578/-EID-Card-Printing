@@ -1,4 +1,5 @@
 ﻿using EIDCardPrint.Models.DTO.Offices;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -13,7 +14,7 @@ namespace EIDCardPrint.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<OfficeDataRes>> GetOffices(string token)
+        public async Task<List<OfficeStationData>> GetOffices(string token)
         {
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
@@ -26,15 +27,9 @@ namespace EIDCardPrint.Services
 
             var json = await response.Content.ReadAsStringAsync();
 
-            var result = JsonSerializer.Deserialize<OfficeDataRes>(
-                json,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }
-            );
+            var result = JsonConvert.DeserializeObject<OfficeDataRes>(json);
 
-            return await Task.FromResult(result?.Offices ?? new List<OfficeStationData>());
+            return result?.OfficeStationDatas ?? [];
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace EIDCardPrint.Services
+﻿using EIDCardPrint.Models.DTO.Offices;
+
+namespace EIDCardPrint.Services
 {
     public interface IOfficeServices
     {
-        Task<List<OfficeDataRes>> GetOffices(string token);
+        Task<List<OfficeStationData>> GetOffices(string token);
     }
 }

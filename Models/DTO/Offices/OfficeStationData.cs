@@ -2,7 +2,7 @@
 
 namespace EIDCardPrint.Models.DTO.Offices
 {
-    internal class OfficeStationData
+    public class OfficeStationData
     {
         [JsonProperty("station_name")]
         public string StationName { get; set; }

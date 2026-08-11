@@ -191,7 +191,7 @@ function showAppAlert(options = {}) {
     icon.className = "app-alert-icon";
 
     icon.innerHTML =
-        `< i class="${selected.icon}" ></i > `;
+        `<i class="${selected.icon}"></i>`;
 
     icon.classList.add(selected.class);
 

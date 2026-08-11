@@ -56,22 +56,48 @@ namespace EIDCardPrint.Controllers
             
         }
 
-        public async Task<IActionResult> CardPrintingGrid(ApplicantListView dataModel)
+        [HttpGet]
+        public async Task<IActionResult> CardPrintingGrid(ApplicantListPageView dataModel)
         {
             var token = HttpContext.Session.GetString("ApiToken");
-            if (string.IsNullOrEmpty(token)) { return RedirectToAction("Login"); }
 
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login");
+            }
 
-            var (fromDate, toDate) = await _dateRangeService.GetDateRange(dataModel.DateRange, dataModel.FromDate, dataModel.ToDate);
+            var (fromDate, toDate) =
+                await _dateRangeService.GetDateRange(
+                    dataModel.SelectedDate,
+                    dataModel.FromDate,
+                    dataModel.ToDate
+                );
+
             dataModel.FromDate = fromDate;
             dataModel.ToDate = toDate;
 
-            //api request   
-            var request = new ApplicantListRequest { CurrentPageNumber = 1, ApplicantPerPage = 10, OfficeCode = "KMX" };
+            var request = new ApplicantListRequest
+            {
+                CurrentPageNumber = 1,
+                ApplicantPerPage = 100,
 
+                // Search
+                SearchTerm = dataModel.SearchTerm,
 
-            //api call
-            var result = await _applicantService.GetApplicants(request);
+                // Office Code
+                OfficeCode = dataModel.OfficeCode,
+
+                // Date
+                FromDate = dataModel.FromDate?
+                    .ToString("yyyy-MM-dd"),
+
+                ToDate = dataModel.ToDate?
+                    .ToString("yyyy-MM-dd")
+            };
+
+            var result =
+                await _applicantService.GetApplicants(request);
+
             if (result == null)
             {
                 throw new Exception("API result is NULL");
@@ -84,38 +110,57 @@ namespace EIDCardPrint.Controllers
                 );
             }
 
-            //API result -> View Model
-            var applicants = result.Data .Select(x => new ApplicantListView 
-            {
-                UId = x.Uid.ToString(),
-                NRC = x.Nrc,
-                Gender = x.Gender,
-                DOB = x.BirthDate,
-                PersonNameMM = x.PersonNameMm,
-                PersonNameEN = x.PersonNameEn,
-                PrintedDate = x.PrintedDate,
-                Photo = x.Photo 
-            }) .ToList();
+            var applicants = result.Data
+                .Select(x => new ApplicantListView
+                {
+                    ApplicantId = x.ApplicationId.ToString(),
+                    UId = x.Uid.ToString(),
+                    NRC = x.Nrc,
+                    Gender = x.Gender,
+                    DOB = x.BirthDate,
+                    PersonNameMM = x.PersonNameMm,
+                    PersonNameEN = x.PersonNameEn,
+                    PrintedDate = x.PrintedDate,
+                    Photo = x.Photo
+                })
+                .ToList();
 
-            // View
             var viewModel = new ApplicantListPageView
             {
                 RecordCount = result.RecordCount,
+
                 CurrentPageNumber = request.CurrentPageNumber,
+
                 ApplicantPerPage = request.ApplicantPerPage,
-                OfficeCode = request.OfficeCode,
-                Applicants = applicants 
+
+                Applicants = applicants,
+
+                SearchTerm = dataModel.SearchTerm,
+
+                OfficeCode = dataModel.OfficeCode,
+
+                OfficeName = dataModel.OfficeName,
+
+                SelectedDate = dataModel.SelectedDate,
+
+                FromDate = dataModel.FromDate,
+
+                ToDate = dataModel.ToDate
             };
+
             return View(viewModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetOfficesAsync()
+        public async Task<IActionResult> GetOffices()
         {
             var token = HttpContext.Session.GetString("ApiToken");
-            if (string.IsNullOrEmpty(token)) { return RedirectToAction("Login"); }
 
-            // Office API ကို token နဲ့ ခေါ်မယ့် service
+            if (string.IsNullOrEmpty(token))
+            {
+                return Unauthorized();
+            }
+
             var result = await _officeService.GetOffices(token);
 
             return Json(result);
