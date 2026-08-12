@@ -1,9 +1,13 @@
 ﻿using EIDCardPrint.Models;
+using EIDCardPrint.Models.DTO;
 using EIDCardPrint.Models.DTO.Applicants;
 using EIDCardPrint.Models.DTO.PrintedDto;
 using EIDCardPrint.Services;
+using EIDCardPrint.Utils;
 using Microsoft.AspNetCore.Mvc;
 using QRCoder;
+using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EIDCardPrint.Controllers
 {
@@ -17,31 +21,61 @@ namespace EIDCardPrint.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult>EIDCardPrint(string applicantId, string uid , string? OfficeCode)
+        public async Task<IActionResult>EIDCardPrint(EIDCardModel request, string? OfficeCode)
         {
 
             var token = HttpContext.Session.GetString("ApiToken");
 
-            //api request   
-            var request = new ApplicantListRequest { CurrentPageNumber = 1, ApplicantPerPage = 10, OfficeCode = OfficeCode };
-            var applicant = await _applicantService.GetApplicant(request, applicantId, uid);
-            string qrText = applicant.Uid.ToString();
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
-            using var qrGenerator = new QRCodeGenerator();
+            if (string.IsNullOrWhiteSpace(request.ApplicantId) &&
+                string.IsNullOrWhiteSpace(request.Uid))
+            {
+                return BadRequest("ApplicantId or Uid is required.");
+            }
 
-            using var qrData = qrGenerator.CreateQrCode(
-                qrText,
-                QRCodeGenerator.ECCLevel.M);
+            if (request.CurrentPageNumber < 1)
+            {
+                request.CurrentPageNumber = 1;
+            }
 
-            var qrCode = new PngByteQRCode(qrData);
+            if (request.ApplicantPerPage < 1)
+            {
+                request.ApplicantPerPage = 10;
+            }
 
-            // 20px module size
-            byte[] qrBytes = qrCode.GetGraphic(
-                pixelsPerModule: 20,
-                drawQuietZones: true);
+            var applicantRequest = new ApplicantListRequest
+            {
+                CurrentPageNumber = request.CurrentPageNumber,
+                ApplicantPerPage = request.ApplicantPerPage,
+                SearchTerm = request.SearchTerm,
+                OfficeCode = request.OfficeCode,
+                FromDate = request.FromDate?.ToString("yyyy-MM-dd"),
+                ToDate = request.ToDate?.ToString("yyyy-MM-dd")
+            };
 
-            string qrBase64 = Convert.ToBase64String(qrBytes);
-            var model = new EIDCardPrintViewModel
+            var applicant = await _applicantService.GetApplicant(
+                applicantRequest,
+                request.ApplicantId
+            );
+
+            if (applicant == null)
+            {
+                return NotFound(
+                    $"Applicant not found. " +
+                    $"ApplicationId={request.ApplicantId}, " +
+                    $"Uid={request.Uid}"
+                );
+            }
+
+            var qrBase64 = GeneratedQrCode(
+                applicant.Uid.ToString()
+            );
+
+            var viewModel = new EIDCardPrintViewModel
             {
                 ApplicantId = applicant.ApplicationId,
                 UID = applicant.Uid.ToString(),
@@ -51,14 +85,39 @@ namespace EIDCardPrint.Controllers
                 MName = applicant.PersonNameMm,
                 EName = applicant.PersonNameEn,
                 Image = applicant.Photo,
-                QR = qrBase64
+                QR = qrBase64,
+
+                // Grid state
+                CurrentPageNumber = request.CurrentPageNumber,
+                ApplicantPerPage = request.ApplicantPerPage,
+                OfficeCode = request.OfficeCode,
+                SearchTerm = request.SearchTerm,
+                SelectedDate = request.SelectedDate,
+                FromDate = request.FromDate,
+                ToDate = request.ToDate
             };
 
-            return View(model);
+            return View(viewModel);
+        }
+
+        private string GeneratedQrCode(string text)
+        {
+            using var qrGenerator = new QRCodeGenerator();
+
+            using var qrData = qrGenerator.CreateQrCode(text,QRCodeGenerator.ECCLevel.M);
+
+            var qrCode = new PngByteQRCode(qrData);
+
+            var qrBytes = qrCode.GetGraphic(
+                pixelsPerModule: 20,
+                drawQuietZones: true
+            );
+
+            return Convert.ToBase64String(qrBytes);
         }
 
         [HttpPost]
-        public async Task<IActionResult> MarkAsPrinted([FromBody]MarkPrintedRequest model)
+        public async Task<IActionResult> MarkAsPrinted([FromBody]MarkPrintedRequest request)
         {
             try
             {
@@ -71,18 +130,7 @@ namespace EIDCardPrint.Controllers
                 }
 
                 // API ကို call
-                var result = await _applicantService.MarkAsPrinted(
-                        model.ApplicantId,
-                        token);
-
-                if (result.ResponseStatus != "success")
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "Unable to update printed status"
-                    });
-                }
+                var result = await _applicantService.MarkAsPrinted(request,token);
 
                 return Ok(new
                 {

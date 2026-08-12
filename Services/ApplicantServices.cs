@@ -3,6 +3,7 @@ using EIDCardPrint.Models.DTO.Applicants;
 using EIDCardPrint.Models.DTO.PrintedDto;
 using EIDCardPrint.Utils;
 using log4net;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 
 namespace EIDCardPrint.Services
@@ -22,7 +23,7 @@ namespace EIDCardPrint.Services
             _logger = logFactory.CreateLogger<APIAccessHelper>();
         }
 
-        public async Task<ApplicantDto?> GetApplicant(ApplicantListRequest request ,string applicantId, string uid)
+        public async Task<ApplicantDto?> GetApplicant(ApplicantListRequest request, string applicantId)
         {
             try
             {
@@ -57,10 +58,7 @@ namespace EIDCardPrint.Services
                     return null;
                 }
 
-                var applicant = response.Data.FirstOrDefault(x =>
-                    x.ApplicationId == applicantId ||
-                    x.Uid.ToString() == uid
-                );
+                var applicant = response.Data.FirstOrDefault(x =>x.ApplicationId == applicantId);
 
                 return applicant;
             }
@@ -97,6 +95,21 @@ namespace EIDCardPrint.Services
 
 
                 var response = await _api.SendRequestAsync<ApplicantListRes>(requestDto);
+
+                if(!string.IsNullOrWhiteSpace(request.SearchTerm))
+{
+                    response.Data = response.Data
+                        .Where(x =>
+                            x.Uid.ToString().Contains(request.SearchTerm,
+                                    StringComparison.OrdinalIgnoreCase)
+                            ||
+                            (x.PersonNameMm ?? "").Contains(request.SearchTerm,
+                                    StringComparison.OrdinalIgnoreCase)
+                            ||
+                            (x.ApplicationId.ToString().Contains(request.SearchTerm,
+                            StringComparison.OrdinalIgnoreCase))).ToList();
+                }
+
                 return response;
             }
             catch (Exception ex)
@@ -107,23 +120,23 @@ namespace EIDCardPrint.Services
 
         }
 
-        public async Task<PrintedResponse> MarkAsPrinted(string applicantId, string token)
+        public async Task<PrintedResponse> MarkAsPrinted(MarkPrintedRequest request, string token)
         {
 
             if (string.IsNullOrEmpty(token))
             {
                 throw new Exception("Token is null or empty");
             }
-
+            Debug.WriteLine($"HTTP Status: {request}");
             //Authorization bearer token
             RequestDto requestDto = ModelConverter.CreateRequestDto(
-                applicantId,
+                request,
                 APIAccessHelper.BaseUrl,
                 "api/print-applicants",
                 eHttpRequestType.POST
             );
             requestDto.AccessToken = token;
-            var response = await _api.SendRequestAsync<PrintedResponse>(requestDto);
+            PrintedResponse response = await _api.SendRequestAsync<PrintedResponse>(requestDto);
             return response;
         }
     }

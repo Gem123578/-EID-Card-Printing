@@ -4,6 +4,7 @@
     ViewData["Title"] = "Home";
     Layout = "_layout";
 }
+<link href="~/css/CardPrintingGridForm.css" rel="stylesheet" />
 
 <form asp-controller="Home" asp-action="CardPrintingGrid" method="get" class="p-4 border rounded-3 bg-white shadow-sm animated-search-card mb-4">
     <div class="row g-4 align-items-end">
@@ -11,13 +12,12 @@
         <div class="col-md-3">
             <label asp-for="SearchTerm" class="form-label text-color fw-bold">Name</label>
             <div class="input-group">
-                <input asp-for="SearchTerm" class="form-control animated-input" placeholder="Name, UID သို့မဟုတ် QR ရိုက်ပါ..." />
+                <input asp-for="SearchTerm" id="SearchTerm" name="SearchTerm" class="form-control animated-input" placeholder="Name, UID သို့မဟုတ် QR ရိုက်ပါ..." />
             </div>
         </div>
 
         <div class="col-md-3">
-            <label asp-for="OfficeCode"
-                   class="form-label text-color fw-bold">
+            <label asp-for="OfficeCode" class="form-label text-color fw-bold">
                 Office Stations
             </label>
 
@@ -76,9 +76,7 @@
                                 @(applicant.PrintedDate?.ToString("yyyy-MM-dd") ?? "-")
                             </td>
                             <td class="text-center">
-                                <a href="@Url.Action(
-                                               "EIDCardPrint",
-                                               "CardPrint",
+                                <a href="@Url.Action("EIDCardPrint", "CardPrint",
                                                new
                                                {
                                                    applicantId = applicant.ApplicantId,
@@ -100,6 +98,98 @@
         </div>
     </div>
 </div>
+
+@if (Model.TotalPages > 1)
+{
+    <div class="pagination-wrapper d-flex justify-content-between align-items-center p-3 border-top">
+
+        <div class="text-muted">
+            Showing
+            <strong>@Model.Applicants.Count</strong>
+            of
+            <strong>@Model.RecordCount</strong>
+            records
+        </div>
+
+        <nav>
+            <ul class="pagination mb-0">
+
+                <!-- Previous -->
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a href="@Url.Action("CardPrintingGrid","Home",
+                                   new
+                                   {
+                                       CurrentPageNumber = Model.CurrentPageNumber - 1,
+                                       ApplicantPerPage = Model.ApplicantPerPage,
+                                       SearchTerm = Model.SearchTerm,
+                                       OfficeCode = Model.OfficeCode,
+                                       SelectedDate = Model.SelectedDate,
+                                       FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
+                                       ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
+                                   })"class="page-link">
+
+                            <i class="fa-solid fa-chevron-left me-1"></i>
+                            Previous
+
+                        </a>
+                                }
+                    else
+                    {
+                        <span class="page-link">
+                            <i class="fa-solid fa-chevron-left me-1"></i>
+                            Previous
+                        </span>
+                    }
+
+                </li>
+
+                <!-- Current Page -->
+                <li class="page-item active">
+                    <span class="page-link">
+                        @Model.CurrentPageNumber
+                    </span>
+                </li>
+
+                <!-- Next -->
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+
+                    @if (Model.HasNextPage)
+                    {
+                        <a href="@Url.Action("CardPrintingGrid","Home",
+                                   new
+                                   {
+                                       CurrentPageNumber = Model.CurrentPageNumber + 1,
+                                       ApplicantPerPage = Model.ApplicantPerPage,
+                                       SearchTerm = Model.SearchTerm,
+                                       OfficeCode = Model.OfficeCode,
+                                       SelectedDate = Model.SelectedDate,
+                                       FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
+                                       ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
+                                   })" class="page-link">
+
+                            Next
+                            <i class="fa-solid fa-chevron-right ms-1"></i>
+
+                        </a>
+                                }
+                    else
+                    {
+                        <span class="page-link">
+                            Next
+                            <i class="fa-solid fa-chevron-right ms-1"></i>
+                        </span>
+                    }
+
+                </li>
+
+            </ul>
+        </nav>
+
+    </div>
+}
 
 @section Scripts {
     <script src="~/js/CardPrintingGrid.js"></script>

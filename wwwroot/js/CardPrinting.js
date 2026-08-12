@@ -26,9 +26,6 @@ async function markCardAsPrinted() {
 
     try {
 
-        console.log("URL =", markPrintedUrl);
-        console.log("ApplicantId =", applicantId);
-
         const response = await fetch(
             markPrintedUrl,
             {
@@ -39,8 +36,9 @@ async function markCardAsPrinted() {
                 },
 
                 body: JSON.stringify({
-                    applicantId: applicantId
+                    application_ids: [applicantId]
                 })
+
             }
         );
 
@@ -50,17 +48,19 @@ async function markCardAsPrinted() {
 
             const errorText = await response.text();
 
-            console.error("Server response =", errorText);
-
             throw new Error(
                 `HTTP Error: ${response.status}`
             );
         }
 
         const result = await response.json();
-
-
-        console.log("Print status:", result);
+        showAppAlert({
+            title: "Print Successful",
+            message: "The card has been printed successfully.",
+            type: "success",
+            confirmText: "OK",
+            showCancel: false
+        });
 
     }
     catch (error) {

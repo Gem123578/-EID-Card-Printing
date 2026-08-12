@@ -58,6 +58,7 @@ async function fetchOffices() {
 
         const data = await response.json();
 
+
         const officeSelect =
             $('#officeSelect');
 
@@ -99,7 +100,7 @@ fetchOffices();
 document.querySelectorAll(".print-btn").forEach(function (button) {
     button.addEventListener("click", function () {
         this.classList.add("loading");
-        ထ
+
         const icon = this.querySelector("i");
 
         if (icon) {
@@ -112,4 +113,44 @@ document.querySelectorAll(".print-btn").forEach(function (button) {
 $('form').on('submit', function () {
     const officeCode = $('#officeSelect').val();
     $('#officeSelect').trigger('change');
+});
+
+$('form').on('submit', function () {
+
+    const $form = $(this);
+
+    const $search =
+        $('#SearchTerm');
+
+    const $office =
+        $('#officeSelect');
+
+    const $date =
+        $('#dateRangeFilter');
+
+
+    // Trim search value
+    if ($search.length) {
+
+        $search.val(
+            $.trim($search.val())
+        );
+
+    }
+
+
+    // Make sure Select2 value is submitted
+    if ($office.length) {
+
+        $office.val(
+            $office.val()
+        );
+
+    }
+
+
+    // Do NOT clear SearchTerm
+    // Do NOT reset form
+    // Do NOT call form.reset()
+
 });

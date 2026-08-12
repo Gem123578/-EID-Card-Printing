@@ -73,6 +73,7 @@ namespace EIDCardPrint.Utils
 
                     string json = await response.Content.ReadAsStringAsync();
 
+                    response.EnsureSuccessStatusCode();
 
                     return JsonConvert.DeserializeObject<T>(json);
                 }

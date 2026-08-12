@@ -3,6 +3,8 @@ using EIDCardPrint.Models.DTO.Applicants;
 using EIDCardPrint.Models.DTO.LoginDto;
 using EIDCardPrint.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Newtonsoft.Json;
 using System.Reflection;
 
 namespace EIDCardPrint.Controllers
@@ -42,8 +44,11 @@ namespace EIDCardPrint.Controllers
                 if (response.Success)
                 {
                     HttpContext.Session.SetString("ApiToken", response.Token ?? string.Empty);
+                    HttpContext.Session.SetString("Permission", JsonConvert.SerializeObject(response.User.Permissions));
                     return RedirectToAction("CardPrintingGrid", "Home");
                 }
+
+                
 
                 ModelState.AddModelError("", "Error: " + response.ResponseStatus);
                 return View(new LoginViewModel());
@@ -65,6 +70,14 @@ namespace EIDCardPrint.Controllers
             {
                 return RedirectToAction("Login");
             }
+            if (dataModel.CurrentPageNumber < 1)
+            {
+                dataModel.CurrentPageNumber = 1;
+            }
+            if (dataModel.ApplicantPerPage < 1)
+            {
+                dataModel.ApplicantPerPage = 10;
+            }
 
             var (fromDate, toDate) =
                 await _dateRangeService.GetDateRange(
@@ -78,8 +91,8 @@ namespace EIDCardPrint.Controllers
 
             var request = new ApplicantListRequest
             {
-                CurrentPageNumber = 1,
-                ApplicantPerPage = 100,
+                CurrentPageNumber = dataModel.CurrentPageNumber,
+                ApplicantPerPage = dataModel.ApplicantPerPage,
 
                 // Search
                 SearchTerm = dataModel.SearchTerm,
@@ -132,7 +145,7 @@ namespace EIDCardPrint.Controllers
                 CurrentPageNumber = request.CurrentPageNumber,
 
                 ApplicantPerPage = request.ApplicantPerPage,
-
+                TotalPages = request.ApplicantPerPage > 0? (int)Math.Ceiling((double)result.RecordCount / request.ApplicantPerPage): 0,
                 Applicants = applicants,
 
                 SearchTerm = dataModel.SearchTerm,

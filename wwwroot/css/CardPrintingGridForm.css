@@ -83,3 +83,108 @@
             background: #0b5ed7;
         }
 
+/*paging*/
+.pagination-wrapper {
+    animation: pagingFadeIn 0.4s ease-out;
+}
+
+.pagination .page-link {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover */
+.pagination .page-item:not(.disabled) .page-link:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Click */
+.pagination .page-item:not(.disabled) .page-link:active {
+    transform: scale(0.92);
+}
+
+/* Current page */
+.pagination .page-item.active .page-link {
+    transform: scale(1.05);
+}
+
+/* Disabled */
+.pagination .page-item.disabled .page-link {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Page wrapper animation */
+@keyframes pagingFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Office Station Select2 */
+#officeSelect + .select2 {
+    width: 100% !important;
+}
+
+    #officeSelect + .select2 .select2-selection--single {
+        height: 38px;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        background-color: #fff;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+        #officeSelect + .select2 .select2-selection--single:hover {
+            border-color: #86b7fe;
+            transform: translateY(-1px);
+        }
+
+    #officeSelect + .select2.select2-container--focus
+    .select2-selection--single,
+    #officeSelect + .select2.select2-container--open
+    .select2-selection--single {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+
+    #officeSelect + .select2
+    .select2-selection__rendered {
+        line-height: 36px;
+        padding-left: 12px;
+    }
+
+    #officeSelect + .select2
+    .select2-selection__arrow {
+        height: 36px;
+    }
+
+/* Dropdown */
+.select2-container--open .select2-dropdown {
+    animation: officeDropdownFade 0.2s ease-out;
+}
+
+.select2-results__option {
+    transition: background-color 0.15s ease, padding-left 0.15s ease;
+}
+
+.select2-results__option--highlighted {
+    padding-left: 16px !important;
+}
+
+@keyframes officeDropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

@@ -5,8 +5,8 @@ namespace EIDCardPrint.Services
 {
     public interface IApplicantServices
     {
-        Task<ApplicantDto?> GetApplicant(ApplicantListRequest request, string applicantId, string uid);
+        Task<ApplicantDto?> GetApplicant(ApplicantListRequest request, string applicantId);
         Task<ApplicantListRes> GetApplicants(ApplicantListRequest request);
-        Task<PrintedResponse> MarkAsPrinted(string applicantId, string token);
+        Task<PrintedResponse> MarkAsPrinted(MarkPrintedRequest request, string token);
     }
 }

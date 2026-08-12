@@ -13,7 +13,15 @@
         public string Image { get; set; }
         public string QR { get; set; }
 
-        public string DateRange { get; set; }
+        public int CurrentPageNumber { get; set; }
+
+        public int ApplicantPerPage { get; set; }
+
+        public string? OfficeCode { get; set; }
+
+        public string? SearchTerm { get; set; }
+
+        public string? SelectedDate { get; set; }
 
         public DateTime? FromDate { get; set; }
 

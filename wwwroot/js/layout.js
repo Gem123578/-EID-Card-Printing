@@ -57,10 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-
-// ========================================
-// Global Alert
-// ========================================
+//global alert
 
 let currentConfirmCallback = null;
 
@@ -115,17 +112,10 @@ function showAppAlert(options = {}) {
         return;
     }
 
-
-    // ========================================
-    // Store callback
-    // ========================================
+    //store callback for confirm button
 
     currentConfirmCallback = onConfirm;
 
-
-    // ========================================
-    // Text
-    // ========================================
 
     titleElement.textContent = title;
 
@@ -135,10 +125,7 @@ function showAppAlert(options = {}) {
 
     cancelBtn.textContent = cancelText;
 
-
-    // ========================================
-    // Confirm Button
-    // ========================================
+    //confirm button classes
 
     confirmBtn.className =
         "app-alert-btn app-alert-btn-confirm";
@@ -150,9 +137,7 @@ function showAppAlert(options = {}) {
     }
 
 
-    // ========================================
-    // Icons
-    // ========================================
+    //icon and type classes
 
     const icons = {
 
@@ -196,9 +181,7 @@ function showAppAlert(options = {}) {
     icon.classList.add(selected.class);
 
 
-    // ========================================
-    // Cancel Button
-    // ========================================
+    //Cancel button visibility
 
     cancelBtn.style.display =
         showCancel ? "inline-flex" : "none";
@@ -216,20 +199,13 @@ function showAppAlert(options = {}) {
 
     };
 
-
-    // ========================================
-    // Show Modal
-    // ========================================
+    //Show modal
 
     modal.classList.add("is-visible");
 
 }
 
-
-// ========================================
-// Close Alert
-// ========================================
-
+//Close alert
 function closeAppAlert() {
 
     const modal =
@@ -245,11 +221,7 @@ function closeAppAlert() {
 
 }
 
-
-// ========================================
-// Logout
-// ========================================
-
+//logout
 function Logout() {
 
     const logoutBtn =
