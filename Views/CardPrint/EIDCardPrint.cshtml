@@ -39,18 +39,9 @@
                     <!-- Photo -->
                     <div class="photo-section">
 
-                        @if (!string.IsNullOrEmpty(Model.Image))
-                        {
-                            <img src="data:image/png;base64,@Model.Image"
-                                 class="photo"
-                                 alt="Profile" />
-                        }
-                        else
-                        {
-                            <img src="~/images/ID.jpg"
-                                 class="photo"
-                                 alt="Profile" />
-                        }
+                        <img src="data:image/png;base64,@Model.Image"
+                             class="photo"
+                             alt="Profile" />
 
                     </div>
 

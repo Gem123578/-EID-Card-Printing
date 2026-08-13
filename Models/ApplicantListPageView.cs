@@ -4,6 +4,8 @@
     {
         public int RecordCount { get; set; }
 
+        public bool IsPrinted { get; set; }
+
         public int CurrentPageNumber { get; set; } 
 
         public int ApplicantPerPage { get; set; }

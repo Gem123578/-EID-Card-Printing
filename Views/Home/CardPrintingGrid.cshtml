@@ -78,7 +78,31 @@
                    value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
 
         </div>
-        <div class="col-md-3">
+
+        <div class="col-md-1">
+
+            <label class="form-label text-color fw-bold">
+                Status
+            </label>
+
+            <div class="printed-option">
+
+                <input class="printed-radio"
+                       type="radio"
+                       name="IsPrinted"
+                       id="isPrinted"
+                       value="true"
+                       @(Model.IsPrinted == true ? "checked" : "") />
+
+                <label for="isPrinted" class="printed-label">
+                    <span class="printed-radio-circle"></span>
+                    <span>Printed</span>
+                </label>
+
+            </div>
+
+        </div>
+        <div class="col-md-2">
             <button class="btn btn-primary animated-btn" type="submit">
                 <i class="fa-solid fa-magnifying-glass me-1"></i> Search
             </button>
@@ -242,6 +266,7 @@
                                        ApplicantPerPage = Model.ApplicantPerPage,
                                        SearchTerm = Model.SearchTerm,
                                        OfficeCode = Model.OfficeCode,
+                                       IsPrinted = Model.IsPrinted,
                                        SelectedDate = Model.SelectedDate,
                                        FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
                                        ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
@@ -282,6 +307,7 @@
                                        ApplicantPerPage = Model.ApplicantPerPage,
                                        SearchTerm = Model.SearchTerm,
                                        OfficeCode = Model.OfficeCode,
+                                       IsPrinted = Model.IsPrinted,
                                        SelectedDate = Model.SelectedDate,
                                        FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
                                        ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
@@ -307,8 +333,12 @@
 
     </div>
 }
-
 @section Scripts {
-    <script src="~/js/CardPrintingGrid.js"></script>
 
+    <script>
+        const markPrintedUrl =
+            '@Url.Action("MarkAsPrinted", "CardPrint")';
+    </script>
+
+    <script src="~/js/CardPrintingGrid.js"></script>
 }

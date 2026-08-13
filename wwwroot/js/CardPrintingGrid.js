@@ -126,6 +126,208 @@
 
 
 // =========================================================
+// MARK CARD AS PRINTED
+// =========================================================
+
+async function markCardAsPrinted(applicantId) {
+
+    if (!applicantId) {
+
+        console.error(
+            "Applicant ID မရှိပါ။"
+        );
+
+        return false;
+    }
+
+    try {
+
+        console.log(
+            "Marking card as printed:",
+            applicantId
+        );
+
+        const response = await fetch(
+            markPrintedUrl,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    application_ids: [
+                        applicantId
+                    ]
+                })
+            }
+        );
+
+
+        console.log(
+            "Mark Printed Status =",
+            response.status
+        );
+
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            console.error(
+                "Mark Printed Error:",
+                errorText
+            );
+
+            throw new Error(
+                `HTTP Error: ${response.status}`
+            );
+        }
+
+
+        const result =
+            await response.json();
+
+        console.log(
+            "Mark Printed Result:",
+            result
+        );
+
+
+        // =====================================================
+        // SUCCESS ALERT
+        // =====================================================
+
+        if (typeof showAppAlert === "function") {
+
+            showAppAlert({
+
+                title: "ပုံနှိပ်ခြင်း အောင်မြင်ပါသည်",
+
+                message:
+                    "EID Card ကို ပုံနှိပ်ပြီးပါပြီ။",
+
+                type: "success",
+
+                confirmText: "OK",
+
+                showCancel: false
+
+            });
+
+        }
+        else {
+
+            alert(
+                "EID Card ကို ပုံနှိပ်ပြီးပါပြီ။"
+            );
+
+        }
+
+
+        // =====================================================
+        // UPDATE PRINTED DATE IN TABLE
+        // =====================================================
+
+        updatePrintedDate(applicantId);
+
+
+        return true;
+
+    }
+    catch (error) {
+
+        console.error(
+            "Mark Printed Error:",
+            error
+        );
+
+        if (typeof showAppAlert === "function") {
+
+            showAppAlert({
+
+                title: "အမှားဖြစ်နေပါသည်",
+
+                message:
+                    "Card ကို Printed အဖြစ် မှတ်သား၍ မရပါ။",
+
+                type: "error",
+
+                confirmText: "OK",
+
+                showCancel: false
+
+            });
+
+        }
+
+        return false;
+    }
+}
+
+
+// =========================================================
+// UPDATE PRINTED DATE IN TABLE
+// =========================================================
+
+function updatePrintedDate(applicantId) {
+
+    const button =
+        document.querySelector(
+            `.preview-card-btn[data-applicant-id="${applicantId}"]`
+        );
+
+    if (!button) {
+        return;
+    }
+
+
+    const row =
+        button.closest("tr");
+
+    if (!row) {
+        return;
+    }
+
+
+    // Printed Date column
+    // UId = 0
+    // Name = 1
+    // NRC = 2
+    // Gender = 3
+    // DOB = 4
+    // Printed Date = 5
+
+    const printedDateCell =
+        row.children[5];
+
+    if (printedDateCell) {
+
+        const today =
+            new Date();
+
+        const year =
+            today.getFullYear();
+
+        const month =
+            String(
+                today.getMonth() + 1
+            ).padStart(2, "0");
+
+        const day =
+            String(
+                today.getDate()
+            ).padStart(2, "0");
+
+        printedDateCell.textContent =
+            `${year}-${month}-${day}`;
+    }
+}
+
+
+// =========================================================
 // FETCH OFFICE
 // =========================================================
 
@@ -134,7 +336,9 @@ async function fetchOffices() {
     try {
 
         const response =
-            await fetch('/Home/GetOffices');
+            await fetch(
+                '/Home/GetOffices'
+            );
 
         if (!response.ok) {
 
@@ -144,13 +348,17 @@ async function fetchOffices() {
 
         }
 
+
         const data =
             await response.json();
+
 
         const officeSelect =
             $('#officeSelect');
 
+
         officeSelect.empty();
+
 
         officeSelect.append(
             new Option(
@@ -158,6 +366,7 @@ async function fetchOffices() {
                 ''
             )
         );
+
 
         data.forEach(function (office) {
 
@@ -169,6 +378,7 @@ async function fetchOffices() {
             );
 
         });
+
 
         officeSelect.select2({
 
@@ -206,15 +416,18 @@ document.addEventListener(
                 "cardPreviewModal"
             );
 
+
         const modalContent =
             document.getElementById(
                 "cardPreviewContent"
             );
 
+
         const closeBtn =
             document.getElementById(
                 "closeCardPreview"
             );
+
 
         const printBtn =
             document.getElementById(
@@ -242,20 +455,6 @@ document.addEventListener(
 
 
         // =====================================================
-        // MARK PRINTED URL
-        // =====================================================
-
-        /*
-         * IMPORTANT:
-         * Change this URL if your controller action
-         * uses another route.
-         */
-
-        const markPrintedUrl =
-            '/CardPrint/MarkAsPrinted';
-
-
-        // =====================================================
         // OPEN CARD PREVIEW
         // =====================================================
 
@@ -268,16 +467,18 @@ document.addEventListener(
                         ".preview-card-btn"
                     );
 
+
                 if (!button) {
                     return;
                 }
 
+
                 e.preventDefault();
 
 
-                // ---------------------------------------------
-                // Get applicant data
-                // ---------------------------------------------
+                // -------------------------------------------------
+                // GET APPLICANT DATA
+                // -------------------------------------------------
 
                 currentApplicantId =
                     button.dataset.applicantId;
@@ -289,9 +490,15 @@ document.addEventListener(
                     button.dataset.officeCode || "";
 
 
-                // ---------------------------------------------
+                console.log(
+                    "Applicant ID =",
+                    currentApplicantId
+                );
+
+
+                // -------------------------------------------------
                 // API URL
-                // ---------------------------------------------
+                // -------------------------------------------------
 
                 const url =
                     `/CardPrint/EIDCardPrint` +
@@ -306,22 +513,23 @@ document.addEventListener(
                 );
 
 
-                // ---------------------------------------------
-                // Show modal
-                // ---------------------------------------------
+                // -------------------------------------------------
+                // SHOW MODAL
+                // -------------------------------------------------
 
                 modal.classList.add(
                     "preview-show"
                 );
+
 
                 document.body.classList.add(
                     "preview-body-lock"
                 );
 
 
-                // ---------------------------------------------
-                // Loading
-                // ---------------------------------------------
+                // -------------------------------------------------
+                // LOADING
+                // -------------------------------------------------
 
                 modalContent.innerHTML = `
 
@@ -342,18 +550,21 @@ document.addEventListener(
 
 
                 if (printBtn) {
+
                     printBtn.disabled = true;
+
                 }
 
 
-                // ---------------------------------------------
-                // Load card
-                // ---------------------------------------------
+                // -------------------------------------------------
+                // LOAD CARD
+                // -------------------------------------------------
 
                 try {
 
                     const response =
                         await fetch(url);
+
 
                     if (!response.ok) {
 
@@ -363,16 +574,18 @@ document.addEventListener(
 
                     }
 
+
                     const html =
                         await response.text();
 
 
-                    // -----------------------------------------
-                    // Parse HTML
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // PARSE HTML
+                    // -------------------------------------------------
 
                     const parser =
                         new DOMParser();
+
 
                     const doc =
                         parser.parseFromString(
@@ -381,9 +594,9 @@ document.addEventListener(
                         );
 
 
-                    // -----------------------------------------
-                    // Find card
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // FIND CARD
+                    // -------------------------------------------------
 
                     const card =
                         doc.querySelector(
@@ -400,20 +613,21 @@ document.addEventListener(
                     }
 
 
-                    // -----------------------------------------
-                    // Show card
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // SHOW CARD
+                    // -------------------------------------------------
 
                     modalContent.innerHTML = "";
+
 
                     modalContent.appendChild(
                         card.cloneNode(true)
                     );
 
 
-                    // -----------------------------------------
-                    // Enable print
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // ENABLE PRINT BUTTON
+                    // -------------------------------------------------
 
                     if (printBtn) {
 
@@ -429,9 +643,11 @@ document.addEventListener(
                         error
                     );
 
+
                     modalContent.innerHTML = `
 
-                        <div class="text-danger text-center">
+                        <div
+                            class="text-danger text-center">
 
                             <i class="
                                 fa-solid
@@ -440,7 +656,9 @@ document.addEventListener(
                             </i>
 
                             <div class="mt-2 fw-bold">
+
                                 Card Loading Failed
+
                             </div>
 
                         </div>
@@ -468,9 +686,23 @@ document.addEventListener(
                     );
 
 
-                    // -----------------------------------------
-                    // Get card
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // CHECK APPLICANT
+                    // -------------------------------------------------
+
+                    if (!currentApplicantId) {
+
+                        alert(
+                            "Applicant ID မရှိပါ။"
+                        );
+
+                        return;
+                    }
+
+
+                    // -------------------------------------------------
+                    // GET CARD
+                    // -------------------------------------------------
 
                     const card =
                         document.querySelector(
@@ -488,23 +720,9 @@ document.addEventListener(
                     }
 
 
-                    // -----------------------------------------
-                    // Check applicant
-                    // -----------------------------------------
-
-                    if (!currentApplicantId) {
-
-                        alert(
-                            "Applicant ID not found."
-                        );
-
-                        return;
-                    }
-
-
-                    // -----------------------------------------
-                    // Open print window
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // OPEN PRINT WINDOW
+                    // -------------------------------------------------
 
                     const printWindow =
                         window.open(
@@ -517,16 +735,16 @@ document.addEventListener(
                     if (!printWindow) {
 
                         alert(
-                            "Popup Blocked. Please allow popups."
+                            "Popup Block ဖြစ်နေပါသည်။ Browser popup ကို Allow လုပ်ပါ။"
                         );
 
                         return;
                     }
 
 
-                    // -----------------------------------------
-                    // Get CSS files
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // GET CSS
+                    // -------------------------------------------------
 
                     const styles =
                         Array.from(
@@ -546,11 +764,12 @@ document.addEventListener(
                             .join("");
 
 
-                    // -----------------------------------------
-                    // Write print page
-                    // -----------------------------------------
+                    // -------------------------------------------------
+                    // PRINT HTML
+                    // -------------------------------------------------
 
                     printWindow.document.open();
+
 
                     printWindow.document.write(`
 
@@ -652,6 +871,7 @@ document.addEventListener(
 
                                     }
 
+
                                     .nrc-wrapper {
 
                                         box-shadow:
@@ -680,9 +900,9 @@ document.addEventListener(
                     printWindow.document.close();
 
 
-                    // -----------------------------------------
-                    // Wait for print window
-                    // -----------------------------------------
+                    // =================================================
+                    // WAIT THEN PRINT
+                    // =================================================
 
                     setTimeout(
                         function () {
@@ -692,37 +912,73 @@ document.addEventListener(
                             printWindow.print();
 
 
-                            /*
-                             * afterprint fires when the user
-                             * finishes/cancels the browser
-                             * print dialog.
-                             */
+                            // =================================================
+                            // PRINT ပြီးမှ Mark As Printed
+                            // =================================================
 
-                            printWindow.onafterprint =
-                                async function () {
-
-                                    console.log(
-                                        "PRINT DIALOG CLOSED"
-                                    );
+                            let printHandled = false;
 
 
-                                    /*
-                                     * Mark as printed ONLY
-                                     * after print dialog closes.
-                                     */
+                            function printFinished() {
 
-                                    await markCardAsPrinted(
-                                        currentApplicantId
-                                    );
+                                if (printHandled) {
+                                    return;
+                                }
 
 
-                                    /*
-                                     * Close print window
-                                     */
+                                printHandled = true;
+
+
+                                console.log(
+                                    "Print finished."
+                                );
+
+
+                                // Close print window
+                                try {
 
                                     printWindow.close();
 
-                                };
+                                }
+                                catch (e) {
+
+                                    console.warn(
+                                        "Print window close error:",
+                                        e
+                                    );
+
+                                }
+
+
+                                // -------------------------------------------------
+                                // MARK AS PRINTED
+                                // -------------------------------------------------
+
+                                markCardAsPrinted(
+                                    currentApplicantId
+                                );
+
+                            }
+
+
+                            // Browser afterprint
+                            printWindow.addEventListener(
+                                "afterprint",
+                                printFinished
+                            );
+
+
+                            // Fallback
+                            // Browser တချို့မှာ afterprint မရနိုင်ပါ
+                            setTimeout(
+                                function () {
+
+                                    printFinished();
+
+                                },
+                                1500
+                            );
+
 
                         },
                         1000
@@ -735,241 +991,7 @@ document.addEventListener(
 
 
         // =====================================================
-        // MARK CARD AS PRINTED
-        // =====================================================
-
-        async function markCardAsPrinted(
-            applicantId
-        ) {
-
-            if (!applicantId) {
-
-                console.error(
-                    "Applicant ID is missing."
-                );
-
-                return;
-            }
-
-
-            try {
-
-                console.log(
-                    "Marking card as printed:",
-                    applicantId
-                );
-
-
-                const response =
-                    await fetch(
-                        markPrintedUrl,
-                        {
-                            method: "POST",
-
-                            headers: {
-
-                                "Content-Type":
-                                    "application/json"
-
-                            },
-
-                            body: JSON.stringify({
-
-                                application_ids: [
-                                    applicantId
-                                ]
-
-                            })
-
-                        }
-                    );
-
-
-                console.log(
-                    "Mark Printed Status =",
-                    response.status
-                );
-
-
-                if (!response.ok) {
-
-                    const errorText =
-                        await response.text();
-
-                    console.error(
-                        "Mark Printed Error:",
-                        errorText
-                    );
-
-                    throw new Error(
-                        `HTTP Error: ${response.status}`
-                    );
-
-                }
-
-
-                const result =
-                    await response.json();
-
-
-                console.log(
-                    "Mark Printed Result:",
-                    result
-                );
-
-
-                // ---------------------------------------------
-                // Success message
-                // ---------------------------------------------
-
-                if (typeof showAppAlert === "function") {
-
-                    showAppAlert({
-
-                        title:
-                            "Print Successful",
-
-                        message:
-                            "The card has been printed successfully.",
-
-                        type:
-                            "success",
-
-                        confirmText:
-                            "OK",
-
-                        showCancel:
-                            false
-
-                    });
-
-                }
-                else {
-
-                    alert(
-                        "The card has been printed successfully."
-                    );
-
-                }
-
-
-                // ---------------------------------------------
-                // Optional:
-                // Update Printed Date in table
-                // ---------------------------------------------
-
-                updatePrintedDate(
-                    applicantId
-                );
-
-            }
-            catch (error) {
-
-                console.error(
-                    "Mark Printed Error:",
-                    error
-                );
-
-
-                if (typeof showAppAlert === "function") {
-
-                    showAppAlert({
-
-                        title:
-                            "Print Status Error",
-
-                        message:
-                            "Card was printed, but the printed status could not be updated.",
-
-                        type:
-                            "error",
-
-                        confirmText:
-                            "OK",
-
-                        showCancel:
-                            false
-
-                    });
-
-                }
-
-            }
-
-        }
-
-
-        // =====================================================
-        // UPDATE PRINTED DATE IN TABLE
-        // =====================================================
-
-        function updatePrintedDate(
-            applicantId
-        ) {
-
-            const button =
-                document.querySelector(
-                    `.preview-card-btn[data-applicant-id="${applicantId}"]`
-                );
-
-
-            if (!button) {
-                return;
-            }
-
-
-            const row =
-                button.closest("tr");
-
-
-            if (!row) {
-                return;
-            }
-
-
-            /*
-             * Table columns:
-             *
-             * 0 = UID
-             * 1 = Name
-             * 2 = NRC
-             * 3 = Gender
-             * 4 = DOB
-             * 5 = Printed Date
-             * 6 = Action
-             */
-
-            const printedDateCell =
-                row.cells[5];
-
-
-            if (printedDateCell) {
-
-                const today =
-                    new Date();
-
-                const date =
-                    today.getFullYear() +
-                    "-" +
-                    String(
-                        today.getMonth() + 1
-                    ).padStart(2, "0") +
-                    "-" +
-                    String(
-                        today.getDate()
-                    ).padStart(2, "0");
-
-
-                printedDateCell.textContent =
-                    date;
-
-            }
-
-        }
-
-
-        // =====================================================
-        // CLOSE
+        // CLOSE BUTTON
         // =====================================================
 
         if (closeBtn) {
@@ -1033,6 +1055,7 @@ document.addEventListener(
                 "preview-show"
             );
 
+
             document.body.classList.remove(
                 "preview-body-lock"
             );
@@ -1052,7 +1075,8 @@ document.addEventListener(
                             <div class="preview-loading">
 
                                 <div
-                                    class="spinner-border text-primary"
+                                    class="spinner-border
+                                           text-primary"
                                     role="status">
                                 </div>
 
@@ -1086,3 +1110,26 @@ document.addEventListener(
 
     }
 );
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const printedRadio = document.getElementById("isPrinted");
+
+    if (!printedRadio) return;
+
+    printedRadio.addEventListener("click", function () {
+
+        if (this.dataset.checked === "true") {
+
+            this.checked = false;
+            this.dataset.checked = "false";
+
+        } else {
+
+            this.dataset.checked = "true";
+
+        }
+
+    });
+
+});

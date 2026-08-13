@@ -17,7 +17,7 @@ namespace EIDCardPrint.Models.DTO.Applicants
 
 
         [JsonProperty("is_printed")]
-        public int? IsPrinted { get; set; }
+        public int IsPrinted { get; set; }
 
 
         [JsonProperty("from_date")]

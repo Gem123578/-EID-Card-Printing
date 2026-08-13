@@ -94,7 +94,7 @@ namespace EIDCardPrint.Controllers
                     SearchTerm = null,
                     OfficeCode = dataModel.OfficeCode,
                     OfficeName = null,
-
+                    IsPrinted = false,
                     SelectedDate = null,
                     FromDate = null,
                     ToDate = null
@@ -113,6 +113,7 @@ namespace EIDCardPrint.Controllers
                 CurrentPageNumber = dataModel.CurrentPageNumber,
                 ApplicantPerPage = dataModel.ApplicantPerPage,
 
+                IsPrinted = dataModel.IsPrinted == true ? 1 : 0,
                 // Search
                 SearchTerm = dataModel.SearchTerm,
 
@@ -125,7 +126,7 @@ namespace EIDCardPrint.Controllers
 
                 ToDate = dataModel.ToDate?
                     .ToString("yyyy-MM-dd")
-            };
+            };  
 
             var result =
                 await _applicantService.GetApplicants(request);
@@ -170,6 +171,8 @@ namespace EIDCardPrint.Controllers
                 Applicants = applicants,
 
                 IsSearch = true,
+
+                IsPrinted = dataModel.IsPrinted ,
 
                 SearchTerm = dataModel.SearchTerm,
 
