@@ -35,5 +35,7 @@
 
         public bool HasNextPage =>
             CurrentPageNumber < TotalPages;
+
+        public bool IsSearch { get;  set; }
     }
 }

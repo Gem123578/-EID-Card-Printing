@@ -159,10 +159,33 @@
         const applicantId =
             '@Model.ApplicantId';
 
-        console.log(
-            "View ApplicantId =",
-            applicantId
-        );
+        console.log("ApplicantId =", applicantId);
+    </script>
+
+    <script src="~/js/CardPrinting.js"></script>
+
+    <script>
+
+        const urlParams =
+            new URLSearchParams(window.location.search);
+
+        const autoPrint =
+            urlParams.get("autoPrint");
+
+        if (autoPrint === "true") {
+
+            window.addEventListener("load", function () {
+
+                setTimeout(function () {
+
+                    window.print();
+
+                }, 500);
+
+            });
+
+        }
+
     </script>
 
     <script src="~/js/CardPrinting.js"></script>

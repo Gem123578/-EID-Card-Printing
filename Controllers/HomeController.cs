@@ -62,7 +62,7 @@ namespace EIDCardPrint.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CardPrintingGrid(ApplicantListPageView dataModel)
+        public async Task<IActionResult> CardPrintingGrid(ApplicantListPageView dataModel , bool  isSearch = false)
         {
             var token = HttpContext.Session.GetString("ApiToken");
 
@@ -79,12 +79,31 @@ namespace EIDCardPrint.Controllers
                 dataModel.ApplicantPerPage = 10;
             }
 
-            var (fromDate, toDate) =
-                await _dateRangeService.GetDateRange(
-                    dataModel.SelectedDate,
-                    dataModel.FromDate,
-                    dataModel.ToDate
-                );
+
+            if (!isSearch)
+            {
+                var emptyModel = new ApplicantListPageView
+                {
+                    Applicants = new List<ApplicantListView>(),
+                    RecordCount = 0,
+
+                    CurrentPageNumber = 1,
+                    ApplicantPerPage = dataModel.ApplicantPerPage,
+                    TotalPages = 0,
+                    IsSearch = false,
+                    SearchTerm = null,
+                    OfficeCode = dataModel.OfficeCode,
+                    OfficeName = null,
+
+                    SelectedDate = null,
+                    FromDate = null,
+                    ToDate = null
+                };
+
+                return View(emptyModel);
+            }
+
+            var (fromDate, toDate) = await _dateRangeService.GetDateRange(dataModel.SelectedDate,dataModel.FromDate, dataModel.ToDate);
 
             dataModel.FromDate = fromDate;
             dataModel.ToDate = toDate;
@@ -145,8 +164,12 @@ namespace EIDCardPrint.Controllers
                 CurrentPageNumber = request.CurrentPageNumber,
 
                 ApplicantPerPage = request.ApplicantPerPage,
+
                 TotalPages = request.ApplicantPerPage > 0? (int)Math.Ceiling((double)result.RecordCount / request.ApplicantPerPage): 0,
+
                 Applicants = applicants,
+
+                IsSearch = true,
 
                 SearchTerm = dataModel.SearchTerm,
 
@@ -161,6 +184,7 @@ namespace EIDCardPrint.Controllers
                 ToDate = dataModel.ToDate
             };
 
+            ModelState.Clear();
             return View(viewModel);
         }
 
