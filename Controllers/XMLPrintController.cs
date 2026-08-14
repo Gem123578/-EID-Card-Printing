@@ -55,6 +55,14 @@ namespace EIDCardPrint.Controllers
                 }
 
 
+                var applicantRequest =
+                    new ApplicantListRequest
+                    {
+                        CurrentPageNumber = 1,
+                        ApplicantPerPage = 10
+                    };
+
+
                 var applicant = await _applicantService.GetApplicant(applicantRequest,request.ApplicationId);
 
 
