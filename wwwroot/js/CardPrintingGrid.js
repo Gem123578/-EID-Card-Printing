@@ -35,6 +35,7 @@
                 moment().subtract(1, 'year').startOf('year'),
                 moment().subtract(1, 'year').endOf('year')
             ]
+
         }
 
     }, function (start, end, label) {
@@ -60,6 +61,8 @@
                 break;
         }
 
+
+        // Hidden fields
         $('#dateRangeType').val(rangeType);
 
         $('#fromDate').val(
@@ -70,53 +73,98 @@
             end.format('YYYY-MM-DD')
         );
 
+
+        // Display Date
         $('#dateRangeFilter').val(
             start.format('YYYY-MM-DD') +
             ' - ' +
             end.format('YYYY-MM-DD')
         );
 
-    });
 
+        // DATE ရွေးပြီးမှ CLEAR BUTTON ပေါ်
 
-    // CLEAR DATE
-
-    $('#clearDateRange').on('click', function () {
-
-        $('#dateRangeFilter').val('');
-        $('#dateRangeType').val('');
-        $('#fromDate').val('');
-        $('#toDate').val('');
+        $('#clearDateRange').addClass('show');
 
     });
+
+
+    // PAGE LOAD
+
+    const fromDate =
+        $('#fromDate').val();
+
+    const toDate =
+        $('#toDate').val();
+
+
+    if (fromDate && toDate) {
+
+        $('#clearDateRange')
+            .addClass('show');
+
+    }
+    else {
+
+        $('#clearDateRange')
+            .removeClass('show');
+
+    }
+
+    // CLEAR DATE RANGE
+
+    $('#clearDateRange').on(
+        'click',
+        function () {
+
+            // Display Date Clear
+            $('#dateRangeFilter').val('');
+
+
+            // Hidden values Clear
+            $('#dateRangeType').val('');
+
+            $('#fromDate').val('');
+
+            $('#toDate').val('');
+
+
+            // Clear Button Hide
+            $(this).removeClass('show');
+
+        }
+    );
 
 
     // SEARCH
 
-    $('#cardSearchForm').on('submit', function () {
+    $('#cardSearchForm').on(
+        'submit',
+        function () {
 
-        const searchInput =
-            document.getElementById('SearchTerm');
+            const searchInput =
+                document.getElementById(
+                    'SearchTerm'
+                );
 
-        if (searchInput) {
+            if (searchInput) {
 
-            searchInput.value =
-                searchInput.value
-                    .trim()
-                    .replace(/\s+/g, ' ');
+                searchInput.value =
+                    searchInput.value
+                        .trim()
+                        .replace(/\s+/g, ' ');
+
+            }
 
         }
+    );
 
-    });
 
-
-    // OFFICE
+    // FETCH OFFICE
 
     fetchOffices();
 
 });
-
-
 // MARK CARD AS PRINTED
 
 async function markCardAsPrinted(applicantId) {
@@ -147,19 +195,19 @@ async function markCardAsPrinted(applicantId) {
                 },
 
                 body: JSON.stringify({
+
                     application_ids: [
                         applicantId
                     ]
+
                 })
             }
         );
-
 
         console.log(
             "Mark Printed Status =",
             response.status
         );
-
 
         if (!response.ok) {
 
@@ -176,7 +224,6 @@ async function markCardAsPrinted(applicantId) {
             );
         }
 
-
         const result =
             await response.json();
 
@@ -185,22 +232,27 @@ async function markCardAsPrinted(applicantId) {
             result
         );
 
+
         // SUCCESS ALERT
 
         if (typeof showAppAlert === "function") {
 
             showAppAlert({
 
-                title: "ပုံနှိပ်ခြင်း အောင်မြင်ပါသည်",
+                title:
+                    "ပုံနှိပ်ခြင်း အောင်မြင်ပါသည်",
 
                 message:
                     "EID Card ကို ပုံနှိပ်ပြီးပါပြီ။",
 
-                type: "success",
+                type:
+                    "success",
 
-                confirmText: "OK",
+                confirmText:
+                    "OK",
 
-                showCancel: false
+                showCancel:
+                    false
 
             });
 
@@ -213,10 +265,12 @@ async function markCardAsPrinted(applicantId) {
 
         }
 
-        // UPDATE PRINTED DATE IN TABLE
 
-        updatePrintedDate(applicantId);
+        // UPDATE TABLE PRINTED DATE
 
+        updatePrintedDate(
+            applicantId
+        );
 
         return true;
 
@@ -232,18 +286,29 @@ async function markCardAsPrinted(applicantId) {
 
             showAppAlert({
 
-                title: "အမှားဖြစ်နေပါသည်",
+                title:
+                    "အမှားဖြစ်နေပါသည်",
 
                 message:
                     "Card ကို Printed အဖြစ် မှတ်သား၍ မရပါ။",
 
-                type: "error",
+                type:
+                    "error",
 
-                confirmText: "OK",
+                confirmText:
+                    "OK",
 
-                showCancel: false
+                showCancel:
+                    false
 
             });
+
+        }
+        else {
+
+            alert(
+                "Card ကို Printed အဖြစ် မှတ်သား၍ မရပါ။"
+            );
 
         }
 
@@ -252,7 +317,7 @@ async function markCardAsPrinted(applicantId) {
 }
 
 
-// UPDATE PRINTED DATE IN TABLE
+// UPDATE PRINTED DATE
 
 function updatePrintedDate(applicantId) {
 
@@ -262,50 +327,50 @@ function updatePrintedDate(applicantId) {
         );
 
     if (!button) {
+
+        console.warn(
+            "Applicant button not found:",
+            applicantId
+        );
+
         return;
     }
-
 
     const row =
         button.closest("tr");
 
     if (!row) {
+
         return;
     }
 
 
-    // Printed Date column
-    // UId = 0
-    // Name = 1
-    // NRC = 2
-    // Gender = 3
-    // DOB = 4
-    // Printed Date = 5
-
     const printedDateCell =
         row.children[5];
 
-    if (printedDateCell) {
+    if (!printedDateCell) {
 
-        const today =
-            new Date();
-
-        const year =
-            today.getFullYear();
-
-        const month =
-            String(
-                today.getMonth() + 1
-            ).padStart(2, "0");
-
-        const day =
-            String(
-                today.getDate()
-            ).padStart(2, "0");
-
-        printedDateCell.textContent =
-            `${year}-${month}-${day}`;
+        return;
     }
+
+    const today =
+        new Date();
+
+    const year =
+        today.getFullYear();
+
+    const month =
+        String(
+            today.getMonth() + 1
+        ).padStart(2, "0");
+
+    const day =
+        String(
+            today.getDate()
+        ).padStart(2, "0");
+
+    printedDateCell.textContent =
+        `${year}-${month}-${day}`;
 }
 
 
@@ -325,20 +390,15 @@ async function fetchOffices() {
             throw new Error(
                 `HTTP Error: ${response.status}`
             );
-
         }
-
 
         const data =
             await response.json();
 
-
         const officeSelect =
             $('#officeSelect');
 
-
         officeSelect.empty();
-
 
         officeSelect.append(
             new Option(
@@ -346,7 +406,6 @@ async function fetchOffices() {
                 ''
             )
         );
-
 
         data.forEach(function (office) {
 
@@ -359,15 +418,16 @@ async function fetchOffices() {
 
         });
 
-
         officeSelect.select2({
 
             placeholder:
                 '-- Office Stations ရွေးပါ --',
 
-            allowClear: true,
+            allowClear:
+                true,
 
-            width: '100%'
+            width:
+                '100%'
 
         });
 
@@ -389,29 +449,30 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
+        // GET ELEMENTS
+
         const modal =
             document.getElementById(
                 "cardPreviewModal"
             );
-
 
         const modalContent =
             document.getElementById(
                 "cardPreviewContent"
             );
 
-
         const closeBtn =
             document.getElementById(
                 "closeCardPreview"
             );
-
 
         const printBtn =
             document.getElementById(
                 "printCardBtn"
             );
 
+
+        // CHECK ELEMENTS
 
         if (!modal || !modalContent) {
 
@@ -422,11 +483,32 @@ document.addEventListener(
             return;
         }
 
+
         // CURRENT APPLICANT
 
-        let currentApplicantId = null;
-        let currentUid = null;
-        let currentOfficeCode = null;
+        let currentApplicantId =
+            null;
+
+        let currentUid =
+            null;
+
+        let currentOfficeCode =
+            null;
+
+
+        // PRINT STATE
+
+        let isPrinting =
+            false;
+
+        let printStarted =
+            false;
+
+        let printFinished =
+            false;
+
+        let printStartTime =
+            0;
 
 
         // OPEN CARD PREVIEW
@@ -440,11 +522,10 @@ document.addEventListener(
                         ".preview-card-btn"
                     );
 
-
                 if (!button) {
+
                     return;
                 }
-
 
                 e.preventDefault();
 
@@ -461,10 +542,21 @@ document.addEventListener(
                     button.dataset.officeCode || "";
 
 
-                console.log(
-                    "Applicant ID =",
-                    currentApplicantId
-                );
+
+                // RESET PRINT STATE
+
+                isPrinting =
+                    false;
+
+                printStarted =
+                    false;
+
+                printFinished =
+                    false;
+
+                printStartTime =
+                    0;
+
 
                 // API URL
 
@@ -475,17 +567,11 @@ document.addEventListener(
                     `&officeCode=${encodeURIComponent(currentOfficeCode)}`;
 
 
-                console.log(
-                    "Preview URL =",
-                    url
-                );
-
                 // SHOW MODAL
 
                 modal.classList.add(
                     "preview-show"
                 );
-
 
                 document.body.classList.add(
                     "preview-body-lock"
@@ -511,10 +597,12 @@ document.addEventListener(
 
                 `;
 
+                // DISABLE PRINT BUTTON
 
                 if (printBtn) {
 
-                    printBtn.disabled = true;
+                    printBtn.disabled =
+                        true;
 
                 }
 
@@ -526,7 +614,6 @@ document.addEventListener(
                     const response =
                         await fetch(url);
 
-
                     if (!response.ok) {
 
                         throw new Error(
@@ -534,7 +621,6 @@ document.addEventListener(
                         );
 
                     }
-
 
                     const html =
                         await response.text();
@@ -544,7 +630,6 @@ document.addEventListener(
 
                     const parser =
                         new DOMParser();
-
 
                     const doc =
                         parser.parseFromString(
@@ -560,7 +645,6 @@ document.addEventListener(
                             ".nrc-wrapper"
                         );
 
-
                     if (!card) {
 
                         throw new Error(
@@ -569,11 +653,10 @@ document.addEventListener(
 
                     }
 
-
                     // SHOW CARD
 
-                    modalContent.innerHTML = "";
-
+                    modalContent.innerHTML =
+                        "";
 
                     modalContent.appendChild(
                         card.cloneNode(true)
@@ -584,9 +667,14 @@ document.addEventListener(
 
                     if (printBtn) {
 
-                        printBtn.disabled = false;
+                        printBtn.disabled =
+                            false;
 
                     }
+
+                    console.log(
+                        "Card loaded successfully."
+                    );
 
                 }
                 catch (error) {
@@ -595,7 +683,6 @@ document.addEventListener(
                         "Preview Error:",
                         error
                     );
-
 
                     modalContent.innerHTML = `
 
@@ -614,9 +701,22 @@ document.addEventListener(
 
                             </div>
 
+                            <div class="small mt-1">
+
+                                ${error.message}
+
+                            </div>
+
                         </div>
 
                     `;
+
+                    if (printBtn) {
+
+                        printBtn.disabled =
+                            true;
+
+                    }
 
                 }
 
@@ -632,11 +732,11 @@ document.addEventListener(
                 function () {
 
                     console.log(
-                        "PRINT BUTTON CLICKED"
+                        "PRINT CARD CLICKED"
                     );
 
 
-                    //check applicant
+                    // CHECK APPLICANT
 
                     if (!currentApplicantId) {
 
@@ -648,271 +748,232 @@ document.addEventListener(
                     }
 
 
-                    //get card
+                    // CHECK CARD
 
                     const card =
                         document.querySelector(
                             "#cardPreviewContent .nrc-wrapper"
                         );
 
-
                     if (!card) {
 
                         alert(
-                            "No card to print"
+                            "Card မတွေ့ပါ။"
                         );
 
                         return;
                     }
 
 
-                    //open print window
+                    // PREVENT DOUBLE PRINT
 
-                    const printWindow =
-                        window.open(
-                            "",
-                            "_blank",
-                            "width=1000,height=800"
-                        );
+                    if (isPrinting) {
 
-
-                    if (!printWindow) {
-
-                        alert(
-                            "Popup Block
+                        console.warn(
+                            "Print process already running."
                         );
 
                         return;
                     }
 
 
-                    //get css
+                    // RESET PRINT STATE
 
-                    const styles =
-                        Array.from(
-                            document.querySelectorAll(
-                                'link[rel="stylesheet"]'
-                            )
-                        )
-                            .map(function (link) {
+                    isPrinting =
+                        true;
 
-                                return `
-                                <link
-                                    rel="stylesheet"
-                                    href="${link.href}">
-                            `;
+                    printStarted =
+                        false;
 
-                            })
-                            .join("");
+                    printFinished =
+                        false;
 
+                    printStartTime =
+                        Date.now();
 
-                    //print html
 
-                    printWindow.document.open();
+                    // ADD PRINTING CLASS
 
+                    document.body.classList.add(
+                        "printing-card"
+                    );
 
-                    printWindow.document.write(`
 
-                        <!DOCTYPE html>
+                    // DISABLE PRINT BUTTON
 
-                        <html>
+                    printBtn.disabled =
+                        true;
 
-                        <head>
+                    // PRINT MEDIA QUERY
 
-                            <meta charset="UTF-8">
+                    const mediaQueryList =
+                        window.matchMedia(
+                            "print"
+                        );
 
-                            <title>
-                                EID Card Print
-                            </title>
 
-                            ${styles}
+                    // PRINT START
 
-                            <style>
+                    function handleBeforePrint() {
 
-                                @page {
+                        console.log(
+                            "Print dialog / print process started."
+                        );
 
-                                    size:
-                                        85.6mm 54mm;
+                        printStarted =
+                            true;
+                    }
 
-                                    margin: 0;
+                    // PRINT END / CANCEL
 
-                                }
+                    function handleAfterPrint() {
 
+                        if (printFinished) {
 
-                                html,
-                                body {
+                            return;
+                        }
 
-                                    width:
-                                        85.6mm;
+                        printFinished =
+                            true;
 
-                                    height:
-                                        54mm;
 
-                                    margin: 0;
+                        console.log(
+                            "Print dialog closed."
+                        );
 
-                                    padding: 0;
+                        // REMOVE PRINTING CLASS
 
-                                    background: #fff;
+                        document.body.classList.remove(
+                            "printing-card"
+                        );
 
-                                }
 
+                        // REMOVE MEDIA LISTENER
 
-                                body {
+                        if (
+                            mediaQueryList.removeEventListener
+                        ) {
 
-                                    display: flex;
+                            mediaQueryList.removeEventListener(
+                                "change",
+                                handlePrintMediaChange
+                            );
 
-                                    align-items:
-                                        flex-start;
+                        }
+                        else {
 
-                                    justify-content:
-                                        flex-start;
+                            mediaQueryList.removeListener(
+                                handlePrintMediaChange
+                            );
 
-                                }
+                        }
 
 
-                                .nrc-wrapper {
 
-                                    width:
-                                        85.6mm !important;
+                        const printDuration =
+                            Date.now() -
+                            printStartTime;
 
-                                    height:
-                                        54mm !important;
 
-                                    margin: 0 !important;
+                        console.log(
+                            "Print duration:",
+                            printDuration,
+                            "ms"
+                        );
 
-                                    padding: 2.5mm;
 
-                                    box-shadow:
-                                        none !important;
+                        // RESTORE BUTTON
 
-                                    page-break-after:
-                                        avoid;
+                        if (printBtn) {
 
-                                    page-break-inside:
-                                        avoid;
+                            printBtn.disabled =
+                                false;
 
-                                }
+                        }
 
 
-                                @media print {
+                        isPrinting =
+                            false;
 
-                                    html,
-                                    body {
+                    }
 
-                                        width:
-                                            85.6mm;
 
-                                        height:
-                                            54mm;
+                    // MEDIA QUERY CHANGE
 
-                                        margin: 0;
+                    function handlePrintMediaChange(e) {
 
-                                        padding: 0;
+                        console.log(
+                            "Print media change:",
+                            e.matches
+                        );
 
-                                    }
 
+                        if (e.matches) {
 
-                                    .nrc-wrapper {
+                            handleBeforePrint();
 
-                                        box-shadow:
-                                            none !important;
+                        }
+                        else {
 
-                                    }
+                            handleAfterPrint();
 
-                                }
+                        }
 
-                            </style>
+                    }
 
-                        </head>
 
+                    // ADD PRINT LISTENER
 
-                        <body>
+                    if (
+                        mediaQueryList.addEventListener
+                    ) {
 
-                            ${card.outerHTML}
+                        mediaQueryList.addEventListener(
+                            "change",
+                            handlePrintMediaChange
+                        );
 
-                        </body>
+                    }
+                    else {
 
-                        </html>
+                        mediaQueryList.addListener(
+                            handlePrintMediaChange
+                        );
 
-                    `);
+                    }
 
 
-                    printWindow.document.close();
+                    // BEFORE PRINT
 
+                    window.addEventListener(
+                        "beforeprint",
+                        handleBeforePrint
+                    );
 
-                    //wait then print
+
+                    // AFTER PRINT
+
+                    window.addEventListener(
+                        "afterprint",
+                        handleAfterPrint,
+                        {
+                            once: true
+                        }
+                    );
+
+                    // OPEN WINDOWS PRINT DIALOG
 
                     setTimeout(
                         function () {
 
-                            printWindow.focus();
-
-                            printWindow.print();
-
-                            //printfinish
-
-                            let printHandled = false;
-
-
-                            function printFinished() {
-
-                                if (printHandled) {
-                                    return;
-                                }
-
-
-                                printHandled = true;
-
-
-                                console.log(
-                                    "Print finished."
-                                );
-
-
-                                // Close print window
-                                try {
-
-                                    printWindow.close();
-
-                                }
-                                catch (e) {
-
-                                    console.warn(
-                                        "Print window close error:",
-                                        e
-                                    );
-
-                                }
-
-                                //printed
-
-                                markCardAsPrinted(
-                                    currentApplicantId
-                                );
-
-                            }
-
-
-                            // Browser afterprint
-                            printWindow.addEventListener(
-                                "afterprint",
-                                printFinished
+                            console.log(
+                                "Opening browser print dialog..."
                             );
 
-
-                            // Fallback
-                            setTimeout(
-                                function () {
-
-                                    printFinished();
-
-                                },
-                                1500
-                            );
-
+                            window.print();
 
                         },
-                        1000
+                        300
                     );
 
                 }
@@ -920,7 +981,8 @@ document.addEventListener(
 
         }
 
-        //Close inside
+
+        // CLOSE BUTTON
 
         if (closeBtn) {
 
@@ -932,13 +994,15 @@ document.addEventListener(
         }
 
 
-        //Close outside
+        // CLICK OUTSIDE MODAL
 
         modal.addEventListener(
             "click",
             function (e) {
 
-                if (e.target === modal) {
+                if (
+                    e.target === modal
+                ) {
 
                     closePreview();
 
@@ -947,7 +1011,8 @@ document.addEventListener(
             }
         );
 
-        //Ese
+
+        // ESC KEY
 
         document.addEventListener(
             "keydown",
@@ -968,21 +1033,34 @@ document.addEventListener(
         );
 
 
-        // =====================================================
         // CLOSE PREVIEW
-        // =====================================================
 
         function closePreview() {
+
+            // DON'T CLOSE WHILE PRINTING
+
+            if (isPrinting) {
+
+                console.warn(
+                    "Print process is still running."
+                );
+
+                return;
+            }
+
+
+            // CLOSE MODAL
 
             modal.classList.remove(
                 "preview-show"
             );
 
-
             document.body.classList.remove(
                 "preview-body-lock"
             );
 
+
+            // RESET CONTENT
 
             setTimeout(
                 function () {
@@ -1018,14 +1096,39 @@ document.addEventListener(
             );
 
 
-            currentApplicantId = null;
-            currentUid = null;
-            currentOfficeCode = null;
+            // RESET CURRENT APPLICANT
 
+            currentApplicantId =
+                null;
+
+            currentUid =
+                null;
+
+            currentOfficeCode =
+                null;
+
+
+            // RESET PRINT STATE
+
+            isPrinting =
+                false;
+
+            printStarted =
+                false;
+
+            printFinished =
+                false;
+
+            printStartTime =
+                0;
+
+
+            // DISABLE PRINT BUTTON
 
             if (printBtn) {
 
-                printBtn.disabled = true;
+                printBtn.disabled =
+                    true;
 
             }
 
@@ -1034,25 +1137,646 @@ document.addEventListener(
     }
 );
 
-document.addEventListener("DOMContentLoaded", function () {
+//print xml
+// ============================================
+// GENERATE XML
+// ============================================
 
-    const printedRadio = document.getElementById("isPrinted");
+async function submitPrint() {
 
-    if (!printedRadio) return;
+    console.log("========== XML GENERATE START ==========");
 
-    printedRadio.addEventListener("click", function () {
+    // --------------------------------------------
+    // GET CHECKED CHECKBOXES
+    // --------------------------------------------
 
-        if (this.dataset.checked === "true") {
+    const checkboxes = Array.from(
+        document.querySelectorAll(
+            ".applicant-checkbox:checked"
+        )
+    );
 
-            this.checked = false;
-            this.dataset.checked = "false";
+    console.log(
+        "Selected checkbox count:",
+        checkboxes.length
+    );
+
+
+    // --------------------------------------------
+    // NO SELECTION
+    // --------------------------------------------
+
+    if (checkboxes.length === 0) {
+
+        if (typeof showAppAlert === "function") {
+
+            showAppAlert({
+                title: "သတိပေးချက်",
+                message:
+                    "XML Generate ပြုလုပ်ရန် Applicant ကို အနည်းဆုံးတစ်ယောက် ရွေးပါ။",
+                type: "warning",
+                confirmText: "OK",
+                showCancel: false
+            });
 
         } else {
 
-            this.dataset.checked = "true";
-
+            alert(
+                "XML Generate ပြုလုပ်ရန် Applicant ကို အနည်းဆုံးတစ်ယောက် ရွေးပါ။"
+            );
         }
+
+        return;
+    }
+
+
+    // --------------------------------------------
+    // GET DATA FROM EACH ROW
+    // --------------------------------------------
+
+    const selectedRows = checkboxes
+        .map(function (checkbox) {
+
+            const row = checkbox.closest("tr");
+
+            if (!row) {
+
+                console.warn(
+                    "Checkbox row not found:",
+                    checkbox
+                );
+
+                return null;
+            }
+
+
+            // IMPORTANT:
+            // First priority = data-* attribute
+            // Second priority = checkbox value
+
+            const applicantId =
+                checkbox.dataset.applicantId ||
+                checkbox.getAttribute("data-applicant-id") ||
+                checkbox.value ||
+                "";
+
+
+            const uid =
+                checkbox.dataset.uid ||
+                checkbox.getAttribute("data-uid") ||
+                "";
+
+
+            const officeCode =
+                checkbox.dataset.officeCode ||
+                checkbox.getAttribute("data-office-code") ||
+                "";
+
+
+            return {
+
+                applicantId:
+                    applicantId.trim(),
+
+                uid:
+                    uid.trim(),
+
+                officeCode:
+                    officeCode.trim(),
+
+                row:
+                    row
+            };
+
+        })
+        .filter(function (item) {
+
+            return item &&
+                item.applicantId !== "";
+
+        });
+
+
+    console.log(
+        "Selected Rows:",
+        selectedRows
+    );
+
+
+    // --------------------------------------------
+    // SHOW EACH ROW DATA
+    // --------------------------------------------
+
+    selectedRows.forEach(function (item, index) {
+
+        console.log(
+            `Row ${index + 1}:`,
+            {
+                applicantId:
+                    item.applicantId,
+
+                uid:
+                    item.uid,
+
+                officeCode:
+                    item.officeCode
+            }
+        );
 
     });
 
-});
+
+    // --------------------------------------------
+    // NO VALID APPLICANT ID
+    // --------------------------------------------
+
+    if (selectedRows.length === 0) {
+
+        if (typeof showAppAlert === "function") {
+
+            showAppAlert({
+                title: "သတိပေးချက်",
+                message:
+                    "ရွေးထားသော row များတွင် Applicant ID မတွေ့ပါ။",
+                type: "warning",
+                confirmText: "OK",
+                showCancel: false
+            });
+
+        } else {
+
+            alert(
+                "ရွေးထားသော row များတွင် Applicant ID မတွေ့ပါ။"
+            );
+        }
+
+        return;
+    }
+
+
+    // --------------------------------------------
+    // PRINT BUTTON
+    // --------------------------------------------
+
+    const printButton =
+        document.getElementById(
+            "generateXmlTopBtn"
+        );
+
+
+    let successCount = 0;
+
+    let failedCount = 0;
+
+    const failedApplicants = [];
+
+
+    try {
+
+        // ----------------------------------------
+        // DISABLE BUTTON
+        // ----------------------------------------
+
+        if (printButton) {
+
+            printButton.disabled = true;
+
+            printButton.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-1"></span>
+                XML Generate လုပ်နေပါသည်...
+            `;
+        }
+
+
+        // ----------------------------------------
+        // GENERATE XML ONE BY ONE
+        // ----------------------------------------
+
+        for (const item of selectedRows) {
+
+            const applicantId =
+                item.applicantId;
+
+
+            console.log(
+                "----------------------------------------"
+            );
+
+            console.log(
+                "Generating XML for Applicant:",
+                applicantId
+            );
+
+
+            try {
+
+                // --------------------------------
+                // REQUEST BODY
+                // --------------------------------
+
+                const requestBody = {
+
+                    applicationId:
+                        applicantId
+
+                };
+
+
+                console.log(
+                    "Request Body:",
+                    requestBody
+                );
+
+
+                // --------------------------------
+                // POST API
+                // --------------------------------
+
+                const response =
+                    await fetch(
+                        generateXmlUrl,
+                        {
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                "Accept":
+                                    "application/json"
+
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    requestBody
+                                )
+                        }
+                    );
+
+
+                console.log(
+                    "Applicant:",
+                    applicantId,
+                    "HTTP Status:",
+                    response.status
+                );
+
+
+                // --------------------------------
+                // READ RESPONSE
+                // --------------------------------
+
+                const responseText =
+                    await response.text();
+
+
+                console.log(
+                    "Applicant:",
+                    applicantId,
+                    "Raw Response:",
+                    responseText
+                );
+
+
+                // --------------------------------
+                // PARSE JSON
+                // --------------------------------
+
+                let result;
+
+                try {
+
+                    result =
+                        JSON.parse(
+                            responseText
+                        );
+
+                }
+                catch (jsonError) {
+
+                    console.error(
+                        "JSON Parse Error:",
+                        applicantId,
+                        jsonError
+                    );
+
+
+                    failedCount++;
+
+
+                    failedApplicants.push({
+
+                        applicantId:
+                            applicantId,
+
+                        error:
+                            responseText ||
+                            "Invalid server response"
+
+                    });
+
+
+                    continue;
+                }
+
+
+                console.log(
+                    "Applicant:",
+                    applicantId,
+                    "Result:",
+                    result
+                );
+
+
+                // --------------------------------
+                // SERVER ERROR
+                // --------------------------------
+
+                if (
+                    !response.ok ||
+                    !result.success
+                ) {
+
+                    failedCount++;
+
+
+                    failedApplicants.push({
+
+                        applicantId:
+                            applicantId,
+
+                        error:
+                            result.message ||
+                            `HTTP ${response.status}`
+
+                    });
+
+
+                    console.error(
+                        "XML Generate Failed:",
+                        applicantId,
+                        result.message
+                    );
+
+
+                    continue;
+                }
+
+
+                // --------------------------------
+                // SUCCESS
+                // --------------------------------
+
+                successCount++;
+
+
+                console.log(
+                    "XML Generated Successfully:",
+                    applicantId
+                );
+
+
+                console.log(
+                    "File Name:",
+                    result.fileName
+                );
+
+
+                console.log(
+                    "File Path:",
+                    result.filePath
+                );
+
+            }
+            catch (error) {
+
+                failedCount++;
+
+
+                failedApplicants.push({
+
+                    applicantId:
+                        applicantId,
+
+                    error:
+                        error.message ||
+                        "Request failed"
+
+                });
+
+
+                console.error(
+                    "XML Generate Request Error:",
+                    applicantId,
+                    error
+                );
+            }
+        }
+
+
+        // --------------------------------------------
+        // SUMMARY
+        // --------------------------------------------
+
+        console.log(
+            "========== XML GENERATE SUMMARY =========="
+        );
+
+
+        console.log({
+
+            total:
+                selectedRows.length,
+
+            success:
+                successCount,
+
+            failed:
+                failedCount,
+
+            failedApplicants:
+                failedApplicants
+
+        });
+
+
+        // --------------------------------------------
+        // MESSAGE
+        // --------------------------------------------
+
+        let message =
+            `${successCount} ယောက်အတွက် XML File Generate ပြုလုပ်ပြီးပါပြီ။`;
+
+
+        if (successCount > 0) {
+
+            message +=
+                " ရှိပြီးသား XML File များရှိပါက Overwrite ပြုလုပ်ထားပါသည်။";
+
+        }
+
+
+        if (failedCount > 0) {
+
+            message +=
+                ` ${failedCount} ယောက်ကို Generate ပြုလုပ်၍ မရပါ။`;
+
+
+            console.error(
+                "Failed Applicants:",
+                failedApplicants
+            );
+        }
+
+
+        // --------------------------------------------
+        // SHOW RESULT
+        // --------------------------------------------
+
+        if (
+            typeof showAppAlert === "function"
+        ) {
+
+            showAppAlert({
+
+                title:
+                    failedCount === 0
+                        ? "အောင်မြင်ပါသည်"
+                        : "Generate ပြီးပါပြီ",
+
+                message:
+                    message,
+
+                type:
+                    failedCount === 0
+                        ? "success"
+                        : "warning",
+
+                confirmText:
+                    "OK",
+
+                showCancel:
+                    false
+
+            });
+
+        }
+        else {
+
+            alert(message);
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "XML Generate Fatal Error:",
+            error
+        );
+
+
+        if (
+            typeof showAppAlert === "function"
+        ) {
+
+            showAppAlert({
+
+                title:
+                    "အမှားဖြစ်နေပါသည်",
+
+                message:
+                    error.message ||
+                    "XML Generate ပြုလုပ်၍ မရပါ။",
+
+                type:
+                    "error",
+
+                confirmText:
+                    "OK",
+
+                showCancel:
+                    false
+
+            });
+
+        }
+        else {
+
+            alert(
+                error.message ||
+                "XML Generate ပြုလုပ်၍ မရပါ။"
+            );
+        }
+
+    }
+    finally {
+
+        // ----------------------------------------
+        // ENABLE BUTTON
+        // ----------------------------------------
+
+        if (printButton) {
+
+            printButton.disabled =
+                false;
+
+            printButton.innerHTML = `
+                <i class="fa-solid fa-file-code me-1"></i>
+                PRINT
+            `;
+        }
+
+    }
+
+
+    console.log(
+        "========== XML GENERATE END =========="
+    );
+}
+// PRINTED RADIO BUTTON
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const printedRadio =
+            document.getElementById(
+                "isPrinted"
+            );
+
+        if (!printedRadio) {
+
+            return;
+        }
+
+        printedRadio.addEventListener(
+            "click",
+            function () {
+
+                if (
+                    this.dataset.checked ===
+                    "true"
+                ) {
+
+                    this.checked =
+                        false;
+
+                    this.dataset.checked =
+                        "false";
+
+                }
+                else {
+
+                    this.dataset.checked =
+                        "true";
+
+                }
+
+            }
+        );
+
+    }
+);

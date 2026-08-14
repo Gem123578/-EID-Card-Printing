@@ -10,6 +10,7 @@ wwwroot\Images\ID.jpg
 wwwroot\Images\myanmar-flag.svg
 wwwroot\Images\qrcode-27.png
 wwwroot\js\CardPrinting.js
+wwwroot\js\CardPrintingGrid.js
 wwwroot\js\layout.js
 wwwroot\js\Representative.js
 wwwroot\js\site.js
@@ -73,7 +74,6 @@ wwwroot\lib\jquery\dist\jquery.slim.js
 wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\js\CardPrintingGrid.js
 D:\$uper\EIDCardPrint\wwwroot\css\CardPrintingGridForm.css
 D:\$uper\EIDCardPrint\wwwroot\css\EIDCard.css
 D:\$uper\EIDCardPrint\wwwroot\css\IssuedCard.css
@@ -83,6 +83,7 @@ D:\$uper\EIDCardPrint\wwwroot\css\site.css
 D:\$uper\EIDCardPrint\wwwroot\favicon.ico
 D:\$uper\EIDCardPrint\wwwroot\Images\myanmar-flag.svg
 D:\$uper\EIDCardPrint\wwwroot\js\CardPrinting.js
+D:\$uper\EIDCardPrint\wwwroot\js\CardPrintingGrid.js
 D:\$uper\EIDCardPrint\wwwroot\js\layout.js
 D:\$uper\EIDCardPrint\wwwroot\js\Representative.js
 D:\$uper\EIDCardPrint\wwwroot\js\site.js
@@ -145,4 +146,3 @@ D:\$uper\EIDCardPrint\wwwroot\lib\jquery\dist\jquery.slim.js
 D:\$uper\EIDCardPrint\wwwroot\lib\jquery\dist\jquery.slim.min.js
 D:\$uper\EIDCardPrint\wwwroot\lib\jquery\dist\jquery.slim.min.map
 D:\$uper\EIDCardPrint\wwwroot\lib\jquery\LICENSE.txt
-D:\$uper\EIDCardPrint\wwwroot\js\CardPrintingGrid.js

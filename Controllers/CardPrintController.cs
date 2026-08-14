@@ -2,6 +2,7 @@
 using EIDCardPrint.Models.DTO;
 using EIDCardPrint.Models.DTO.Applicants;
 using EIDCardPrint.Models.DTO.PrintedDto;
+using EIDCardPrint.Models.EidCardXMl;
 using EIDCardPrint.Services;
 using EIDCardPrint.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -116,6 +117,8 @@ namespace EIDCardPrint.Controllers
             return Convert.ToBase64String(qrBytes);
         }
 
+        
+
         [HttpPost]
         public async Task<IActionResult> MarkAsPrinted([FromBody]MarkPrintedRequest request)
         {
@@ -129,7 +132,7 @@ namespace EIDCardPrint.Controllers
                     return Unauthorized();
                 }
 
-                // API ကို call
+                // API call
                 var result = await _applicantService.MarkAsPrinted(request,token);
 
                 return Ok(new

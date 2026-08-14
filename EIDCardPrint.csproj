@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="EIDCard.xml" />
+    <None Remove="EIDCard.xml.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="EIDCard.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="log4net" Version="3.3.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="QRCoder" Version="1.8.0" />

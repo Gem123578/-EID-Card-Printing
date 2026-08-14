@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CardLayout WidthMm="86" HeightMm="54" DesignWidth="1016" DesignHeight="638" Orientation="Landscape">
+
+<!-- Replace each Value with the data for one card-printing job. -->
+  <!-- Replace the Photo Value with the real JPEG/PNG Base64 data. -->
+
+  <Fields>
+    <Field class="NameInBurmese">
+      <Type>Text</Type>
+      <FieldType>Dynamic</FieldType>
+      <Value>နေသူရိန်စိုးတင့်</Value>
+      <X>285</X>
+      <Y>48</Y>
+      <Width>350</Width>
+      <Height>52</Height>
+      <FontName>Myanmar Text</FontName>
+      <FontSize>34</FontSize>
+      <FontStyle>Bold</FontStyle>
+      <FontColor>#000000</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="NameInEnglish">
+      <Type>Text</Type>
+      <FieldType>Dynamic</FieldType>
+      <Value>NAY THU REIN SOE TINT</Value>
+      <X>285</X>
+      <Y>103</Y>
+      <Width>350</Width>
+      <Height>46</Height>
+      <FontName>Arial</FontName>
+      <FontSize>30</FontSize>
+      <FontStyle>Bold</FontStyle>
+      <FontColor>#000000</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="LabelGender">
+      <Type>Text</Type>
+      <FieldType>Static</FieldType>
+      <Value>Gender</Value>
+      <X>285</X>
+      <Y>177</Y>
+      <Width>145</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>21</FontSize>
+      <FontStyle>Regular</FontStyle>
+      <FontColor>#444444</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="Gender">
+      <Type>Text</Type>
+      <FieldType>Dynamic</FieldType>
+      <Value>M</Value>
+      <X>435</X>
+      <Y>177</Y>
+      <Width>190</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>23</FontSize>
+      <FontStyle>Bold</FontStyle>
+      <FontColor>#000000</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="LabelDateOfBirth">
+      <Type>Text</Type>
+      <FieldType>Static</FieldType>
+      <Value>Date of birth</Value>
+      <X>285</X>
+      <Y>226</Y>
+      <Width>145</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>21</FontSize>
+      <FontStyle>Regular</FontStyle>
+      <FontColor>#444444</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="DateOfBirth">
+      <Type>Text</Type>
+      <FieldType>Dynamic</FieldType>
+      <Value>20040515</Value>
+      <X>435</X>
+      <Y>226</Y>
+      <Width>190</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>23</FontSize>
+      <FontStyle>Bold</FontStyle>
+      <FontColor>#000000</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="LabelUIDNo">
+      <Type>Text</Type>
+      <FieldType>Static</FieldType>
+      <Value>UID No.</Value>
+      <X>285</X>
+      <Y>275</Y>
+      <Width>145</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>21</FontSize>
+      <FontStyle>Regular</FontStyle>
+      <FontColor>#444444</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="UIDNo">
+      <Type>Text</Type>
+      <FieldType>Dynamic</FieldType>
+      <Value>3117223010</Value>
+      <X>435</X>
+      <Y>275</Y>
+      <Width>190</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>23</FontSize>
+      <FontStyle>Bold</FontStyle>
+      <FontColor>#000000</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="LabelDateOfExpiry">
+      <Type>Text</Type>
+      <FieldType>Static</FieldType>
+      <Value>Expiry date</Value>
+      <X>285</X>
+      <Y>324</Y>
+      <Width>145</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>21</FontSize>
+      <FontStyle>Regular</FontStyle>
+      <FontColor>#444444</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="DateOfExpiry">
+      <Type>Text</Type>
+      <FieldType>Dynamic</FieldType>
+      <Value>00010101</Value>
+      <X>435</X>
+      <Y>324</Y>
+      <Width>190</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>23</FontSize>
+      <FontStyle>Bold</FontStyle>
+      <FontColor>#000000</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="LabelNRCNo">
+      <Type>Text</Type>
+      <FieldType>Static</FieldType>
+      <Value>NRC No.</Value>
+      <X>285</X>
+      <Y>373</Y>
+      <Width>145</Width>
+      <Height>38</Height>
+      <FontName>Arial</FontName>
+      <FontSize>21</FontSize>
+      <FontStyle>Regular</FontStyle>
+      <FontColor>#444444</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="NRCNo">
+      <Type>Text</Type>
+      <FieldType>Dynamic</FieldType>
+      <Value>၁၂/ရကန(နိုင်)၀၉၄၄၅၃</Value>
+      <X>435</X>
+      <Y>373</Y>
+      <Width>205</Width>
+      <Height>46</Height>
+      <FontName>Arial</FontName>
+      <FontSize>20</FontSize>
+      <FontStyle>Bold</FontStyle>
+      <FontColor>#000000</FontColor>
+      <HorizontalAlignment>Left</HorizontalAlignment>
+      <VerticalAlignment>Center</VerticalAlignment>
+    </Field>
+
+    <Field class="Photo">
+      <Type>Image</Type>
+      <FieldType>Dynamic</FieldType>
+      <Shape>Rectangle</Shape>
+      <!-- Valid 1x1 placeholder PNG. Replace with the portrait Base64. -->
+      <Value></Value>
+      <X>38</X>
+      <Y>135</Y>
+      <Width>220</Width>
+      <Height>300</Height>
+    </Field>
+
+    <Field class="VDSQR">
+      <Type>Image</Type>
+      <FieldType>Dynamic</FieldType>
+      <Shape>Rectangle</Shape>
+      <!-- MainForm generates this image from the signed XML data. -->
+      <Value></Value>
+      <X>668</X>
+      <Y>165</Y>
+      <Width>315</Width>
+      <Height>315</Height>
+    </Field>
+  </Fields>
+</CardLayout>

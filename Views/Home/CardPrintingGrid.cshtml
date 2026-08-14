@@ -4,8 +4,9 @@
     ViewData["Title"] = "Home";
     Layout = "_layout";
 }
-<link href="~/css/EIDCard.css" rel="stylesheet" />
+
 <link href="~/css/CardPrintingGridForm.css" rel="stylesheet" />
+<link href="~/css/EIDCard.css" rel="stylesheet" />
 
 <form asp-controller="Home" asp-action="CardPrintingGrid" id="cardSearchForm" method="get" class="p-4 border rounded-3 bg-white shadow-sm animated-search-card mb-4">
     <input type="hidden" name="isSearch" value="true" />
@@ -50,7 +51,7 @@
                 <!-- Clear Date -->
                 <button type="button"
                         id="clearDateRange"
-                        class="btn btn-outline-secondary"
+                        class="btn btn-outline-secondary @(Model.FromDate.HasValue && Model.ToDate.HasValue ? "show" : "")"
                         title="Clear Date">
 
                     <i class="fa-solid fa-xmark"></i>
@@ -113,37 +114,108 @@
 
 @if (Model.IsSearch)
 {
-    <div class="card border-0 shadow-sm rounded-3 overflow-hidden animated-grid">
-        <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fs-6"><i class="fa-solid fa-table me-2"></i> ရှာဖွေတွေ့ရှိချက်များ</h5>
-            <span class="badge bg-light text-primary fs-6">စုစုပေါင်း @Model.RecordCount</span>
+    <div class="card shadow" id="tableContainer">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+
+            <span id="txtTotalCount">
+                Total : @Model.RecordCount
+            </span>
+
+            <button type="button"
+                    id="generateXmlTopBtn"
+                    class="btn btn-warning fw-bold"
+                    onclick="submitPrint()">
+                <i class="fa-solid fa-file-code me-1"></i>
+                PRINT
+            </button>
+
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive table-scroll-container">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="table-light">
+
+        <div class="card-body p-3 border">
+
+            <div class="table-responsive">
+
+                <table id="cardTable"
+                       class="table table-bordered table-hover mb-0 w-100">
+
+                    <thead class="table-dark">
+
                         <tr>
-                            <th>UId</th>
+
+                            <th style="width: 40px;"
+                                class="text-center">
+
+                                <div class="header-checkbox-container">
+
+                                    <span class="all-text">
+                                        ALL
+                                    </span>
+
+                                </div>
+
+                            </th>
+
+                            <th>Applicant Number</th>
+
+                            <th>Name</th>
+
                             <th>အမည်</th>
-                            <th>မှတ်ပုံတင်အမှတ်</th>
-                            <th>Gender</th>
-                            <th>Date Of Birth</th>
-                            <th>Printed Date</th>
-                            <th class="text-center">Action</th>
+
+                            <th>NRC</th>
+
+                            <th>Office Code</th>
+
+                            <th id="colDynamicDate">
+                                Printed Date
+                            </th>
+
+                            <th class="text-center">
+                                Action
+                            </th>
+
                         </tr>
+
                     </thead>
+
                     <tbody>
+
                         @foreach (var applicant in Model.Applicants)
                         {
                             <tr>
-                                <td>@applicant.UId</td>
-                                <td>@applicant.PersonNameMM</td>
-                                <td>@applicant.NRC</td>
-                                <td>@applicant.Gender</td>
-                                <td>@applicant.DOB?.ToString("yyyy-MM-dd")</td>
+
+                                <td class="text-center">
+
+                                    <input type="checkbox"
+                                           class="form-check-input applicant-checkbox"
+                                           value="@applicant.ApplicantId"
+                                           data-uid="@applicant.UId" />
+
+                                </td>
+
+                                <td>
+                                    @applicant.ApplicantId
+                                </td>
+
+                                <td>
+                                    @applicant.PersonNameEN
+                                </td>
+
+                                <td>
+                                    @applicant.PersonNameMM
+                                </td>
+
+                                <td>
+                                    @applicant.NRC
+                                </td>
+
+                                <td>
+                                    @applicant.OfficeCode
+                                </td>
+
                                 <td>
                                     @(applicant.PrintedDate?.ToString("yyyy-MM-dd") ?? "-")
                                 </td>
+
                                 <td class="text-center">
 
                                     <a href="@Url.Action("EIDCardPrint", "CardPrint", new
@@ -164,12 +236,22 @@
                                     </a>
 
                                 </td>
+
                             </tr>
-                            }
+                                        }
+
                     </tbody>
+
                 </table>
+
             </div>
+
+            <input type="hidden"
+                   id="hfCardJson"
+                   value='[]' />
+
         </div>
+
     </div>
 }
 @if (Model.IsSearch)
@@ -336,9 +418,14 @@
 @section Scripts {
 
     <script>
-        const markPrintedUrl =
-            '@Url.Action("MarkAsPrinted", "CardPrint")';
+        const markPrintedUrl = '@Url.Action("MarkAsPrinted", "CardPrint")';
+
+        const generateXmlUrl = '@Url.Action("GenerateEidXml", "XMLPrint")';
+
+
+        console.log("Generate XML URL =", generateXmlUrl);
     </script>
+
 
     <script src="~/js/CardPrintingGrid.js"></script>
 }

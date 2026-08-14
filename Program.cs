@@ -30,6 +30,8 @@ builder.Services.AddScoped<IApplicantServices, ApplicantServices>();
 
 builder.Services.AddHttpClient<IOfficeServices, OfficeServices>();
 
+builder.Services.AddScoped<EidXmlGenerator>();
+
 
 
 builder.Services.AddHttpContextAccessor();

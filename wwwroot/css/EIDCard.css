@@ -11,41 +11,41 @@
 
 
 /* Card header*/
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    height: 8mm;
-    padding: 0 !important;
-    border: none !important;
-}
+    .nrc-wrapper .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        height: 8mm;
+        padding: 0 !important;
+        border: none !important;
+    }
 
-.header-left {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.5mm;
-}
+    .nrc-wrapper .header-left {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5mm;
+    }
 
-.flag {
-    width: 5mm;
-    height: 5mm;
-    object-fit: cover;
-}
+    .nrc-wrapper .flag {
+        width: 5mm;
+        height: 5mm;
+        object-fit: cover;
+    }
 
-.card-header h5 {
+.nrc-wrapper .card-header h5 {
     margin: 0;
     font-size: 2mm;
     line-height: 1.1;
     font-weight: bold;
 }
 
-.card-header small {
+.nrc-wrapper .card-header small {
     font-size: 2mm;
     line-height: 2;
 }
 
 
-.header-right h2 {
+.nrc-wrapper .header-right h2 {
     margin: 0;
     color: #005B96;
     font-size: 4mm;
@@ -54,12 +54,12 @@
 }
 
 /* Card body */
-.card-body {
+.nrc-wrapper .card-body {
     padding: 0 !important;
 }
 
 
-.card-content {
+.nrc-wrapper .card-content {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -68,98 +68,98 @@
 }
 
 /* Photo section */
-.photo-section {
-    flex: 0 0 27mm;
-}
+    .nrc-wrapper .photo-section {
+        flex: 0 0 27mm;
+    }
 
 
-.photo {
-    width: 27mm;
-    height: 34mm;
-    object-fit: cover;
-    border: 0.2mm solid #ddd;
-}
+    .nrc-wrapper .photo {
+        width: 27mm;
+        height: 34mm;
+        object-fit: cover;
+        border: 0.2mm solid #ddd;
+    }
 
 /* Info section */
-.info-section {
-    flex: 1;
-    min-width: 0;
-}
-
-.field {
-    margin-bottom: 0.8mm;
-}
-
-    .field label {
-        display: block;
-        color: #005B96;
-        font-size: 1.5mm;
-        font-weight: bold;
-        line-height: 1.1;
-        margin-bottom: 0.3mm;
+    .nrc-wrapper .info-section {
+        flex: 1;
+        min-width: 0;
     }
 
-
-
-    .field span {
-        display: block;
-        color: #000;
-        font-size: 2mm;
-        font-weight: 600;
-        line-height: 1.8;
+    .nrc-wrapper .field {
+        margin-bottom: 0.8mm;
     }
+
+        .nrc-wrapper .field label {
+            display: block;
+            color: #005B96;
+            font-size: 1.5mm;
+            font-weight: bold;
+            line-height: 1.1;
+            margin-bottom: 0.3mm;
+        }
+
+
+
+        .nrc-wrapper .field span {
+            display: block;
+            color: #000;
+            font-size: 2mm;
+            font-weight: 600;
+            line-height: 1.8;
+        }
 
 
 /* QR Section */
-.qr-section {
-    flex: 0 0 22mm;
-    width: 25mm;
-    text-align: center;
-}
-
-
-
-.qr-photo {
-    width: 25mm;
-    height: 25mm;
-    object-fit: contain;
-}
-
-
-
-.nrc-field {
-    margin-top: 2mm;
-    text-align: center;
-}
-
-
-    .nrc-field label {
-        display: block;
-        color: #005B96;
-        font-size: 1.5mm;
-        text-align : center;
-        font-weight: bold;
-        white-space: nowrap;
+    .nrc-wrapper .qr-section {
+        flex: 0 0 22mm;
+        width: 25mm;
+        text-align: center;
     }
 
 
 
-    .nrc-field span {
-        display: block;
-        font-size: 2mm;
-        font-weight: bold;
-        white-space: nowrap;
+    .nrc-wrapper .qr-photo {
+        width: 25mm;
+        height: 25mm;
+        object-fit: contain;
     }
+
+
+
+    .nrc-wrapper .nrc-field {
+        margin-top: 2mm;
+        text-align: center;
+    }
+
+
+        .nrc-wrapper .nrc-field label {
+            display: block;
+            color: #005B96;
+            font-size: 1.5mm;
+            text-align: center;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+
+
+        .nrc-wrapper .nrc-field span {
+            display: block;
+            font-size: 2mm;
+            font-weight: bold;
+            white-space: nowrap;
+        }
 
 /* size effect removing */
-.fs-1 {
-    font-size: 10mm !important;
-}
+    .nrc-wrapper .fs-1 {
+        font-size: 10mm !important;
+    }
 
 
-.text-muted {
-    color: #000 !important;
-}
+    .nrc-wrapper .text-muted {
+        color: #000 !important;
+    }
 
 /* Printing */
 @media print {
