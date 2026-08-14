@@ -1,8 +1,6 @@
 ﻿$(document).ready(function () {
 
-    // =========================================================
     // DATE RANGE
-    // =========================================================
 
     $('#dateRangeFilter').daterangepicker({
 
@@ -81,9 +79,7 @@
     });
 
 
-    // =========================================================
     // CLEAR DATE
-    // =========================================================
 
     $('#clearDateRange').on('click', function () {
 
@@ -95,9 +91,7 @@
     });
 
 
-    // =========================================================
     // SEARCH
-    // =========================================================
 
     $('#cardSearchForm').on('submit', function () {
 
@@ -116,18 +110,14 @@
     });
 
 
-    // =========================================================
     // OFFICE
-    // =========================================================
 
     fetchOffices();
 
 });
 
 
-// =========================================================
 // MARK CARD AS PRINTED
-// =========================================================
 
 async function markCardAsPrinted(applicantId) {
 
@@ -195,10 +185,7 @@ async function markCardAsPrinted(applicantId) {
             result
         );
 
-
-        // =====================================================
         // SUCCESS ALERT
-        // =====================================================
 
         if (typeof showAppAlert === "function") {
 
@@ -226,10 +213,7 @@ async function markCardAsPrinted(applicantId) {
 
         }
 
-
-        // =====================================================
         // UPDATE PRINTED DATE IN TABLE
-        // =====================================================
 
         updatePrintedDate(applicantId);
 
@@ -268,9 +252,7 @@ async function markCardAsPrinted(applicantId) {
 }
 
 
-// =========================================================
 // UPDATE PRINTED DATE IN TABLE
-// =========================================================
 
 function updatePrintedDate(applicantId) {
 
@@ -327,9 +309,7 @@ function updatePrintedDate(applicantId) {
 }
 
 
-// =========================================================
 // FETCH OFFICE
-// =========================================================
 
 async function fetchOffices() {
 
@@ -403,9 +383,7 @@ async function fetchOffices() {
 }
 
 
-// =========================================================
 // CARD PREVIEW
-// =========================================================
 
 document.addEventListener(
     "DOMContentLoaded",
@@ -444,19 +422,14 @@ document.addEventListener(
             return;
         }
 
-
-        // =====================================================
         // CURRENT APPLICANT
-        // =====================================================
 
         let currentApplicantId = null;
         let currentUid = null;
         let currentOfficeCode = null;
 
 
-        // =====================================================
         // OPEN CARD PREVIEW
-        // =====================================================
 
         document.addEventListener(
             "click",
@@ -476,9 +449,7 @@ document.addEventListener(
                 e.preventDefault();
 
 
-                // -------------------------------------------------
                 // GET APPLICANT DATA
-                // -------------------------------------------------
 
                 currentApplicantId =
                     button.dataset.applicantId;
@@ -495,10 +466,7 @@ document.addEventListener(
                     currentApplicantId
                 );
 
-
-                // -------------------------------------------------
                 // API URL
-                // -------------------------------------------------
 
                 const url =
                     `/CardPrint/EIDCardPrint` +
@@ -512,10 +480,7 @@ document.addEventListener(
                     url
                 );
 
-
-                // -------------------------------------------------
                 // SHOW MODAL
-                // -------------------------------------------------
 
                 modal.classList.add(
                     "preview-show"
@@ -527,9 +492,7 @@ document.addEventListener(
                 );
 
 
-                // -------------------------------------------------
                 // LOADING
-                // -------------------------------------------------
 
                 modalContent.innerHTML = `
 
@@ -556,9 +519,7 @@ document.addEventListener(
                 }
 
 
-                // -------------------------------------------------
                 // LOAD CARD
-                // -------------------------------------------------
 
                 try {
 
@@ -579,9 +540,7 @@ document.addEventListener(
                         await response.text();
 
 
-                    // -------------------------------------------------
                     // PARSE HTML
-                    // -------------------------------------------------
 
                     const parser =
                         new DOMParser();
@@ -594,9 +553,7 @@ document.addEventListener(
                         );
 
 
-                    // -------------------------------------------------
                     // FIND CARD
-                    // -------------------------------------------------
 
                     const card =
                         doc.querySelector(
@@ -613,9 +570,7 @@ document.addEventListener(
                     }
 
 
-                    // -------------------------------------------------
                     // SHOW CARD
-                    // -------------------------------------------------
 
                     modalContent.innerHTML = "";
 
@@ -625,9 +580,7 @@ document.addEventListener(
                     );
 
 
-                    // -------------------------------------------------
                     // ENABLE PRINT BUTTON
-                    // -------------------------------------------------
 
                     if (printBtn) {
 
@@ -670,10 +623,7 @@ document.addEventListener(
             }
         );
 
-
-        // =====================================================
         // PRINT CARD
-        // =====================================================
 
         if (printBtn) {
 
@@ -686,9 +636,7 @@ document.addEventListener(
                     );
 
 
-                    // -------------------------------------------------
-                    // CHECK APPLICANT
-                    // -------------------------------------------------
+                    //check applicant
 
                     if (!currentApplicantId) {
 
@@ -700,9 +648,7 @@ document.addEventListener(
                     }
 
 
-                    // -------------------------------------------------
-                    // GET CARD
-                    // -------------------------------------------------
+                    //get card
 
                     const card =
                         document.querySelector(
@@ -720,9 +666,7 @@ document.addEventListener(
                     }
 
 
-                    // -------------------------------------------------
-                    // OPEN PRINT WINDOW
-                    // -------------------------------------------------
+                    //open print window
 
                     const printWindow =
                         window.open(
@@ -735,16 +679,14 @@ document.addEventListener(
                     if (!printWindow) {
 
                         alert(
-                            "Popup Block ဖြစ်နေပါသည်။ Browser popup ကို Allow လုပ်ပါ။"
+                            "Popup Block
                         );
 
                         return;
                     }
 
 
-                    // -------------------------------------------------
-                    // GET CSS
-                    // -------------------------------------------------
+                    //get css
 
                     const styles =
                         Array.from(
@@ -764,9 +706,7 @@ document.addEventListener(
                             .join("");
 
 
-                    // -------------------------------------------------
-                    // PRINT HTML
-                    // -------------------------------------------------
+                    //print html
 
                     printWindow.document.open();
 
@@ -900,9 +840,7 @@ document.addEventListener(
                     printWindow.document.close();
 
 
-                    // =================================================
-                    // WAIT THEN PRINT
-                    // =================================================
+                    //wait then print
 
                     setTimeout(
                         function () {
@@ -911,10 +849,7 @@ document.addEventListener(
 
                             printWindow.print();
 
-
-                            // =================================================
-                            // PRINT ပြီးမှ Mark As Printed
-                            // =================================================
+                            //printfinish
 
                             let printHandled = false;
 
@@ -949,10 +884,7 @@ document.addEventListener(
 
                                 }
 
-
-                                // -------------------------------------------------
-                                // MARK AS PRINTED
-                                // -------------------------------------------------
+                                //printed
 
                                 markCardAsPrinted(
                                     currentApplicantId
@@ -969,7 +901,6 @@ document.addEventListener(
 
 
                             // Fallback
-                            // Browser တချို့မှာ afterprint မရနိုင်ပါ
                             setTimeout(
                                 function () {
 
@@ -989,10 +920,7 @@ document.addEventListener(
 
         }
 
-
-        // =====================================================
-        // CLOSE BUTTON
-        // =====================================================
+        //Close inside
 
         if (closeBtn) {
 
@@ -1004,9 +932,7 @@ document.addEventListener(
         }
 
 
-        // =====================================================
-        // CLOSE OUTSIDE
-        // =====================================================
+        //Close outside
 
         modal.addEventListener(
             "click",
@@ -1021,10 +947,7 @@ document.addEventListener(
             }
         );
 
-
-        // =====================================================
-        // ESC
-        // =====================================================
+        //Ese
 
         document.addEventListener(
             "keydown",
