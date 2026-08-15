@@ -42,8 +42,6 @@ async function markCardAsPrinted() {
             }
         );
 
-        console.log("Status =", response.status);
-
         if (!response.ok) {
 
             const errorText = await response.text();

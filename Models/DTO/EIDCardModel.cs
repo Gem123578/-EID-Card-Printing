@@ -2,9 +2,9 @@
 {
     public class EIDCardModel
     {
-        public string ApplicantId { get; set; } = string.Empty;
+        public string ApplicantId { get; set; }
 
-        public string Uid { get; set; } = string.Empty;
+        public string Uid { get; set; }
 
         public string? OfficeCode { get; set; }
 

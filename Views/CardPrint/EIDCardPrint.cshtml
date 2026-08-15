@@ -149,8 +149,6 @@
 
         const applicantId =
             '@Model.ApplicantId';
-
-        console.log("ApplicantId =", applicantId);
     </script>
 
     <script src="~/js/CardPrinting.js"></script>
@@ -178,6 +176,19 @@
         }
 
     </script>
+        const markPrintedUrl =
+            '@Url.Action("MarkAsPrinted", "CardPrint")';
 
+        const generateXmlUrl =
+            '@Url.Action("GenerateEidXml", "XMLPrint")';
+
+        const applicantId =
+            '@Model.ApplicantId';
+
+        const applicantUid =
+            '@Model.UID';
+
+        const officeCode =
+            '@Model.OfficeCode';
     <script src="~/js/CardPrinting.js"></script>
 }

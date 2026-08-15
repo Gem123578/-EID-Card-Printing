@@ -1,4 +1,5 @@
 ﻿using EIDCardPrint.Models;
+using EIDCardPrint.Models.DTO;
 using EIDCardPrint.Models.DTO.Applicants;
 using EIDCardPrint.Models.EidCardXMl;
 using EIDCardPrint.Services;
@@ -19,7 +20,7 @@ namespace EIDCardPrint.Controllers
         }
         //for xml file export
         [HttpPost]
-        public async Task<IActionResult> GenerateEidXml([FromBody] EidXmlRequest request)
+        public async Task<IActionResult> GenerateEidXml([FromBody] EIDCardModel request)
         {
             try
             {
@@ -34,6 +35,16 @@ namespace EIDCardPrint.Controllers
                         message = "Session expired."
                     });
                 }
+
+                if (string.IsNullOrWhiteSpace(request.ApplicantId))
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "ApplicantId is required."
+                    });
+                }
+
                 if (request.CurrentPageNumber < 1)
                 {
                     request.CurrentPageNumber = 1;
@@ -45,7 +56,7 @@ namespace EIDCardPrint.Controllers
                 }
 
                 if (request == null ||
-                    string.IsNullOrWhiteSpace(request.ApplicationId))
+                    string.IsNullOrWhiteSpace(request.ApplicantId))
                 {
                     return BadRequest(new
                     {
@@ -55,15 +66,30 @@ namespace EIDCardPrint.Controllers
                 }
 
 
-                var applicantRequest =
-                    new ApplicantListRequest
-                    {
-                        CurrentPageNumber = 1,
-                        ApplicantPerPage = 10
-                    };
+                if (request.CurrentPageNumber < 1)
+                {
+                    request.CurrentPageNumber = 1;
+                }
 
+                if (request.ApplicantPerPage < 1)
+                {
+                    request.ApplicantPerPage = 10;
+                }
 
-                var applicant = await _applicantService.GetApplicant(applicantRequest,request.ApplicationId);
+                var applicantRequest = new ApplicantListRequest
+                {
+                    CurrentPageNumber = request.CurrentPageNumber,
+                    ApplicantPerPage = request.ApplicantPerPage,
+                    SearchTerm = request.SearchTerm,
+                    OfficeCode = request.OfficeCode,
+                    FromDate = request.FromDate?.ToString("yyyy-MM-dd"),
+                    ToDate = request.ToDate?.ToString("yyyy-MM-dd")
+                };
+
+                var applicant = await _applicantService.GetApplicant(
+                    applicantRequest,
+                    request.ApplicantId
+                );
 
 
                 if (applicant == null)
@@ -73,7 +99,7 @@ namespace EIDCardPrint.Controllers
                         success = false,
                         message =
                             $"Applicant not found: " +
-                            $"{request.ApplicationId}"
+                            $"{request.ApplicantId}"
                     });
                 }
 
@@ -128,15 +154,7 @@ namespace EIDCardPrint.Controllers
                 });
             }
             catch (Exception ex)
-            {
-                // IMPORTANT
-                Console.WriteLine(
-                    "GenerateEidXml ERROR:");
-
-                Console.WriteLine(
-                    ex.ToString()
-                );
-
+            { 
                 return StatusCode(500, new
                 {
                     success = false,

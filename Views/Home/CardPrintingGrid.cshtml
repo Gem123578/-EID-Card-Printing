@@ -142,17 +142,22 @@
 
                         <tr>
 
-                            <th style="width: 40px;"
-                                class="text-center">
-
+                            <th style="width: 60px;" class="text-center">
                                 <div class="header-checkbox-container">
+                                    <label class="d-flex flex-column align-items-center mb-0"
+                                           style="cursor:pointer;">
 
-                                    <span class="all-text">
-                                        ALL
-                                    </span>
+                                        <input type="checkbox"
+                                               id="selectAllApplicants"
+                                               class="form-check-input mb-1"
+                                               style="cursor:pointer;" />
 
+                                        <span class="all-text">
+                                            ALL
+                                        </span>
+
+                                    </label>
                                 </div>
-
                             </th>
 
                             <th>Applicant Number</th>
@@ -188,7 +193,9 @@
                                     <input type="checkbox"
                                            class="form-check-input applicant-checkbox"
                                            value="@applicant.ApplicantId"
-                                           data-uid="@applicant.UId" />
+                                           data-applicant-id="@applicant.ApplicantId"
+                                           data-uid="@applicant.UId"
+                                           data-office-code="@Model.OfficeCode" />
 
                                 </td>
 
@@ -305,9 +312,8 @@
             <!-- Action -->
             <div class="preview-actions">
                 <button type="button"
-                        id="printCardBtn"
                         class="preview-print-button"
-                        disabled>
+                        id="previewGenerateXmlBtn">
 
                     <i class="fa-solid fa-print me-1"></i>
                     Print Card
@@ -421,9 +427,6 @@
         const markPrintedUrl = '@Url.Action("MarkAsPrinted", "CardPrint")';
 
         const generateXmlUrl = '@Url.Action("GenerateEidXml", "XMLPrint")';
-
-
-        console.log("Generate XML URL =", generateXmlUrl);
     </script>
 
 

@@ -56,62 +56,27 @@ namespace EIDCardPrint.Utils
                     LoadOptions.PreserveWhitespace
                 );
 
-                // =========================
                 // Dynamic fields
-                // =========================
 
                 SetField(
-                    document,
-                    "NameInBurmese",
-                    model.MName
-                );
+                    document,"NameInBurmese",model.MName);
 
-                SetField(
-                    document,
-                    "NameInEnglish",
-                    model.EName
-                );
+                SetField(document,"NameInEnglish",model.EName);
 
-                SetField(
-                    document,
-                    "Gender",
-                    model.Sex
-                );
+                SetField(document,"Gender",model.Sex);
 
-                SetField(
-                    document,
-                    "DateOfBirth",
-                    model.DOB?.ToString("yyyyMMdd")
-                );
+                SetField(document,"DateOfBirth",model.DOB?.ToString("yyyyMMdd"));
 
-                SetField(
-                    document,
-                    "UIDNo",
-                    model.UID
-                );
+                SetField(document,"UIDNo",model.UID);
 
-                SetField(
-                    document,
-                    "DateOfExpiry",
-                    model.DOE.ToString("yyyyMMdd")
-                );
+                SetField(document,"DateOfExpiry",model.DOE.ToString("yyyyMMdd"));
 
-                SetField(
-                    document,
-                    "NRCNo",
-                    model.NRC
-                );
+                SetField(document,"NRCNo",model.NRC);
 
                 // Image can be NULL
-                SetField(
-                    document,
-                    "Photo",
-                    model.Image
-                );
+                SetField(document,"Photo",model.Image);
 
-                // =========================
                 // File name
-                // =========================
 
                 var applicantId =
                     SanitizeFileName(model.ApplicantId);
@@ -125,9 +90,7 @@ namespace EIDCardPrint.Utils
                         fileName
                     );
 
-                // =========================
                 // Save XML
-                // =========================
 
                 document.Save(
                     outputPath,
@@ -171,8 +134,7 @@ namespace EIDCardPrint.Utils
                 return "Unknown";
             }
 
-            foreach (var invalidChar
-                     in Path.GetInvalidFileNameChars())
+            foreach (var invalidChar in Path.GetInvalidFileNameChars())
             {
                 value = value.Replace(
                     invalidChar,
