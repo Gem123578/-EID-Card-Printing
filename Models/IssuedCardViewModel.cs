@@ -19,6 +19,7 @@
         public string Photo { get; set; }
         public string OfficeName { get; set; }
 
+        public string Phno { get; set; }
         public RepresentativeViewModel RepPeople { get; set; }
     }
 }

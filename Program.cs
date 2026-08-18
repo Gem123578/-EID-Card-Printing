@@ -32,6 +32,10 @@ builder.Services.AddHttpClient<IOfficeServices, OfficeServices>();
 
 builder.Services.AddScoped<EidXmlGenerator>();
 
+builder.Services.AddScoped<IQRCodeServices, QRCodeServices>();
+
+builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
+
 
 
 builder.Services.AddHttpContextAccessor();

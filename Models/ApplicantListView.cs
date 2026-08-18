@@ -14,6 +14,8 @@ namespace EIDCardPrint.Models
 
         public DateTime? DOB { get; set; }
 
+        public DateTime DOE { get; set; }
+
         public string PersonNameMM { get; set; }
 
         public string PersonNameEN { get; set; }

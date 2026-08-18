@@ -4,7 +4,8 @@
     ViewData["Title"] = "Home";
     Layout = "_layout";
 }
-
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css" />
 <link href="~/css/CardPrintingGridForm.css" rel="stylesheet" />
 <link href="~/css/EIDCard.css" rel="stylesheet" />
 
@@ -36,7 +37,7 @@
 
         <div class="col-md-3">
             <label class="form-label text-color fw-bold">
-                ရက်စွဲနှင့် အချိန် (Date)
+                Appointment Date
             </label>
 
             <div class="input-group">
@@ -80,7 +81,7 @@
 
         </div>
 
-        <div class="col-md-1">
+        @* <div class="col-md-1">
 
             <label class="form-label text-color fw-bold">
                 Status
@@ -102,7 +103,7 @@
 
             </div>
 
-        </div>
+        </div> *@
         <div class="col-md-2">
             <button class="btn btn-primary animated-btn" type="submit">
                 <i class="fa-solid fa-magnifying-glass me-1"></i> Search
@@ -126,7 +127,7 @@
                     class="btn btn-warning fw-bold"
                     onclick="submitPrint()">
                 <i class="fa-solid fa-file-code me-1"></i>
-                PRINT
+                CARD PRINT
             </button>
 
         </div>
@@ -160,11 +161,17 @@
                                 </div>
                             </th>
 
-                            <th>Applicant Number</th>
+                            <th>အမည်</th>
 
                             <th>Name</th>
 
-                            <th>အမည်</th>
+                            <th>Sex</th>
+
+                            <th>Date of Birth</th>
+
+                            <th>UID</th>
+
+                            <th>Date of Expiry</th>
 
                             <th>NRC</th>
 
@@ -195,13 +202,10 @@
                                            value="@applicant.ApplicantId"
                                            data-applicant-id="@applicant.ApplicantId"
                                            data-uid="@applicant.UId"
-                                           data-office-code="@Model.OfficeCode" />
+                                           data-office-code="@applicant.OfficeCode" />
 
                                 </td>
 
-                                <td>
-                                    @applicant.ApplicantId
-                                </td>
 
                                 <td>
                                     @applicant.PersonNameEN
@@ -209,6 +213,23 @@
 
                                 <td>
                                     @applicant.PersonNameMM
+                                </td>
+
+
+                                <td>
+                                    @applicant.Gender
+                                </td>
+
+                                <td>
+                                    @(applicant.DOB?.ToString("yyyy-MM-dd") ?? "-")
+                                </td>
+
+                                <td>
+                                    @applicant.UId
+                                </td>
+
+                                <td>
+                                    @(applicant.DOE.ToString("yyyy-MM-dd") ?? "-")
                                 </td>
 
                                 <td>
@@ -427,8 +448,12 @@
         const markPrintedUrl = '@Url.Action("MarkAsPrinted", "CardPrint")';
 
         const generateXmlUrl = '@Url.Action("GenerateEidXml", "XMLPrint")';
+
+        const eidCardPrintUrl =
+        '@Url.Action("EIDCardPrint", "CardPrint")';
     </script>
 
 
+    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
     <script src="~/js/CardPrintingGrid.js"></script>
 }

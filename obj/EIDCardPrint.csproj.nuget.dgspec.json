@@ -59,6 +59,10 @@
               "target": "Package",
               "version": "[1.8.0, )"
             },
+            "ZXing.Net.Bindings.Windows.Compatibility": {
+              "target": "Package",
+              "version": "[0.16.14, )"
+            },
             "log4net": {
               "target": "Package",
               "version": "[3.3.2, )"

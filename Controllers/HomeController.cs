@@ -192,6 +192,138 @@ namespace EIDCardPrint.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> CardPrinted(ApplicantListPageView dataModel, bool isSearch = false)
+        {
+            var token = HttpContext.Session.GetString("ApiToken");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login");
+            }
+            if (dataModel.CurrentPageNumber < 1)
+            {
+                dataModel.CurrentPageNumber = 1;
+            }
+            if (dataModel.ApplicantPerPage < 1)
+            {
+                dataModel.ApplicantPerPage = 10;
+            }
+
+
+            if (!isSearch)
+            {
+                var emptyModel = new ApplicantListPageView
+                {
+                    Applicants = new List<ApplicantListView>(),
+                    RecordCount = 0,
+
+                    CurrentPageNumber = 1,
+                    ApplicantPerPage = dataModel.ApplicantPerPage,
+                    TotalPages = 0,
+                    IsSearch = false,
+                    SearchTerm = null,
+                    OfficeCode = dataModel.OfficeCode,
+                    OfficeName = null,
+                    IsPrinted = true,
+                    SelectedDate = null,
+                    FromDate = null,
+                    ToDate = null
+                };
+
+                return View(emptyModel);
+            }
+
+            var (fromDate, toDate) = await _dateRangeService.GetDateRange(dataModel.SelectedDate, dataModel.FromDate, dataModel.ToDate);
+
+            dataModel.FromDate = fromDate;
+            dataModel.ToDate = toDate;
+
+            var request = new ApplicantListRequest
+            {
+                CurrentPageNumber = dataModel.CurrentPageNumber,
+                ApplicantPerPage = dataModel.ApplicantPerPage,
+
+                IsPrinted = 1,
+                // Search
+                SearchTerm = dataModel.SearchTerm,
+
+                // Office Code
+                OfficeCode = dataModel.OfficeCode,
+
+                // Date
+                FromDate = dataModel.FromDate?
+                    .ToString("yyyy-MM-dd"),
+
+                ToDate = dataModel.ToDate?
+                    .ToString("yyyy-MM-dd")
+            };
+
+            var result =
+                await _applicantService.GetApplicants(request);
+
+            if (result == null)
+            {
+                throw new Exception("API result is NULL");
+            }
+
+            if (result.Data == null)
+            {
+                throw new Exception(
+                    $"API Data is NULL. RecordCount = {result.RecordCount}"
+                );
+            }
+
+            var applicants = result.Data
+                .Select(x => new ApplicantListView
+                {
+                    ApplicantId = x.ApplicationId.ToString(),
+                    UId = x.Uid.ToString(),
+                    NRC = x.Nrc,
+                    Gender = x.Gender,
+                    DOB = x.BirthDate,
+                    PersonNameMM = x.PersonNameMm,
+                    PersonNameEN = x.PersonNameEn,
+                    PrintedDate = x.PrintedDate,
+                    Photo = x.Photo
+                })
+                .ToList();
+
+            var viewModel = new ApplicantListPageView
+            {
+                RecordCount = result.RecordCount,
+
+                CurrentPageNumber = request.CurrentPageNumber,
+
+                ApplicantPerPage = request.ApplicantPerPage,
+
+                TotalPages = request.ApplicantPerPage > 0 ? (int)Math.Ceiling((double)result.RecordCount / request.ApplicantPerPage) : 0,
+
+                Applicants = applicants,
+
+                IsSearch = true,
+
+                IsPrinted = dataModel.IsPrinted,
+
+                SearchTerm = dataModel.SearchTerm,
+
+                OfficeCode = dataModel.OfficeCode,
+
+                OfficeName = dataModel.OfficeName,
+
+                SelectedDate = dataModel.SelectedDate,
+
+                FromDate = dataModel.FromDate,
+
+                ToDate = dataModel.ToDate
+            };
+
+            ModelState.Clear();
+            return View(viewModel);
+        }
+
+
+
+        [HttpGet]
         public async Task<IActionResult> GetOffices()
         {
             var token = HttpContext.Session.GetString("ApiToken");

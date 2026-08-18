@@ -75,7 +75,9 @@ namespace EIDCardPrint.Utils
 
                     response.EnsureSuccessStatusCode();
 
-                    return JsonConvert.DeserializeObject<T>(json);
+                    var result = JsonConvert.DeserializeObject<T>(json);
+                    Debug.WriteLine($"DESERIALIZED: {JsonConvert.SerializeObject(result)}");
+                    return result;
                 }
             }
             catch (Exception ex)

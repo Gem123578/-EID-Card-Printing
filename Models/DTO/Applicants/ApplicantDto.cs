@@ -38,6 +38,9 @@ namespace EIDCardPrint.Models.DTO.Applicants
 
         
         [JsonProperty("photo")]
-        public string Photo { get; set; } 
+        public string Photo { get; set; }
+
+        [JsonProperty("date_of_expiry")]
+        public DateTime? DOE { get; set; }
     }
 }

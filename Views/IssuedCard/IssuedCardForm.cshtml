@@ -19,12 +19,16 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">ရုံးအမည်</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.OfficeName, new { @class = "form-control" })
+                            <select asp-for="OfficeCode"
+                                    id="officeSelect"
+                                    name="OfficeCode"
+                                    class="form-control animated-input">
+                            </select>
                         </div>
                     </div>
 
                     <div class="col-md-12 align-items-center d-flex flex-column text-start">
-                        <img src="~/images/profile.png" class="photo img-thumbnail" alt="Profile" />
+                        <img src="~/images/profile.png" id="profilePhoto" class="photo img-thumbnail" alt="Profile" />
                         <label class="text-color  col-form-label">ဓာတ်ပုံ</label>
                     </div>
 
@@ -40,21 +44,26 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">QR No.</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.QRCode, new { @class = "form-control" })
+                            @Html.TextBoxFor(m => m.QRCode, new
+                                {
+                                     @class = "form-control",
+                                     id = "qrInput",
+                                     autocomplete = "off"
+                                })
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">Packaged No</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.PackagedNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.PackagedNo, new { @class = "form-control", id = "packageCode" })
                         </div>
                     </div>
 
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">Appointment No</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.AppointNo, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.AppointNo, new { @class = "form-control", id = "appointmentNo" })
                         </div>
                        
                     </div>
@@ -62,7 +71,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">UID No</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.UID, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.UID, new { @class = "form-control", id = "uid" })
                         </div>
                         
                     </div>
@@ -70,7 +79,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">အမည်(မြန်မာ)</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.MName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.MName, new { @class = "form-control", id = "mName" })
                         </div>
                         
                     </div>
@@ -78,7 +87,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">အမည်(အဂ်လိပ်)</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.EName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.EName, new { @class = "form-control", id = "eName" })
                         </div>
                         
                     </div>
@@ -86,20 +95,20 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">အဖအမည်(မြန်မာ)</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.FatherName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.FatherName, new { @class = "form-control", id = "fatherName" })
                         </div>
                         
                     </div>
                     <div class="row mb-3">
                         <div class="offset-sm-4 col-sm-8">
                             <div class="form-check form-check-inline">
-                                @Html.RadioButtonFor(m => m.Gender, "Male",new { @class = "form-check-input", id = "genderMale" })
-                                <label class="form-check-label text-color" for="genderMale">ကျား</label>
+                                @Html.RadioButtonFor(m => m.Gender, "Male",new { @class = "form-check-input", id = "Male" })
+                                <label class="form-check-label text-color" for="Male">ကျား</label>
                             </div>
 
                             <div class="form-check form-check-inline">
-                                @Html.RadioButtonFor(m => m.Gender, "Female",new { @class = "form-check-input", id = "genderFemale" })
-                                <label class="form-check-label text-color" for="genderFemale">မ</label>
+                                @Html.RadioButtonFor(m => m.Gender, "Female",new { @class = "form-check-input", id = "Female" })
+                                <label class="form-check-label text-color" for="Female">မ</label>
                             </div>
                         </div>
                         
@@ -109,7 +118,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">မွေးဖွားသည့်ရက်</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.DOB, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.DOB, new { @class = "form-control", id = "dob" })
                         </div>
                        
                     </div>
@@ -117,7 +126,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">ကတ်ပြားအမှတ်</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.OfficeName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.NRC, new { @class = "form-control", id = "nrc" })
                         </div>
                        
                     </div>
@@ -125,7 +134,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">သွေးအမျိုးအစား</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.OfficeName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.BloodType, new { @class = "form-control", id = "bloodType" })
                         </div>
                         
                     </div>
@@ -133,7 +142,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">ဖုန်းနံပါတ်</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.OfficeName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Phno, new { @class = "form-control", id = "phoneNo" })
                         </div>
                        
                     </div>
@@ -141,7 +150,7 @@
                     <div class="row mb-3">
                         <label class="text-color col-sm-4 col-form-label">နေရပ်လိပ်စာ</label>
                         <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.OfficeName, new { @class = "form-control" })
+                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", id = "currentAddress" })
                             
                         </div>
                     </div>
@@ -206,6 +215,7 @@
             </div>
 
         </div>
+    </div>
 </div>
 
 

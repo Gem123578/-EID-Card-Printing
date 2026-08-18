@@ -13,17 +13,22 @@ namespace EIDCardPrint.Controllers
         private readonly IApplicantServices _applicantService;
         private readonly EidXmlGenerator _xmlGenerator;
 
-        public XMLPrintController(IApplicantServices applicantService, EidXmlGenerator eidxml)
+        public XMLPrintController(
+            IApplicantServices applicantService,
+            EidXmlGenerator eidxml)
         {
             _applicantService = applicantService;
             _xmlGenerator = eidxml;
         }
-        //for xml file export
+
         [HttpPost]
-        public async Task<IActionResult> GenerateEidXml([FromBody] EIDCardModel request)
+        public async Task<IActionResult> GenerateEidXml(
+            [FromBody] EIDCardModel? request)
         {
             try
             {
+                // SESSION TOKEN
+
                 var token =
                     HttpContext.Session.GetString("ApiToken");
 
@@ -36,7 +41,20 @@ namespace EIDCardPrint.Controllers
                     });
                 }
 
-                if (string.IsNullOrWhiteSpace(request.ApplicantId))
+                // NULL REQUEST
+
+                if (request == null)
+                {
+                    return BadRequest(new
+                    {
+                        success = false,
+                        message = "Request data is required."
+                    });
+                }
+                // APPLICANT ID
+
+                if (string.IsNullOrWhiteSpace(
+                    request.ApplicantId))
                 {
                     return BadRequest(new
                     {
@@ -44,6 +62,8 @@ namespace EIDCardPrint.Controllers
                         message = "ApplicantId is required."
                     });
                 }
+
+                // DEFAULT PAGING
 
                 if (request.CurrentPageNumber < 1)
                 {
@@ -55,54 +75,53 @@ namespace EIDCardPrint.Controllers
                     request.ApplicantPerPage = 10;
                 }
 
-                if (request == null ||
-                    string.IsNullOrWhiteSpace(request.ApplicantId))
-                {
-                    return BadRequest(new
+                // APPLICANT REQUEST
+
+                var applicantRequest =
+                    new ApplicantListRequest
                     {
-                        success = false,
-                        message = "ApplicantId is required."
-                    });
-                }
+                        CurrentPageNumber =
+                            request.CurrentPageNumber,
 
+                        ApplicantPerPage =
+                            request.ApplicantPerPage,
 
-                if (request.CurrentPageNumber < 1)
-                {
-                    request.CurrentPageNumber = 1;
-                }
+                        SearchTerm =
+                            request.SearchTerm,
 
-                if (request.ApplicantPerPage < 1)
-                {
-                    request.ApplicantPerPage = 10;
-                }
+                        OfficeCode =
+                            request.OfficeCode,
 
-                var applicantRequest = new ApplicantListRequest
-                {
-                    CurrentPageNumber = request.CurrentPageNumber,
-                    ApplicantPerPage = request.ApplicantPerPage,
-                    SearchTerm = request.SearchTerm,
-                    OfficeCode = request.OfficeCode,
-                    FromDate = request.FromDate?.ToString("yyyy-MM-dd"),
-                    ToDate = request.ToDate?.ToString("yyyy-MM-dd")
-                };
+                        FromDate =
+                            request.FromDate?
+                                .ToString("yyyy-MM-dd"),
 
-                var applicant = await _applicantService.GetApplicant(
-                    applicantRequest,
-                    request.ApplicantId
-                );
+                        ToDate =
+                            request.ToDate?
+                                .ToString("yyyy-MM-dd")
+                    };
 
+                // GET APPLICANT
+
+                var applicant =
+                    await _applicantService.GetApplicant(
+                        applicantRequest,
+                        request.ApplicantId
+                    );
 
                 if (applicant == null)
                 {
                     return NotFound(new
                     {
                         success = false,
+
                         message =
                             $"Applicant not found: " +
                             $"{request.ApplicantId}"
                     });
                 }
 
+                // VIEW MODEL
 
                 var viewModel =
                     new EIDCardPrintViewModel
@@ -129,38 +148,88 @@ namespace EIDCardPrint.Controllers
                             applicant.PersonNameEn,
 
                         Image =
-                            applicant.Photo,
+                            applicant.Photo
                     };
 
+                // GENERATE XML
 
-                var result = _xmlGenerator.Generate(viewModel);
+                var result =
+                    _xmlGenerator.Generate(
+                        viewModel
+                    );
 
+                if (result == null)
+                {
+                    return StatusCode(
+                        500,
+                        new
+                        {
+                            success = false,
+                            message =
+                                "XML Generator returned null."
+                        }
+                    );
+                }
 
                 if (!result.Success)
                 {
                     return BadRequest(new
                     {
                         success = false,
-                        message = result.Message
+
+                        message =
+                            result.Message ??
+                            "XML generation failed."
                     });
                 }
 
-                return Ok(new
+                if (result.FileBytes == null ||
+                    result.FileBytes.Length == 0)
                 {
-                    success = true,
-                    message = result.Message,
-                    fileName = result.FileName,
-                    filePath = result.FilePath
-                });
+                    return StatusCode(
+                        500,
+                        new
+                        {
+                            success = false,
+                            message =
+                                "XML file content is empty."
+                        }
+                    );
+                }
+
+                // FILE NAME
+
+                var fileName =
+                    !string.IsNullOrWhiteSpace(
+                        result.FileName)
+
+                        ? result.FileName
+
+                        : $"{request.ApplicantId}.xml";
+
+                // RETURN XML FILE
+
+                return File(
+                    result.FileBytes,
+                    "application/xml",
+                    fileName
+                );
             }
             catch (Exception ex)
-            { 
-                return StatusCode(500, new
-                {
-                    success = false,
-                    message = ex.Message,
-                    detail = ex.ToString()
-                });
+            {
+                return StatusCode(
+                    500,
+                    new
+                    {
+                        success = false,
+
+                        message =
+                            ex.Message,
+
+                        detail =
+                            ex.ToString()
+                    }
+                );
             }
         }
     }

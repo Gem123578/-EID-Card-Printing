@@ -8,23 +8,13 @@ namespace EIDCardPrint.Utils
     public class EidXmlGenerator
     {
         private readonly string _templatePath;
-        private readonly string _outputDirectory;
 
         public EidXmlGenerator()
         {
-            var baseDirectory = AppContext.BaseDirectory;
-
             _templatePath = Path.Combine(
-                baseDirectory,
+                AppContext.BaseDirectory,
                 "EIDCard.xml"
             );
-
-            _outputDirectory = Path.Combine(
-                baseDirectory,
-                "GeneratedXml"
-            );
-
-            Directory.CreateDirectory(_outputDirectory);
 
         }
 
@@ -39,13 +29,13 @@ namespace EIDCardPrint.Utils
                 };
             }
 
-            // Check XML template
             if (!File.Exists(_templatePath))
             {
                 return new EidXmlRes
                 {
                     Success = false,
-                    Message = $"XML template not found: {_templatePath}"
+                    Message =
+                        $"XML template not found: {_templatePath}"
                 };
             }
 
@@ -56,27 +46,53 @@ namespace EIDCardPrint.Utils
                     LoadOptions.PreserveWhitespace
                 );
 
-                // Dynamic fields
+                SetField(
+                    document,
+                    "NameInBurmese",
+                    model.MName
+                );
 
                 SetField(
-                    document,"NameInBurmese",model.MName);
+                    document,
+                    "NameInEnglish",
+                    model.EName
+                );
 
-                SetField(document,"NameInEnglish",model.EName);
+                SetField(
+                    document,
+                    "Gender",
+                    model.Sex
+                );
 
-                SetField(document,"Gender",model.Sex);
+                SetField(
+                    document,
+                    "DateOfBirth",
+                    model.DOB?.ToString("yyyyMMdd")
+                );
 
-                SetField(document,"DateOfBirth",model.DOB?.ToString("yyyyMMdd"));
+                SetField(
+                    document,
+                    "UIDNo",
+                    model.UID
+                );
 
-                SetField(document,"UIDNo",model.UID);
+                SetField(
+                    document,
+                    "DateOfExpiry",
+                    model.DOE.ToString("yyyyMMdd")
+                );
 
-                SetField(document,"DateOfExpiry",model.DOE.ToString("yyyyMMdd"));
+                SetField(
+                    document,
+                    "NRCNo",
+                    model.NRC
+                );
 
-                SetField(document,"NRCNo",model.NRC);
-
-                // Image can be NULL
-                SetField(document,"Photo",model.Image);
-
-                // File name
+                SetField(
+                    document,
+                    "Photo",
+                    model.Image
+                );
 
                 var applicantId =
                     SanitizeFileName(model.ApplicantId);
@@ -84,36 +100,30 @@ namespace EIDCardPrint.Utils
                 var fileName =
                     $"{applicantId}.xml";
 
-                var outputPath =
-                    Path.Combine(
-                        _outputDirectory,
-                        fileName
-                    );
 
-                // Save XML
+                using var memoryStream =
+                    new MemoryStream();
 
                 document.Save(
-                    outputPath,
+                    memoryStream,
                     SaveOptions.DisableFormatting
                 );
 
-                // Check generated file
-                if (!File.Exists(outputPath))
-                {
-                    return new EidXmlRes
-                    {
-                        Success = false,
-                        Message =
-                            $"XML file was not created: {outputPath}"
-                    };
-                }
+                var fileBytes =
+                    memoryStream.ToArray();
 
                 return new EidXmlRes
                 {
                     Success = true,
-                    Message = "XML generated successfully.",
-                    FileName = fileName,
-                    FilePath = outputPath
+
+                    Message =
+                        "XML generated successfully.",
+
+                    FileName =
+                        fileName,
+
+                    FileBytes =
+                        fileBytes
                 };
             }
             catch (Exception ex)
@@ -121,20 +131,24 @@ namespace EIDCardPrint.Utils
                 return new EidXmlRes
                 {
                     Success = false,
+
                     Message =
                         $"XML generation failed: {ex.Message}"
                 };
             }
         }
 
-        private static string SanitizeFileName(string? value)
+        private static string SanitizeFileName(
+            string? value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
                 return "Unknown";
             }
 
-            foreach (var invalidChar in Path.GetInvalidFileNameChars())
+            foreach (
+                var invalidChar
+                in Path.GetInvalidFileNameChars())
             {
                 value = value.Replace(
                     invalidChar,
