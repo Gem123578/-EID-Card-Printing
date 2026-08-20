@@ -38,20 +38,21 @@ namespace EIDCardPrint.Controllers
                 return BadRequest("ApplicantId or Uid is required.");
             }
 
-            if (request.CurrentPageNumber < 1)
-            {
-                request.CurrentPageNumber = 1;
-            }
+            //if (request.CurrentPageNumber < 1)
+            //{
+            //    request.CurrentPageNumber = 1;
+            //}
 
-            if (request.ApplicantPerPage < 1)
-            {
-                request.ApplicantPerPage = 10;
-            }
+            //if (request.ApplicantPerPage < 1)
+            //{
+            //    request.ApplicantPerPage = 10;
+            //}
 
             var applicantRequest = new ApplicantListRequest
             {
-                CurrentPageNumber = request.CurrentPageNumber,
-                ApplicantPerPage = request.ApplicantPerPage,
+                //CurrentPageNumber = request.CurrentPageNumber,
+                //ApplicantPerPage = request.ApplicantPerPage,
+                IsPrinted = request.IsPrinted,
                 SearchTerm = request.SearchTerm,
                 OfficeCode = request.OfficeCode,
                 FromDate = request.FromDate?.ToString("yyyy-MM-dd"),

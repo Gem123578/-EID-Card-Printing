@@ -6,82 +6,90 @@
 }
 <link rel="stylesheet"
       href="https://cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css" />
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/3.2.5/css/buttons.dataTables.min.css">
+
 <link href="~/css/CardPrintingGridForm.css" rel="stylesheet" />
 <link href="~/css/EIDCard.css" rel="stylesheet" />
 
-<form asp-controller="Home" asp-action="CardPrintingGrid" id="cardSearchForm" method="get" class="p-4 border rounded-3 bg-white shadow-sm animated-search-card mb-4">
-    <input type="hidden" name="isSearch" value="true" />
+<div id="regionalOfficerFilter">
+    <form asp-controller="Home" asp-action="CardPrintingGrid" id="cardSearchForm" method="get" class="p-4 border rounded-3 bg-white shadow-sm animated-search-card mb-4">
+        <input type="hidden" name="isSearch" value="true" />
+        <input type="hidden"
+               name="IsPrinted"
+               value="false" />
 
-    <div class="row g-4 align-items-end">
+        <div class="row g-4 align-items-end">
 
-        <div class="col-md-3">
-            <label asp-for="SearchTerm" class="form-label text-color fw-bold">Name</label>
-            <div class="input-group">
-                <input asp-for="SearchTerm" id="SearchTerm" type="text" name="SearchTerm" class="form-control animated-input" placeholder="Name, UID သို့မဟုတ် QR ရိုက်ပါ..." />
-            </div>
-        </div>
-
-        <div class="col-md-3">
-            <label asp-for="OfficeCode" class="form-label text-color fw-bold">
-                Office Stations
-            </label>
-
-            <select asp-for="OfficeCode"
-                    id="officeSelect"
-                    name="OfficeCode"
-                    class="form-control animated-input">
-                <option value="">-- Office Stations ရွေးပါ --</option>
-            </select>
-        </div>
-
-
-        <div class="col-md-3">
-            <label class="form-label text-color fw-bold">
-                Appointment Date
-            </label>
-
-            <div class="input-group">
-
-                <!-- Display Date -->
-                <input id="dateRangeFilter"
-                       type="text"
-                       class="form-control animated-input"
-                       placeholder="Date Range ရွေးပါ"
-                       value="@(Model.FromDate.HasValue && Model.ToDate.HasValue ? $"{Model.FromDate:yyyy-MM-dd} - {Model.ToDate:yyyy-MM-dd}": "")" readonly />
-
-                <!-- Clear Date -->
-                <button type="button"
-                        id="clearDateRange"
-                        class="btn btn-outline-secondary @(Model.FromDate.HasValue && Model.ToDate.HasValue ? "show" : "")"
-                        title="Clear Date">
-
-                    <i class="fa-solid fa-xmark"></i>
-
-                </button>
-
+            <div class="col-md-3">
+                <label asp-for="SearchTerm" class="form-label text-color fw-bold">Name</label>
+                <div class="input-group">
+                    <input asp-for="SearchTerm" id="SearchTerm" type="text" name="SearchTerm" class="form-control animated-input" placeholder="Name, UID သို့မဟုတ် QR ရိုက်ပါ..." />
+                </div>
             </div>
 
-            <!-- Selected Date Range Type -->
-            <input type="hidden"
-                   name="SelectedDate"
-                   id="dateRangeType"
-                   value="@Model.SelectedDate" />
+            <div class="col-md-3">
+                <label asp-for="OfficeCode" class="form-label text-color fw-bold">
+                    Office Stations
+                </label>
 
-            <!-- From Date -->
-            <input type="hidden"
-                   name="FromDate"
-                   id="fromDate"
-                   value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+                <select asp-for="OfficeCode"
+                        id="officeSelect"
+                        name="OfficeCode"
+                        class="form-control animated-input">
+                    <option value="">-- Office Stations ရွေးပါ --</option>
+                </select>
+            </div>
 
-            <!-- To Date -->
-            <input type="hidden"
-                   name="ToDate"
-                   id="toDate"
-                   value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
 
-        </div>
+            <div class="col-md-3">
+                <label class="form-label text-color fw-bold">
+                    Appointment Date
+                </label>
 
-        @* <div class="col-md-1">
+                <div class="input-group">
+
+                    <!-- Display Date -->
+                    <input id="dateRangeFilter"
+                           type="text"
+                           class="form-control animated-input"
+                           placeholder="Date Range ရွေးပါ"
+                           value="@(Model.FromDate.HasValue && Model.ToDate.HasValue ? $"{Model.FromDate:yyyy-MM-dd} - {Model.ToDate:yyyy-MM-dd}" : "")" readonly />
+
+                    <!-- Clear Date -->
+                    <button type="button"
+                            id="clearDateRange"
+                            class="btn btn-outline-secondary @(Model.FromDate.HasValue && Model.ToDate.HasValue ? "show" : "")"
+                            title="Clear Date">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                    </button>
+
+                </div>
+
+                <!-- Selected Date Range Type -->
+                <input type="hidden"
+                       name="SelectedDate"
+                       id="dateRangeType"
+                       value="@Model.SelectedDate" />
+
+                <!-- From Date -->
+                <input type="hidden"
+                       name="FromDate"
+                       id="fromDate"
+                       value="@Model.FromDate?.ToString("yyyy-MM-dd")" />
+
+                <!-- To Date -->
+                <input type="hidden"
+                       name="ToDate"
+                       id="toDate"
+                       value="@Model.ToDate?.ToString("yyyy-MM-dd")" />
+
+            </div>
+
+            @* <div class="col-md-1">
 
             <label class="form-label text-color fw-bold">
                 Status
@@ -104,27 +112,25 @@
             </div>
 
         </div> *@
-        <div class="col-md-2">
-            <button class="btn btn-primary animated-btn" type="submit">
-                <i class="fa-solid fa-magnifying-glass me-1"></i> Search
-            </button>
+            <div class="col-md-2">
+                <button class="btn btn-primary animated-btn" type="submit">
+                    <i class="fa-solid fa-magnifying-glass me-1"></i> Search
+                </button>
+            </div>
+
         </div>
-        
-    </div>
-</form>
+    </form>
+</div>
 
 @if (Model.IsSearch)
 {
     <div class="card shadow" id="tableContainer">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
 
-            <span id="txtTotalCount">
-                Total : @Model.RecordCount
-            </span>
 
             <button type="button"
                     id="generateXmlTopBtn"
-                    class="btn btn-warning fw-bold"
+                    class="btn btn-warning fw-bold ms-auto"
                     onclick="submitPrint()">
                 <i class="fa-solid fa-file-code me-1"></i>
                 CARD PRINT
@@ -175,8 +181,6 @@
 
                             <th>NRC</th>
 
-                            <th>Office Code</th>
-
                             <th id="colDynamicDate">
                                 Printed Date
                             </th>
@@ -184,6 +188,80 @@
                             <th class="text-center">
                                 Action
                             </th>
+
+                        </tr>
+                        <!-- Column Search -->
+                        <tr class="filter-row">
+
+                            <!-- Checkbox column -->
+                            <th></th>
+
+                            <!-- အမည် -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="1"
+                                       placeholder="Search အမည်">
+                            </th>
+
+                            <!-- Name -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="2"
+                                       placeholder="Search Name">
+                            </th>
+
+                            <!-- Sex -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="3"
+                                       placeholder="Search Sex">
+                            </th>
+
+                            <!-- DOB -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="4"
+                                       placeholder="Search Date of Birth">
+                            </th>
+
+                            <!-- UID -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="5"
+                                       placeholder="Search UID">
+                            </th>
+
+                            <!-- DOE -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="6"
+                                       placeholder="Search Date of Expiry">
+                            </th>
+
+                            <!-- NRC -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="7"
+                                       placeholder="Search NRC">
+                            </th>
+
+                            <!-- Printed Date -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="8"
+                                       placeholder="Search Printed Date">
+                            </th>
+
+                            <!-- Action -->
+                            <th></th>
 
                         </tr>
 
@@ -221,7 +299,7 @@
                                 </td>
 
                                 <td>
-                                    @(applicant.DOB?.ToString("yyyy-MM-dd") ?? "-")
+                                    @(applicant.DOB?.ToString("yyyy-MM-dd"))
                                 </td>
 
                                 <td>
@@ -229,19 +307,16 @@
                                 </td>
 
                                 <td>
-                                    @(applicant.DOE.ToString("yyyy-MM-dd") ?? "-")
+                                    @(applicant.DOE?.ToString("yyyy-MM-dd"))
                                 </td>
 
                                 <td>
                                     @applicant.NRC
                                 </td>
 
-                                <td>
-                                    @applicant.OfficeCode
-                                </td>
 
                                 <td>
-                                    @(applicant.PrintedDate?.ToString("yyyy-MM-dd") ?? "-")
+                                    @(applicant.PrintedDate?.ToString("yyyy-MM-dd"))
                                 </td>
 
                                 <td class="text-center">
@@ -341,13 +416,13 @@
 
                 </button>
             </div>
-            
+
 
         </div>
 
     </div>
 }
-@if (Model.IsSearch && Model.TotalPages > 1)
+@* @if (Model.IsSearch && Model.TotalPages > 1)
 {
     <div class="pagination-wrapper d-flex justify-content-between align-items-center p-3 border-top">
 
@@ -368,21 +443,21 @@
                     @if (Model.HasPreviousPage)
                     {
                         <a href="@Url.Action("CardPrintingGrid","Home",
-                                   new
-                                   {
-                                       isSearch = true,
-                                       CurrentPageNumber = Model.CurrentPageNumber - 1,
-                                       ApplicantPerPage = Model.ApplicantPerPage,
-                                       SearchTerm = Model.SearchTerm,
-                                       OfficeCode = Model.OfficeCode,
-                                       IsPrinted = Model.IsPrinted,
-                                       SelectedDate = Model.SelectedDate,
-                                       FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
-                                       ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
-                                   })"class="page-link">
+                                                                                         new
+                                                                                         {
+                                                                                             isSearch = true,
+                                                                                             CurrentPageNumber = Model.CurrentPageNumber - 1,
+                                                                                             ApplicantPerPage = Model.ApplicantPerPage,
+                                                                                             SearchTerm = Model.SearchTerm,
+                                                                                             OfficeCode = Model.OfficeCode,
+                                                                                             IsPrinted = Model.IsPrinted,
+                                                                                             SelectedDate = Model.SelectedDate,
+                                                                                             FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
+                                                                                             ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
+                                                                                         })" class="page-link">
 
-                            <i class="fa-solid fa-chevron-left me-1"></i>
-                            Previous
+                    <i class="fa-solid fa-chevron-left me-1"></i>
+                    Previous
 
                         </a>
                                 }
@@ -409,21 +484,21 @@
                     @if (Model.HasNextPage)
                     {
                         <a href="@Url.Action("CardPrintingGrid","Home",
-                                   new
-                                   {
-                                       isSearch = true,
-                                       CurrentPageNumber = Model.CurrentPageNumber + 1,
-                                       ApplicantPerPage = Model.ApplicantPerPage,
-                                       SearchTerm = Model.SearchTerm,
-                                       OfficeCode = Model.OfficeCode,
-                                       IsPrinted = Model.IsPrinted,
-                                       SelectedDate = Model.SelectedDate,
-                                       FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
-                                       ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
-                                   })" class="page-link">
+                                                                                         new
+                                                                                         {
+                                                                                             isSearch = true,
+                                                                                             CurrentPageNumber = Model.CurrentPageNumber + 1,
+                                                                                             ApplicantPerPage = Model.ApplicantPerPage,
+                                                                                             SearchTerm = Model.SearchTerm,
+                                                                                             OfficeCode = Model.OfficeCode,
+                                                                                             IsPrinted = Model.IsPrinted,
+                                                                                             SelectedDate = Model.SelectedDate,
+                                                                                             FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
+                                                                                             ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
+                                                                                         })" class="page-link">
 
-                            Next
-                            <i class="fa-solid fa-chevron-right ms-1"></i>
+                    Next
+                    <i class="fa-solid fa-chevron-right ms-1"></i>
 
                         </a>
                                 }
@@ -441,19 +516,48 @@
         </nav>
 
     </div>
-}
+} *@
+
 @section Scripts {
 
     <script>
-        const markPrintedUrl = '@Url.Action("MarkAsPrinted", "CardPrint")';
+        const isPrintedPage = 0;
 
-        const generateXmlUrl = '@Url.Action("GenerateEidXml", "XMLPrint")';
+        const markPrintedUrl =
+            '@Url.Action("MarkAsPrinted", "CardPrint")';
+
+        const generateXmlUrl =
+            '@Url.Action("GenerateEidXml", "XMLPrint")';
 
         const eidCardPrintUrl =
-        '@Url.Action("EIDCardPrint", "CardPrint")';
+            '@Url.Action("EIDCardPrint", "CardPrint")';
+
+            const serverApplicants = @Html.Raw(
+                    Newtonsoft.Json.JsonConvert.SerializeObject(
+                            Model.Applicants ??
+                            new List<EIDCardPrint.Models.ApplicantListView>()
+                    )
+            );
+        const isCardPrintingGridPage = true;
+
     </script>
-
-
     <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.pdf.min.js"></script>
+
     <script src="~/js/CardPrintingGrid.js"></script>
+
+    <script src="~/js/CardPrintingGrid.js"></script>
+
 }

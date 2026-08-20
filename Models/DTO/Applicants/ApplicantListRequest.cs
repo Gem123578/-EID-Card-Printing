@@ -4,12 +4,12 @@ namespace EIDCardPrint.Models.DTO.Applicants
 {
     public class ApplicantListRequest
     {
-        [JsonProperty("current_page_number")]
-        public int CurrentPageNumber { get; set; } 
+        //    [JsonProperty("current_page_number")]
+        //    public int? CurrentPageNumber { get; set; } 
 
 
-        [JsonProperty("applicant_per_page")]
-        public int ApplicantPerPage { get; set; } 
+        //    [JsonProperty("applicant_per_page")]
+        //    public int? ApplicantPerPage { get; set; } 
 
 
         [JsonProperty("office_code")]

@@ -63,28 +63,16 @@ namespace EIDCardPrint.Controllers
                     });
                 }
 
-                // DEFAULT PAGING
-
-                if (request.CurrentPageNumber < 1)
-                {
-                    request.CurrentPageNumber = 1;
-                }
-
-                if (request.ApplicantPerPage < 1)
-                {
-                    request.ApplicantPerPage = 10;
-                }
-
                 // APPLICANT REQUEST
 
                 var applicantRequest =
                     new ApplicantListRequest
                     {
-                        CurrentPageNumber =
-                            request.CurrentPageNumber,
+                        //CurrentPageNumber =
+                        //    request.CurrentPageNumber,
 
-                        ApplicantPerPage =
-                            request.ApplicantPerPage,
+                        //ApplicantPerPage =
+                        //    request.ApplicantPerPage,
 
                         SearchTerm =
                             request.SearchTerm,
@@ -98,7 +86,9 @@ namespace EIDCardPrint.Controllers
 
                         ToDate =
                             request.ToDate?
-                                .ToString("yyyy-MM-dd")
+                                .ToString("yyyy-MM-dd"),
+
+                        IsPrinted = request.IsPrinted
                     };
 
                 // GET APPLICANT
@@ -148,7 +138,9 @@ namespace EIDCardPrint.Controllers
                             applicant.PersonNameEn,
 
                         Image =
-                            applicant.Photo
+                            applicant.Photo,
+
+                        DOE = applicant.DOE
                     };
 
                 // GENERATE XML

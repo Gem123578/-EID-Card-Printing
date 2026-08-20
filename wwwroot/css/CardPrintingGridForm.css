@@ -52,7 +52,7 @@ body {
         width: 60%;
         height: 2px;
         background: linear-gradient( 90deg, transparent, rgba(13, 110, 253, 0.9), transparent );
-        animation: searchCardShine 4s ease-in-out infinite;
+        /*animation: searchCardShine 4s ease-in-out infinite;*/
     }
 
     .animated-search-card::after {
@@ -87,7 +87,7 @@ body {
     }
 }
 
-@keyframes searchCardShine {
+/*@keyframes searchCardShine {
     0% {
         left: -100%;
     }
@@ -96,7 +96,7 @@ body {
         left: 150%;
     }
 }
-
+*/
 
 /* FORM LABEL*/
 
@@ -303,10 +303,10 @@ body {
         height: 100%;
         background: linear-gradient( 90deg, transparent, rgba(255,255,255,.12), transparent );
         transform: skewX(-20deg);
-        animation: tableHeaderShine 5s ease-in-out infinite;
+        /*animation: tableHeaderShine 5s ease-in-out infinite;*/
         pointer-events: none;
     }
-
+/*
 
 @keyframes tableHeaderShine {
 
@@ -317,7 +317,7 @@ body {
     75%, 100% {
         left: 150%;
     }
-}
+}*/
 
 
 /* TOTAL COUNT*/
@@ -1179,3 +1179,35 @@ body {
         transition: none !important;
     }
 }
+
+#regionalOfficerFilter {
+    display: none;
+}
+
+/*search for column*/
+.filter-row th {
+    padding: 6px !important;
+    background: #f8f9fa !important;
+}
+
+.column-search {
+    width: 100%;
+    min-width: 100px;
+    padding: 7px 9px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    outline: none;
+    font-size: 13px;
+    background: #ffffff;
+    transition: all .2s ease;
+}
+
+    .column-search:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, .15);
+    }
+
+    .column-search::placeholder {
+        color: #9ca3af;
+        font-size: 12px;
+    }

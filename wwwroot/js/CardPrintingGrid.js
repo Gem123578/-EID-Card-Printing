@@ -1,33 +1,419 @@
-﻿let cardTable = null;
+﻿
+let cardTable = null;
 
+const SELECTED_STORAGE_KEY = 'selectedApplicants';
 
-// ============================================================
-// DOCUMENT READY
-// ============================================================
+const CARD_SEARCH_PERFORMED_KEY = 'cardSearchPerformed';
+
 
 $(document).ready(function () {
 
-    // Initialize DataTable first
     initCardDataTable();
 
-    // Initialize select all
     initSelectAll();
 
-    // Date Range
     initDateRange();
 
-    // Search form
     initSearchForm();
 
-    // Load offices
-    fetchOffices();
+    initOfficerOffice();
+
+
+    if (
+        typeof serverApplicants !== 'undefined' &&
+        Array.isArray(serverApplicants) &&
+        serverApplicants.length > 0
+    ) {
+
+        loadApplicantDataToTable(
+            serverApplicants
+        );
+
+    }
+    $(document).on(
+        'click.cardSidebarClear',
+        'a',
+        function (e) {
+
+            const href = $(this).attr('href');
+
+
+
+            if (!href) {
+                return;
+            }
+
+
+            if (
+                href === '#' ||
+                href.startsWith('javascript:')
+            ) {
+                return;
+            }
+
+
+
+            const currentUrl =
+                window.location.pathname +
+                window.location.search;
+
+
+
+            let linkUrl;
+
+            try {
+
+                linkUrl =
+                    new URL(
+                        href,
+                        window.location.origin
+                    );
+
+            }
+            catch (error) {
+
+                return;
+
+            }
+
+
+
+            const targetUrl =
+                linkUrl.pathname +
+                linkUrl.search;
+
+            if (targetUrl !== currentUrl) {
+
+                clearSelectedApplicants();
+
+
+            }
+
+        }
+    );
+
+
+    // Restore checkbox state
+    restoreCheckboxState();
 
 });
 
+//async function loadTodayApplicants() {
 
-// ============================================================
-// DATATABLE
-// ============================================================
+//    const today = moment().format('YYYY-MM-DD');
+
+//    console.log('Today Applicant Search:', today);
+
+//    const url =
+//        '/Home/CardPrintingGrid' +
+//        '?isSearch=true' +
+//        `&IsPrinted=${encodeURIComponent(isPrintedPage)}` +
+//        '&FromDate=' + encodeURIComponent(today) +
+//        '&ToDate=' + encodeURIComponent(today);
+
+//    try {
+
+//        const response = await fetch(url, {
+//            method: 'GET',
+//            headers: {
+//                'Accept': 'text/html'
+//            }
+//        });
+
+//        console.log(
+//            'CardPrintingGrid Status:',
+//            response.status
+//        );
+
+//        if (!response.ok) {
+
+//            const text = await response.text();
+
+//            throw new Error(
+//                `HTTP ${response.status}: ${text}`
+//            );
+//        }
+
+//        const html = await response.text();
+
+//        console.log(
+//            'CardPrintingGrid HTML loaded.'
+//        );
+
+
+//    }
+//    catch (error) {
+
+//        console.error(
+//            'Today Applicant API Error:',
+//            error
+//        );
+
+//        showWarning(
+//            error.message ||
+//            'ယနေ့ Applicant data ရှာ၍ မရပါ။'
+//        );
+//    }
+//}
+
+async function initOfficerOffice() {
+
+    const filterForm =
+        $('#regionalOfficerFilter');
+
+    try {
+
+        const response =
+            await fetch('/Home/GetCurrentOfficer');
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP Error: ${response.status}`
+            );
+
+        }
+
+        const officer =
+            await response.json();
+
+        const officeCode =
+            (
+                officer.office_code ||
+                officer.officeCode ||
+                ''
+            )
+                .trim()
+                .toUpperCase();
+
+
+
+
+        if (officeCode === 'HO') {
+
+
+            filterForm.show();
+
+            await fetchOffices();
+
+            return;
+
+        }
+
+
+
+        filterForm.hide();
+
+        $('#tableContainer').show();
+
+    }
+    catch (error) {
+
+        console.error(
+            'Current Officer Error:',
+            error
+        );
+
+    }
+
+}
+
+
+
+function loadApplicantDataToTable(data) {
+
+    if (!cardTable) {
+
+        console.error(
+            'DataTable is not initialized.'
+        );
+
+        return;
+
+    }
+
+
+    if (!Array.isArray(data)) {
+
+        console.warn(
+            'Applicant data is not an array.'
+        );
+
+        return;
+
+    }
+
+
+    // Clear old rows
+    cardTable.clear();
+
+
+    data.forEach(function (applicant) {
+
+        const applicantId =
+            applicant.applicantId ??
+            applicant.ApplicantId ??
+            '';
+
+        const uid =
+            applicant.uId ??
+            applicant.uid ??
+            applicant.UId ??
+            '';
+
+        const officeCode =
+            applicant.officeCode ??
+            applicant.OfficeCode ??
+            '';
+
+        const personNameMM =
+            applicant.personNameMM ??
+            applicant.PersonNameMM ??
+            '-';
+
+        const personNameEN =
+            applicant.personNameEN ??
+            applicant.PersonNameEN ??
+            '-';
+
+        const gender =
+            applicant.gender ??
+            applicant.Gender ??
+            '-';
+
+        const dob =
+            applicant.dob ??
+            applicant.DOB ??
+            null;
+
+        const doe =
+            applicant.doe ??
+            applicant.DOE ??
+            null;
+
+        const nrc =
+            applicant.nrc ??
+            applicant.NRC ??
+            '-';
+
+        const printedDate =
+            applicant.printedDate ??
+            applicant.PrintedDate ??
+            null;
+
+
+        const row = [
+
+
+            `
+            <input type="checkbox"
+                   class="form-check-input applicant-checkbox"
+                   value="${escapeHtml(applicantId)}"
+                   data-applicant-id="${escapeHtml(applicantId)}"
+                   data-uid="${escapeHtml(uid)}"
+                   data-office-code="${escapeHtml(officeCode)}"
+                   >
+            `,
+
+
+
+            escapeHtml(personNameMM),
+
+
+
+            escapeHtml(personNameEN),
+
+
+
+            escapeHtml(gender),
+
+
+            formatDate(dob),
+
+
+
+            escapeHtml(uid),
+
+
+            formatDate(doe),
+
+
+
+            escapeHtml(nrc),
+
+
+            formatDate(printedDate),
+
+
+
+            `
+            <div class="text-center">
+
+                <a href="#"
+                   class="btn btn-sm btn-outline-success preview-card-btn"
+                   data-applicant-id="${escapeHtml(applicantId)}"
+                   data-uid="${escapeHtml(uid)}"
+                   data-office-code="${escapeHtml(officeCode)}"
+                   title="Print Preview">
+
+                    <i class="fa-solid fa-print me-1"></i>
+
+                    <span>
+                        Print Preview
+                    </span>
+
+                </a>
+
+            </div>
+            `
+
+        ];
+
+
+        cardTable.row.add(row);
+
+    });
+
+
+    cardTable.draw();
+
+
+    // Restore checked state after DataTable draws
+    restoreCheckboxState();
+
+    updateSelectAllState();
+
+}
+
+
+function formatDate(value) {
+
+    if (!value) {
+        return '';
+    }
+
+
+  
+
+        const date =
+            String(value);
+
+
+        if (date.length >= 10) {
+
+            return escapeHtml(
+                date.substring(0, 10)
+            );
+
+        }
+
+
+        return escapeHtml(date);
+
+    }
+
+
+
 
 function initCardDataTable() {
 
@@ -37,41 +423,69 @@ function initCardDataTable() {
         return;
     }
 
-    // Prevent duplicate initialization
+    // Already initialized
     if ($.fn.DataTable.isDataTable('#cardTable')) {
+
         cardTable = table.DataTable();
+
         return;
     }
 
     cardTable = table.DataTable({
 
-        /*
-         * IMPORTANT
-         *
-         * MVC already handles pagination.
-         * Therefore DataTables pagination is disabled.
-         */
-        paging: false,
 
-        searching: false,
+        paging: true,
+
+        pageLength: 10,
+
+        lengthChange: true,
+
+        lengthMenu: [
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
+        ],
+
+        searching: true,
 
         ordering: true,
 
-        info: false,
+        info: true,
 
-        lengthChange: false,
+        responsive: true,
 
         autoWidth: false,
 
-        responsive: false,
-
+        // Printed Date
         order: [
-            [1, 'asc']
+            [8, 'desc']
         ],
 
+        orderCellsTop: true,
+
+        layout: {
+            topStart: [
+                'pageLength',
+                {
+                    buttons: [
+                        {
+                            extend: 'collection',
+                            text: 'Export',
+                            buttons: [
+                                'copy',
+                                'excel',
+                                'csv',
+                                'pdf',
+                                'print'
+                            ]
+                        }
+                    ]
+                }
+            ],
+
+            topEnd: 'search'
+        },
         columnDefs: [
 
-            // Checkbox column
             {
                 targets: 0,
                 orderable: false,
@@ -79,9 +493,8 @@ function initCardDataTable() {
                 className: 'text-center'
             },
 
-            // Action column
             {
-                targets: 7,
+                targets: 9,
                 orderable: false,
                 searchable: false,
                 className: 'text-center'
@@ -91,19 +504,75 @@ function initCardDataTable() {
 
         language: {
 
-            search: "Search:",
+            search: "အားလုံးရှာရန်:",
+
+            lengthMenu: "Show_MENU_ Entries",
+
+            info:
+                "Showing _START_ to _END_ of _TOTAL_ applicants",
+
+            infoEmpty:
+                "Record မရှိပါ",
 
             zeroRecords:
-                "No matching applicants found.",
+                "ရှာဖွေမှုနှင့် ကိုက်ညီသော Record မရှိပါ",
 
             emptyTable:
-                "No applicants available."
+                "Applicant မရှိပါ",
+
+            paginate: {
+
+                next: "Next",
+
+                previous: "Previous"
+
+            }
 
         },
 
         drawCallback: function () {
 
+            restoreCheckboxState();
+
             updateSelectAllState();
+
+        },
+
+        initComplete: function () {
+
+            const api = this.api();
+
+            $('.column-search')
+                .off(
+                    'keyup.cardColumnSearch change.cardColumnSearch'
+                )
+                .on(
+                    'keyup.cardColumnSearch change.cardColumnSearch',
+                    function () {
+
+                        const columnIndex =
+                            Number(
+                                $(this).data('column')
+                            );
+
+                        const value =
+                            this.value.trim();
+
+                        if (
+                            api
+                                .column(columnIndex)
+                                .search() !== value
+                        ) {
+
+                            api
+                                .column(columnIndex)
+                                .search(value)
+                                .draw();
+
+                        }
+
+                    }
+                );
 
         }
 
@@ -111,10 +580,164 @@ function initCardDataTable() {
 
 }
 
+function initSearchForm() {
 
-// ============================================================
-// DATE RANGE
-// ============================================================
+    $('#cardSearchForm')
+        .off('submit.cardSearch')
+        .on('submit.cardSearch', function () {
+
+            const searchInput =
+                document.getElementById('SearchTerm');
+
+
+            if (searchInput) {
+
+                searchInput.value =
+                    searchInput.value
+                        .trim()
+                        .replace(/\s+/g, ' ');
+
+            }
+
+
+            // Clear selected applicants
+            clearSelectedApplicants();
+
+        });
+
+}
+async function fetchOffices() {
+
+    const officeSelect =
+        $('#officeSelect');
+
+
+    if (!officeSelect.length) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const urlParams =
+            new URLSearchParams(
+                window.location.search
+            );
+
+
+        const selectedOfficeCode =
+            urlParams.get(
+                'OfficeCode'
+            ) || '';
+
+
+        officeSelect.css(
+            'visibility',
+            'hidden'
+        );
+
+
+        const response =
+            await fetch(
+                '/Home/GetOffices'
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `HTTP Error: ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        officeSelect.empty();
+
+
+        officeSelect.append(
+            new Option(
+                '-- Office Stations ရွေးပါ --',
+                ''
+            )
+        );
+
+
+        data.forEach(function (office) {
+
+            officeSelect.append(
+                new Option(
+                    office.stationName,
+                    office.stationCode
+                )
+            );
+
+        });
+
+
+        if (
+            officeSelect.hasClass(
+                'select2-hidden-accessible'
+            )
+        ) {
+
+            officeSelect.select2(
+                'destroy'
+            );
+
+        }
+
+
+        officeSelect.select2({
+
+            placeholder:
+                '-- Office Stations ရွေးပါ --',
+
+            allowClear: true,
+
+            width: '100%'
+
+        });
+
+
+        if (selectedOfficeCode) {
+
+            officeSelect
+                .val(selectedOfficeCode)
+                .trigger('change');
+
+        }
+
+
+        officeSelect.css(
+            'visibility',
+            'visible'
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            'Office API Error:',
+            error
+        );
+
+
+        officeSelect.css(
+            'visibility',
+            'visible'
+        );
+
+    }
+
+}
+
 
 function initDateRange() {
 
@@ -124,21 +747,14 @@ function initDateRange() {
         return;
     }
 
-
     dateFilter.daterangepicker({
 
         autoUpdateInput: false,
-
         autoApply: false,
-
         opens: 'left',
-
         drops: 'down',
-
         parentEl: 'body',
-
         linkedCalendars: false,
-
         showDropdowns: true,
 
         ranges: {
@@ -159,8 +775,13 @@ function initDateRange() {
             ],
 
             'Last Year': [
-                moment().subtract(1, 'year').startOf('year'),
-                moment().subtract(1, 'year').endOf('year')
+                moment()
+                    .subtract(1, 'year')
+                    .startOf('year'),
+
+                moment()
+                    .subtract(1, 'year')
+                    .endOf('year')
             ]
 
         }
@@ -169,314 +790,120 @@ function initDateRange() {
 
         let rangeType = 'custom';
 
-
         switch (label) {
 
             case 'Today':
-
                 rangeType = 'today';
-
                 break;
 
             case 'Last 7 Days':
-
                 rangeType = 'last7';
-
                 break;
 
             case 'This Month':
-
                 rangeType = 'thisMonth';
-
                 break;
 
             case 'Last Year':
-
                 rangeType = 'lastYear';
-
                 break;
-
         }
 
+        $('#dateRangeType').val(rangeType);
 
-        $('#dateRangeType')
-            .val(rangeType);
+        $('#fromDate').val(
+            start.format('YYYY-MM-DD')
+        );
 
+        $('#toDate').val(
+            end.format('YYYY-MM-DD')
+        );
 
-        $('#fromDate')
-            .val(
-                start.format('YYYY-MM-DD')
-            );
+        $('#dateRangeFilter').val(
+            start.format('YYYY-MM-DD') +
+            ' - ' +
+            end.format('YYYY-MM-DD')
+        );
 
-
-        $('#toDate')
-            .val(
-                end.format('YYYY-MM-DD')
-            );
-
-
-        $('#dateRangeFilter')
-            .val(
-                start.format('YYYY-MM-DD') +
-                ' - ' +
-                end.format('YYYY-MM-DD')
-            );
-
-
-        $('#clearDateRange')
-            .addClass('show');
+        $('#clearDateRange').addClass('show');
 
     });
 
 
-    // ========================================================
-    // AUTO SELECT TODAY
-    // ========================================================
 
-    const fromDate =
+    const urlParams =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const hasSearchParameters =
+        urlParams.has('SearchTerm') ||
+        urlParams.has('OfficeCode') ||
+        urlParams.has('FromDate') ||
+        urlParams.has('ToDate') ||
+        urlParams.has('SelectedDate') ||
+        urlParams.has('DateRangeType');
+
+
+    let fromDate =
         $('#fromDate').val();
 
-    const toDate =
+    let toDate =
         $('#toDate').val();
 
 
-    // Server မှ Date မပါလာရင် Today ကို Auto Select
-    if (!fromDate && !toDate) {
+    if (!hasSearchParameters) {
 
-        const today =
-            moment().format('YYYY-MM-DD');
+        const today = moment().format('YYYY-MM-DD');
 
+        $('#fromDate').val(today);
+        $('#toDate').val(today);
+        $('#dateRangeType').val('today');
 
-        $('#dateRangeFilter')
-            .val(
-                today + ' - ' + today
-            );
+        $('#dateRangeFilter').val(
+            today + ' - ' + today
+        );
 
+        $('#clearDateRange').addClass('show');
 
-        $('#dateRangeType')
-            .val('today');
-
-
-        $('#fromDate')
-            .val(today);
-
-
-        $('#toDate')
-            .val(today);
-
-
-        $('#clearDateRange')
-            .addClass('show');
-
-    }
-    else {
-
-        // Server က Date ပြန်ပေးထားရင် အဲဒီ Date ကိုပဲပြမယ်
-
-        if (fromDate && toDate) {
-
-            $('#dateRangeFilter')
-                .val(
-                    fromDate +
-                    ' - ' +
-                    toDate
-                );
-
-            $('#clearDateRange')
-                .addClass('show');
-
-        }
-
+       /* loadTodayApplicants();*/
     }
 
 
-    // ========================================================
-    // CLEAR DATE
-    // ========================================================
 
     $('#clearDateRange')
-        .on('click', function () {
+        .off('click.cardDateClear')
+        .on('click.cardDateClear', function () {
 
-            $('#dateRangeFilter')
-                .val('');
+            $('#dateRangeFilter').val('');
 
-            $('#dateRangeType')
-                .val('');
+            $('#dateRangeType').val('');
 
-            $('#fromDate')
-                .val('');
+            $('#fromDate').val('');
 
-            $('#toDate')
-                .val('');
+            $('#toDate').val('');
 
-            $(this)
-                .removeClass('show');
+            $(this).removeClass('show');
 
         });
 
 }
-
-
-// ============================================================
-// SEARCH FORM
-// ============================================================
-
-function initSearchForm() {
-
-    $('#cardSearchForm')
-        .on('submit', function () {
-
-            const searchInput =
-                document.getElementById(
-                    'SearchTerm'
-                );
-
-            if (searchInput) {
-
-                searchInput.value =
-                    searchInput.value
-                        .trim()
-                        .replace(/\s+/g, ' ');
-
-            }
-
-        });
-
-}
-
-
-// ============================================================
-// FETCH OFFICES
-// ============================================================
-
-async function fetchOffices() {
-
-    const officeSelect =
-        $('#officeSelect');
-
-    try {
-
-        // Get selected OfficeCode from URL
-        const urlParams =
-            new URLSearchParams(
-                window.location.search
-            );
-
-        const selectedOfficeCode =
-            urlParams.get('OfficeCode') || '';
-
-
-        // Hide until data is ready
-        officeSelect
-            .css('visibility', 'hidden');
-
-
-        const response =
-            await fetch('/Home/GetOffices');
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP Error: ${response.status}`
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        // Clear existing options
-        officeSelect.empty();
-
-
-        // Default option
-        officeSelect.append(
-            new Option(
-                '-- Office Stations ရွေးပါ --',
-                ''
-            )
-        );
-
-
-        // Add offices
-        data.forEach(function (office) {
-
-            officeSelect.append(
-                new Option(
-                    office.stationName,
-                    office.stationCode
-                )
-            );
-
-        });
-
-
-        // Initialize Select2
-        officeSelect.select2({
-
-            placeholder:
-                '-- Office Stations ရွေးပါ --',
-
-            allowClear: false,
-
-            width: '100%'
-
-        });
-
-
-        // Restore selected Office
-        if (selectedOfficeCode) {
-
-            officeSelect
-                .val(selectedOfficeCode)
-                .trigger('change');
-
-        }
-
-
-        // Show only after everything is ready
-        officeSelect
-            .css('visibility', 'visible');
-
-
-    }
-    catch (error) {
-
-        console.error(
-            'Office API Error:',
-            error
-        );
-
-        // Show select even if API fails
-        officeSelect
-            .css('visibility', 'visible');
-
-    }
-
-}
-
-// ============================================================
-// GET APPLICANT DATA
-// ============================================================
 
 function getApplicantDataFromCheckbox(
     checkbox
 ) {
 
     if (!checkbox) {
+
         return null;
+
     }
 
 
     const applicantId =
         (
             checkbox.dataset.applicantId ||
-            checkbox.getAttribute(
-                'data-applicant-id'
-            ) ||
             checkbox.value ||
             ''
         ).trim();
@@ -485,9 +912,6 @@ function getApplicantDataFromCheckbox(
     const uid =
         (
             checkbox.dataset.uid ||
-            checkbox.getAttribute(
-                'data-uid'
-            ) ||
             ''
         ).trim();
 
@@ -495,9 +919,6 @@ function getApplicantDataFromCheckbox(
     const officeCode =
         (
             checkbox.dataset.officeCode ||
-            checkbox.getAttribute(
-                'data-office-code'
-            ) ||
             ''
         ).trim();
 
@@ -518,106 +939,150 @@ function getApplicantDataFromCheckbox(
 }
 
 
-// ============================================================
-// GET SELECTED APPLICANTS
-// ============================================================
-
 function getSelectedApplicants() {
 
-    const selectedApplicants = [];
+    const selectedApplicants =
+        getStoredSelectedApplicants();
 
 
-    /*
-     * IMPORTANT:
-     *
-     * Use DataTables rows instead of
-     * document.querySelectorAll().
-     */
-    if (cardTable) {
-
-        cardTable
-            .rows()
-            .nodes()
-            .to$()
-            .find(
-                '.applicant-checkbox:checked'
-            )
-            .each(function () {
-
-                const data =
-                    getApplicantDataFromCheckbox(
-                        this
-                    );
-
-
-                if (
-                    data &&
-                    data.applicantId
-                ) {
-
-                    selectedApplicants.push(
-                        data
-                    );
-
-                }
-
-            });
-
-    }
-    else {
-
-        // Fallback
-        document
-            .querySelectorAll(
-                '.applicant-checkbox:checked'
-            )
-            .forEach(function (checkbox) {
-
-                const data =
-                    getApplicantDataFromCheckbox(
-                        checkbox
-                    );
-
-
-                if (
-                    data &&
-                    data.applicantId
-                ) {
-
-                    selectedApplicants.push(
-                        data
-                    );
-
-                }
-
-            });
-
-    }
-
-
-    return selectedApplicants;
+    return Object.values(
+        selectedApplicants
+    );
 
 }
 
 
-// ============================================================
-// SELECT ALL
-// ============================================================
 
-function initSelectAll() {
+function getStoredSelectedApplicants() {
 
-    const selectAll =
-        document.getElementById(
-            'selectAllApplicants'
+    try {
+
+        const data =
+            localStorage.getItem(
+                SELECTED_STORAGE_KEY
+            );
+
+
+        if (!data) {
+
+            return {};
+
+        }
+
+
+        const parsed =
+            JSON.parse(data);
+
+
+        if (
+            !parsed ||
+            typeof parsed !== 'object'
+        ) {
+
+            return {};
+
+        }
+
+
+        return parsed;
+
+    }
+    catch (error) {
+
+        console.error(
+            'Selected Applicant Storage Error:',
+            error
         );
 
 
-    if (!selectAll) {
-        return;
+        return {};
+
     }
 
+}
 
-    // Select all
+
+function saveStoredSelectedApplicants(
+    data
+) {
+
+    try {
+
+        localStorage.setItem(
+            SELECTED_STORAGE_KEY,
+            JSON.stringify(data)
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            'Save Selected Applicant Error:',
+            error
+        );
+
+    }
+
+}
+
+
+
+function clearSelectedApplicants() {
+
+    localStorage.removeItem(
+        SELECTED_STORAGE_KEY
+    );
+
+}
+
+
+function restoreCheckboxState() {
+
+    const selectedApplicants =
+        getStoredSelectedApplicants();
+
+
+    $('#cardTable')
+        .find(
+            '.applicant-checkbox'
+        )
+        .each(function () {
+
+            const applicantId =
+                (
+                    this.dataset.applicantId ||
+                    this.value ||
+                    ''
+                ).trim();
+
+
+            if (!applicantId) {
+
+                this.checked = false;
+
+                return;
+
+            }
+
+
+            this.checked =
+                Object.prototype.hasOwnProperty.call(
+                    selectedApplicants,
+                    applicantId
+                );
+
+        });
+
+
+    updateSelectAllState();
+
+}
+
+
+
+function initSelectAll() {
+
+
 
     $(document)
         .off(
@@ -633,72 +1098,85 @@ function initSelectAll() {
                     this.checked;
 
 
-                if (cardTable) {
+                selectAllDataTableRows(
+                    checked
+                );
 
-                    cardTable
-                        .rows()
-                        .nodes()
-                        .to$()
-                        .find(
-                            '.applicant-checkbox'
-                        )
-                        .prop(
-                            'checked',
-                            checked
-                        );
+            }
+        );
+
+
+
+    $(document)
+        .off(
+            'change.cardCheckbox',
+            '#cardTable tbody .applicant-checkbox'
+        )
+        .on(
+            'change.cardCheckbox',
+            '#cardTable tbody .applicant-checkbox',
+            function () {
+
+                const checkbox =
+                    this;
+
+
+                const data =
+                    getApplicantDataFromCheckbox(
+                        checkbox
+                    );
+
+
+                if (
+                    !data ||
+                    !data.applicantId
+                ) {
+
+                    return;
+
+                }
+
+
+                const selectedApplicants =
+                    getStoredSelectedApplicants();
+
+
+                if (checkbox.checked) {
+
+                    selectedApplicants[
+                        data.applicantId
+                    ] = data;
 
                 }
                 else {
 
-                    document
-                        .querySelectorAll(
-                            '.applicant-checkbox'
-                        )
-                        .forEach(
-                            function (
-                                checkbox
-                            ) {
-
-                                checkbox.checked =
-                                    checked;
-
-                            }
-                        );
+                    delete selectedApplicants[
+                        data.applicantId
+                    ];
 
                 }
 
 
-                updateSelectAllState();
+                saveStoredSelectedApplicants(
+                    selectedApplicants
+                );
 
-            }
-        );
-
-
-    // Individual checkbox
-
-    $('#cardTable tbody')
-        .off(
-            'change.cardCheckbox',
-            '.applicant-checkbox'
-        )
-        .on(
-            'change.cardCheckbox',
-            '.applicant-checkbox',
-            function () {
 
                 updateSelectAllState();
 
             }
         );
 
-
-    // DataTable redraw
 
     $('#cardTable')
-        .off('draw.dt.cardCheckbox')
+        .off(
+            'draw.dt.cardCheckbox'
+        )
         .on(
             'draw.dt.cardCheckbox',
             function () {
+
+                restoreCheckboxState();
 
                 updateSelectAllState();
 
@@ -708,9 +1186,116 @@ function initSelectAll() {
 }
 
 
-// ============================================================
-// UPDATE SELECT ALL STATE
-// ============================================================
+function selectAllDataTableRows(
+    checked
+) {
+
+    if (!cardTable) {
+
+        return;
+
+    }
+
+
+    const selectedApplicants =
+        getStoredSelectedApplicants();
+
+
+
+    cardTable.rows().every(function () {
+
+        const rowData =
+            this.data();
+
+
+        if (
+            !rowData ||
+            !rowData[0]
+        ) {
+
+            return;
+
+        }
+
+
+        const tempDiv =
+            document.createElement(
+                'div'
+            );
+
+
+        tempDiv.innerHTML =
+            rowData[0];
+
+
+        const checkbox =
+            tempDiv.querySelector(
+                '.applicant-checkbox'
+            );
+
+
+        if (!checkbox) {
+
+            return;
+
+        }
+
+
+
+        const data =
+            getApplicantDataFromCheckbox(
+                checkbox
+            );
+
+
+        if (
+            !data ||
+            !data.applicantId
+        ) {
+
+            return;
+
+        }
+
+
+
+        if (checked) {
+
+            selectedApplicants[
+                data.applicantId
+            ] = data;
+
+        }
+
+
+
+        else {
+
+            delete selectedApplicants[
+                data.applicantId
+            ];
+
+        }
+
+    });
+
+
+
+    saveStoredSelectedApplicants(
+        selectedApplicants
+    );
+
+
+
+    restoreCheckboxState();
+
+
+
+    updateSelectAllState();
+
+}
+
+
 
 function updateSelectAllState() {
 
@@ -721,41 +1306,104 @@ function updateSelectAllState() {
 
 
     if (!selectAll) {
+
         return;
-    }
-
-
-    let checkboxes;
-
-
-    if (cardTable) {
-
-        checkboxes =
-            cardTable
-                .rows()
-                .nodes()
-                .to$()
-                .find(
-                    '.applicant-checkbox'
-                );
-
-    }
-    else {
-
-        checkboxes =
-            $('.applicant-checkbox');
 
     }
 
 
-    const total =
-        checkboxes.length;
+    if (!cardTable) {
+
+        selectAll.checked =
+            false;
+
+        selectAll.indeterminate =
+            false;
+
+        return;
+
+    }
 
 
-    const checked =
-        checkboxes.filter(
-            ':checked'
-        ).length;
+    const selectedApplicants =
+        getStoredSelectedApplicants();
+
+
+    let total = 0;
+
+    let selectedCount = 0;
+
+
+    cardTable.rows().every(function () {
+
+        const rowData =
+            this.data();
+
+
+        if (
+            !rowData ||
+            !rowData[0]
+        ) {
+
+            return;
+
+        }
+
+
+        const tempDiv =
+            document.createElement(
+                'div'
+            );
+
+
+        tempDiv.innerHTML =
+            rowData[0];
+
+
+        const checkbox =
+            tempDiv.querySelector(
+                '.applicant-checkbox'
+            );
+
+
+        if (!checkbox) {
+
+            return;
+
+        }
+
+
+        const applicantId =
+            (
+                checkbox.dataset.applicantId ||
+                checkbox.value ||
+                ''
+            ).trim();
+
+
+        if (!applicantId) {
+
+            return;
+
+        }
+
+
+        total++;
+
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                selectedApplicants,
+                applicantId
+            )
+        ) {
+
+            selectedCount++;
+
+        }
+
+    });
+
 
 
     if (total === 0) {
@@ -771,16 +1419,8 @@ function updateSelectAllState() {
     }
 
 
-    if (checked === 0) {
 
-        selectAll.checked =
-            false;
-
-        selectAll.indeterminate =
-            false;
-
-    }
-    else if (checked === total) {
+    if (selectedCount === total) {
 
         selectAll.checked =
             true;
@@ -789,22 +1429,33 @@ function updateSelectAllState() {
             false;
 
     }
+
+
+    else if (selectedCount > 0) {
+
+        selectAll.checked =
+            false;
+
+        selectAll.indeterminate =
+            true;
+
+    }
+
+
+
     else {
 
         selectAll.checked =
             false;
 
         selectAll.indeterminate =
-            true;
+            false;
 
     }
 
 }
 
 
-// ============================================================
-// SERVER ERROR
-// ============================================================
 
 async function getServerErrorMessage(
     response
@@ -833,12 +1484,12 @@ async function getServerErrorMessage(
     }
 
 
-    // JSON
-
     try {
 
         const json =
-            JSON.parse(responseText);
+            JSON.parse(
+                responseText
+            );
 
 
         if (json) {
@@ -858,79 +1509,6 @@ async function getServerErrorMessage(
     }
     catch {
 
-        // Not JSON
-
-    }
-
-
-    // XML
-
-    if (
-        responseText.trim()
-            .startsWith('<?xml') ||
-        responseText.trim()
-            .startsWith('<')
-    ) {
-
-        try {
-
-            const parser =
-                new DOMParser();
-
-
-            const xml =
-                parser.parseFromString(
-                    responseText,
-                    'application/xml'
-                );
-
-
-            const messageNode =
-                xml.querySelector(
-                    'Message, message, Error, error'
-                );
-
-
-            if (
-                messageNode &&
-                messageNode.textContent
-            ) {
-
-                return messageNode
-                    .textContent
-                    .trim();
-
-            }
-
-
-            const parserError =
-                xml.querySelector(
-                    'parsererror'
-                );
-
-
-            if (parserError) {
-
-                return (
-                    `HTTP ${response.status}: ` +
-                    responseText.substring(
-                        0,
-                        500
-                    )
-                );
-
-            }
-
-
-            return responseText;
-
-        }
-        catch {
-
-            return responseText;
-
-        }
-
     }
 
 
@@ -939,9 +1517,6 @@ async function getServerErrorMessage(
 }
 
 
-// ============================================================
-// GENERATE XML
-// ============================================================
 
 async function generateXmlForApplicant(
     applicantId,
@@ -967,9 +1542,12 @@ async function generateXmlForApplicant(
             uid || '',
 
         officeCode:
-            officeCode || ''
+            officeCode || '',
+
+        isPrinted: isPrintedPage
 
     };
+
 
 
     const response =
@@ -977,8 +1555,7 @@ async function generateXmlForApplicant(
             generateXmlUrl,
             {
 
-                method:
-                    'POST',
+                method: 'POST',
 
                 headers: {
 
@@ -1046,42 +1623,14 @@ async function generateXmlForApplicant(
 }
 
 
-// ============================================================
-// FOLDER PICKER
-// ============================================================
-
 async function chooseXmlFolder() {
-
-    if (
-        typeof window.showDirectoryPicker !==
-        'function'
-    ) {
-
-        throw new Error(
-            'ဤစက်၏ Browser မှာ Folder Selection API မရနိုင်ပါ။ Chrome/Edge ကို Update လုပ်ပြီး HTTPS ဖြင့် Website ကို ပြန်ဖွင့်ပါ။'
-        );
-
-    }
-
-
-    if (!window.isSecureContext) {
-
-        throw new Error(
-            'Website သည် Secure Context မဟုတ်ပါ။ HTTPS ဖြင့် Website ကို ဖွင့်ပါ။'
-        );
-
-    }
 
 
     try {
 
-        const directoryHandle =
-            await window.showDirectoryPicker({
-                mode: 'readwrite'
-            });
-
-
-        return directoryHandle;
+        return await window.showDirectoryPicker({
+            mode: 'readwrite'
+        });
 
     }
     catch (error) {
@@ -1103,10 +1652,6 @@ async function chooseXmlFolder() {
 }
 
 
-// ============================================================
-// SAVE XML
-// ============================================================
-
 async function saveXmlToFolder(
     directoryHandle,
     result
@@ -1116,18 +1661,6 @@ async function saveXmlToFolder(
 
         throw new Error(
             'Folder မရွေးထားပါ။'
-        );
-
-    }
-
-
-    if (
-        !result ||
-        !result.blob
-    ) {
-
-        throw new Error(
-            'XML File မရရှိပါ။'
         );
 
     }
@@ -1162,15 +1695,9 @@ async function saveXmlToFolder(
 }
 
 
-// ============================================================
-// SUBMIT PRINT
-// ============================================================
-
 async function submitPrint() {
 
-    /*
-     * Get selected rows from DataTables
-     */
+
     const selectedRows =
         getSelectedApplicants();
 
@@ -1187,10 +1714,6 @@ async function submitPrint() {
 
     }
 
-
-    // ========================================================
-    // CHOOSE FOLDER
-    // ========================================================
 
     let directoryHandle;
 
@@ -1219,10 +1742,6 @@ async function submitPrint() {
 
     }
 
-
-    // ========================================================
-    // BUTTON
-    // ========================================================
 
     const printButton =
         document.getElementById(
@@ -1253,15 +1772,13 @@ async function submitPrint() {
         }
 
 
-        // ====================================================
-        // GENERATE ONE BY ONE
-        // ====================================================
 
         for (
             const item of selectedRows
         ) {
 
             try {
+
 
                 const result =
                     await generateXmlForApplicant(
@@ -1270,7 +1787,8 @@ async function submitPrint() {
 
                         item.uid,
 
-                        item.officeCode
+                        item.officeCode,
+                       
 
                     );
 
@@ -1288,12 +1806,6 @@ async function submitPrint() {
 
             }
             catch (error) {
-
-                console.error(
-                    `XML Error: ${item.applicantId}`,
-                    error
-                );
-
 
                 failedCount++;
 
@@ -1314,23 +1826,59 @@ async function submitPrint() {
         }
 
 
-        // ====================================================
-        // RESULT
-        // ====================================================
-
         showXmlResult(
-
             successCount,
-
             failedCount,
-
             failedApplicants
-
         );
+
+
+
+        if (
+            successCount > 0
+        ) {
+
+            const selectedApplicants =
+                getStoredSelectedApplicants();
+
+
+            selectedRows.forEach(function (item) {
+
+                if (
+                    !failedApplicants.some(
+                        function (failed) {
+
+                            return (
+                                failed.applicantId ===
+                                item.applicantId
+                            );
+
+                        }
+                    )
+                ) {
+
+                    delete selectedApplicants[
+                        item.applicantId
+                    ];
+
+                }
+
+            });
+
+
+            saveStoredSelectedApplicants(
+                selectedApplicants
+            );
+
+
+            restoreCheckboxState();
+
+            updateSelectAllState();
+
+        }
 
     }
     catch (error) {
-
 
         showWarning(
             error.message ||
@@ -1348,7 +1896,7 @@ async function submitPrint() {
 
             printButton.innerHTML = `
                 <i class="fa-solid fa-file-code me-1"></i>
-                PRINT
+                CARD PRINT
             `;
 
         }
@@ -1358,9 +1906,6 @@ async function submitPrint() {
 }
 
 
-// ============================================================
-// XML RESULT
-// ============================================================
 
 function showXmlResult(
     successCount,
@@ -1443,49 +1988,6 @@ function showXmlResult(
 }
 
 
-// ============================================================
-// SUCCESS
-// ============================================================
-
-function showSuccess(message) {
-
-    if (
-        typeof showAppAlert ===
-        'function'
-    ) {
-
-        showAppAlert({
-
-            title:
-                'အောင်မြင်ပါသည်',
-
-            message:
-                message,
-
-            type:
-                'success',
-
-            confirmText:
-                'OK',
-
-            showCancel:
-                false
-
-        });
-
-    }
-    else {
-
-        alert(message);
-
-    }
-
-}
-
-
-// ============================================================
-// WARNING
-// ============================================================
 
 function showWarning(message) {
 
@@ -1523,234 +2025,58 @@ function showWarning(message) {
 }
 
 
-// ============================================================
-// ESCAPE HTML
-// ============================================================
+
+function showSuccess(message) {
+
+    if (
+        typeof showAppAlert ===
+        'function'
+    ) {
+
+        showAppAlert({
+
+            title:
+                'အောင်မြင်ပါသည်',
+
+            message:
+                message,
+
+            type:
+                'success',
+
+            confirmText:
+                'OK',
+
+            showCancel:
+                false
+
+        });
+
+    }
+    else {
+
+        alert(message);
+
+    }
+
+}
 
 function escapeHtml(value) {
 
     const div =
-        document.createElement('div');
+        document.createElement(
+            'div'
+        );
 
 
     div.textContent =
-        value || '';
+        value ?? '';
 
 
     return div.innerHTML;
 
 }
 
-
-// ============================================================
-// MARK PRINTED
-// ============================================================
-
-async function markCardAsPrinted(
-    applicantId
-) {
-
-    try {
-
-        const response =
-            await fetch(
-                markPrintedUrl,
-                {
-
-                    method:
-                        'POST',
-
-                    headers: {
-
-                        'Content-Type':
-                            'application/json'
-
-                    },
-
-                    body:
-                        JSON.stringify({
-
-                            application_ids: [
-                                applicantId
-                            ]
-
-                        })
-
-                }
-            );
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                `HTTP Error: ${response.status}`
-            );
-
-        }
-
-
-        await response.json();
-
-
-        updatePrintedDate(
-            applicantId
-        );
-
-
-        return true;
-
-    }
-    catch (error) {
-
-        console.error(
-            'Mark Printed Error:',
-            error
-        );
-
-
-        return false;
-
-    }
-
-}
-
-
-// ============================================================
-// UPDATE PRINTED DATE
-// ============================================================
-
-function updatePrintedDate(
-    applicantId
-) {
-
-    const button =
-        document.querySelector(
-            `.preview-card-btn[data-applicant-id="${CSS.escape(
-                applicantId
-            )}"]`
-        );
-
-
-    if (!button) {
-        return;
-    }
-
-
-    const row =
-        button.closest('tr');
-
-
-    if (!row) {
-        return;
-    }
-
-
-    /*
-     * DataTables-safe way
-     */
-    const rowData =
-        cardTable
-            ? cardTable
-                .row(row)
-            : null;
-
-
-    const printedDateCell =
-        row.children[6];
-
-
-    if (!printedDateCell) {
-        return;
-    }
-
-
-    const today =
-        new Date();
-
-
-    const year =
-        today.getFullYear();
-
-
-    const month =
-        String(
-            today.getMonth() + 1
-        ).padStart(2, '0');
-
-
-    const day =
-        String(
-            today.getDate()
-        ).padStart(2, '0');
-
-
-    printedDateCell.textContent =
-        `${year}-${month}-${day}`;
-
-
-    if (rowData) {
-
-        rowData
-            .invalidate()
-            .draw(false);
-
-    }
-
-}
-
-
-// ============================================================
-// PRINTED RADIO
-// ============================================================
-
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
-
-        const printedRadio =
-            document.getElementById(
-                'isPrinted'
-            );
-
-
-        if (!printedRadio) {
-            return;
-        }
-
-
-        printedRadio.addEventListener(
-            'click',
-            function () {
-
-                if (
-                    this.dataset.checked ===
-                    'true'
-                ) {
-
-                    this.checked =
-                        false;
-
-                    this.dataset.checked =
-                        'false';
-
-                }
-                else {
-
-                    this.dataset.checked =
-                        'true';
-
-                }
-
-            }
-        );
-
-    }
-);
-
-
-// ============================================================
-// CARD PREVIEW
-// ============================================================
 
 document.addEventListener(
     'DOMContentLoaded',
@@ -1797,9 +2123,6 @@ document.addEventListener(
         let currentOfficeCode = null;
 
 
-        // ====================================================
-        // OPEN PREVIEW
-        // ====================================================
 
         document.addEventListener(
             'click',
@@ -1812,7 +2135,9 @@ document.addEventListener(
 
 
                 if (!button) {
+
                     return;
+
                 }
 
 
@@ -1829,7 +2154,8 @@ document.addEventListener(
 
                 currentUid =
                     (
-                        button.dataset.uid ||
+                        button.dataset
+                            .uid ||
                         ''
                     ).trim();
 
@@ -1875,26 +2201,17 @@ document.addEventListener(
                     printBtn.disabled =
                         true;
 
-                    printBtn.innerHTML = `
-                        <i class="fa-solid fa-file-code me-1"></i>
-                        PRINT
-                    `;
-
                 }
 
 
                 const url =
                     eidCardPrintUrl +
-                    `?applicantId=${encodeURIComponent(
-                        currentApplicantId
-                    )}` +
-                    `&uid=${encodeURIComponent(
-                        currentUid
-                    )}` +
-                    `&officeCode=${encodeURIComponent(
-                        currentOfficeCode
-                    )}`;
-
+                    `?applicantId=${encodeURIComponent(currentApplicantId)}` +
+                    `&uid=${encodeURIComponent(currentUid)}` +
+                    `&officeCode=${encodeURIComponent(currentOfficeCode)}` +
+                    `&IsPrinted=${encodeURIComponent(isPrintedPage)}` +
+                    `&FromDate=${encodeURIComponent(fromDate)}` +
+                    `&ToDate=${encodeURIComponent(toDate)}`;
 
                 try {
 
@@ -1960,11 +2277,6 @@ document.addEventListener(
                 }
                 catch (error) {
 
-                    console.error(
-                        'Preview Error:',
-                        error
-                    );
-
 
                     modalContent.innerHTML = `
 
@@ -1991,23 +2303,12 @@ document.addEventListener(
 
                     `;
 
-
-                    if (printBtn) {
-
-                        printBtn.disabled =
-                            true;
-
-                    }
-
                 }
 
             }
         );
 
 
-        // ====================================================
-        // PREVIEW PRINT
-        // ====================================================
 
         if (printBtn) {
 
@@ -2022,15 +2323,6 @@ document.addEventListener(
                         showWarning(
                             'Applicant ID မရှိပါ။'
                         );
-
-                        return;
-
-                    }
-
-
-                    if (
-                        printBtn.disabled
-                    ) {
 
                         return;
 
@@ -2088,7 +2380,6 @@ document.addEventListener(
                     }
                     catch (error) {
 
-
                         showWarning(
                             error.message ||
                             'Print လုပ်၍ မရပါ။'
@@ -2102,8 +2393,8 @@ document.addEventListener(
 
 
                         printBtn.innerHTML = `
-                            <i class="fa-solid fa-file-code me-1"></i>
-                            PRINT
+                            <i class="fa-solid fa-print me-1"></i>
+                            Print Card
                         `;
 
                     }
@@ -2114,9 +2405,6 @@ document.addEventListener(
         }
 
 
-        // ====================================================
-        // CLOSE
-        // ====================================================
 
         if (closeBtn) {
 
@@ -2175,63 +2463,11 @@ document.addEventListener(
             );
 
 
-            currentApplicantId =
-                null;
+            currentApplicantId = null;
 
+            currentUid = null;
 
-            currentUid =
-                null;
-
-
-            currentOfficeCode =
-                null;
-
-
-            setTimeout(
-                function () {
-
-                    if (
-                        !modal.classList.contains(
-                            'preview-show'
-                        )
-                    ) {
-
-                        modalContent.innerHTML = `
-
-                            <div class="preview-loading">
-
-                                <div
-                                    class="spinner-border text-primary"
-                                    role="status">
-                                </div>
-
-                                <span class="mt-2">
-                                    Loading Card...
-                                </span>
-
-                            </div>
-
-                        `;
-
-                    }
-
-                },
-                300
-            );
-
-
-            if (printBtn) {
-
-                printBtn.disabled =
-                    true;
-
-
-                printBtn.innerHTML = `
-                    <i class="fa-solid fa-file-code me-1"></i>
-                    PRINT
-                `;
-
-            }
+            currentOfficeCode = null;
 
         }
 

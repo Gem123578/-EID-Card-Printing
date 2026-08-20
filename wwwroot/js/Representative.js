@@ -7,286 +7,8 @@
     });
 });
 
-////Fetch 
-//fetchOffices();
-
-//// FETCH OFFICE
-
-//async function fetchOffices() {
-
-//    try {
-
-//        const response = await fetch('/Home/GetOffices');
-
-//        if (!response.ok) {
-
-//            throw new Error(`HTTP Error: ${response.status}`);
-//        }
-
-//        const data = await response.json();
-
-//        const officeSelect = $('#officeSelect');
-
-//        officeSelect.empty();
-
-//        officeSelect.append(new Option('-- Office Stations ရွေးပါ --', ''));
-
-//        data.forEach(function (office) {
-
-//            officeSelect.append(new Option(office.stationName, office.stationCode));
-
-//        });
-
-//        officeSelect.select2
-//            ({
-//                placeholder: '-- Office Stations ရွေးပါ --',
-
-//                allowClear: true,
-
-//                width: '100%'
-//            });
-
-//    }
-//    catch (error) {
-
-//        console.error("Office API Error:", error);
-
-//    }
-//}
-
-//QR
-//document.addEventListener('DOMContentLoaded', function () {
-
-//    const txtQr = document.getElementById("qrInput");
-
-//    if (!txtQr) {
-//        console.error("qrInput not found.");
-//        return;
-//    }
-
-//    // Page load မှာ QR input ကို focus
-//    txtQr.focus();
-
-//    txtQr.addEventListener("keydown", function (e) {
-
-//        if (e.key !== "Enter") {
-//            return;
-//        }
-
-//        e.preventDefault();
-
-//        const encryptedData = this.value.trim();
-
-//        // Scan value ကို မပျောက်ခင် သိမ်းထားပါ
-//        this.value = "";
-
-//        if (!encryptedData) {
-
-//            showAppAlert({
-//                title: "Error Message",
-//                type: "error",
-//                message: "QR Code is empty."
-//            });
-
-//            txtQr.focus();
-//            return;
-//        }
-
-//        // Get selected office
-//        const issueOffice = $('#officeSelect').val();
-
-//        if (!issueOffice) {
-
-//            showAppAlert({
-//                title: "Information Message",
-//                type: "information",
-//                message: "ရုံးအမည် တစ်ခုကိုရွေးချယ်ပါ"
-//            });
-
-//            $('#officeSelect').select2('open');
-
-//            return;
-//        }
-
-//        const requestData = {
-//            qrCode: encryptedData,
-//            officeCode: issueOffice
-//        };
-
-//        const token =
-//            $('input[name="__RequestVerificationToken"]').val();
-
-//        $.ajax({
-//            url: '/IssuedCard/ScanQRCode',
-//            type: 'POST',
-//            contentType: 'application/json',
-
-//            headers: {
-//                "RequestVerificationToken": token
-//            },
-
-//            data: JSON.stringify({
-//                QRcode: encryptedData,
-//                OfficeCode: issueOffice
-//            }),
-
-//            success: function (res) {
-
-//                if (res.logout) {
-//                    window.location.href = "/Login";
-//                    return;
-//                }
-
-//                if (!res.success) {
-
-//                    showAppAlert({
-//                        title: "Error Message",
-//                        type: "error",
-//                        message: res.message
-//                    });
-
-//                    txtQr.focus();
-//                    return;
-//                }
-
-//                console.log("Queue Token:", res.queueToken);
-//                console.log("UID:", res.uid);
-//                console.log("Office:", res.issueOffice);
-//                console.log("Appointment:", res.appointment);
-
-//                showAppAlert({
-//                    title: "Information Message",
-//                    type: "information",
-//                    message: res.message || "QR Code processed successfully."
-//                });
-
-//                txtQr.focus();
-//            },
-
-//            error: function (xhr, status, error) {
-
-//                console.error("QR Error:", xhr.responseText);
-
-//                showAppAlert({
-//                    title: "Error Message",
-//                    type: "error",
-//                    message: "Server connection failed."
-//                });
-
-//                txtQr.focus();
-//            }
-//        });
-//    });
-//});
-
-document.addEventListener('DOMContentLoaded', function () {
-
-    const txtQr = document.getElementById("qrInput");
-
-    if (!txtQr) {
-        console.error("qrInput not found.");
-        return;
-    }
-
-    txtQr.focus();
-
-    txtQr.addEventListener("keydown", function (e) {
-
-        if (e.key !== "Enter") {
-            return;
-        }
-
-        e.preventDefault();
-
-        const fullQr = this.value.trim();
-
-        console.log("FULL QR:", fullQr);
-
-        if (!fullQr) {
-            return;
-        }
-
-        try {
-
-            const url = new URL(fullQr);
-
-            const qrData = url.searchParams.get("param1");
-
-            if (!qrData) {
-                console.error("param1 not found");
-                return;
-            }
-
-            // TextBox မှာ data only
-            txtQr.value = qrData;
-
-            console.log("QR DATA ONLY:", qrData);
-
-            const issueOffice = $('#officeSelect').val();
-
-            if (!issueOffice) {
-                showAppAlert({
-                    title: "Information Message",
-                    type: "information",
-                    message: "ရုံးအမည် တစ်ခုကိုရွေးချယ်ပါ"
-                });
-
-                return;
-            }
-
-            // Controller ကို data only ပို့
-            const requestData = {
-                QRcode: qrData,
-                OfficeCode: issueOffice
-            };
-
-            console.log("SEND TO CONTROLLER:", requestData);
-
-            $.ajax({
-                url: '/IssuedCard/ScanQRCode',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(requestData),
-
-                success: function (res) {
-
-                    console.log("SERVER RESPONSE:", res);
-
-                    if (!res.success) {
-                        showAppAlert({
-                            title: "Error Message",
-                            type: "error",
-                            message: res.message
-                        });
-                        return;
-                    }
-
-                    console.log("Queue Token:", res.queueToken);
-                    console.log("UID:", res.uid);
-                    console.log("Appointment:", res.appointment);
-                },
-
-                error: function (xhr) {
-
-                    console.error(
-                        "QR ERROR:",
-                        xhr.responseText
-                    );
-                }
-            });
-
-        }
-        catch (error) {
-
-            console.error("Invalid QR:", error);
-        }
-    });
-});
-
 //data return 
 document.addEventListener("DOMContentLoaded", function () {
-
-    console.log("IssuedCard.js loaded.");
 
     const txtQr = document.getElementById("qrInput");
     const officeSelect = $("#officeSelect");
@@ -296,15 +18,14 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-
     // ==========================================
     // LOAD OFFICES
     // ==========================================
 
-    fetchOffices();
+    loadOffices();
 
 
-    async function fetchOffices() {
+    async function loadOffices() {
 
         try {
 
@@ -316,10 +37,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 );
             }
 
-            const data = await response.json();
+            const offices = await response.json();
 
+            console.log("Offices:", offices);
+
+            // Clear existing options
             officeSelect.empty();
 
+            // Default option
             officeSelect.append(
                 new Option(
                     "-- Office Stations ရွေးပါ --",
@@ -327,8 +52,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 )
             );
 
-
-            data.forEach(function (office) {
+            // Add offices
+            offices.forEach(function (office) {
 
                 officeSelect.append(
                     new Option(
@@ -339,16 +64,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
             });
 
+            // Initialize Select2
+            if (officeSelect.hasClass("select2-hidden-accessible")) {
+                officeSelect.select2("destroy");
+            }
 
             officeSelect.select2({
-                placeholder:
-                    "-- Office Stations ရွေးပါ --",
-
+                placeholder: "-- Office Stations ရွေးပါ --",
                 allowClear: true,
-
                 width: "100%"
             });
 
+            console.log(
+                "Office options loaded:",
+                officeSelect.find("option").length
+            );
 
         }
         catch (error) {
@@ -358,8 +88,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 error
             );
 
+            showError(
+                "Office list loading failed."
+            );
         }
-
     }
 
 
@@ -369,403 +101,299 @@ document.addEventListener("DOMContentLoaded", function () {
 
     txtQr.focus();
 
+    txtQr.addEventListener("keydown", function (e) {
 
-    txtQr.addEventListener(
-        "keydown",
-        function (e) {
+        if (e.key !== "Enter") {
+            return;
+        }
 
-            // Scanner usually sends ENTER
-            if (e.key !== "Enter") {
-                return;
-            }
+        e.preventDefault();
 
-            e.preventDefault();
+        const fullQr = txtQr.value.trim();
 
+        if (!fullQr) {
 
-            const fullQr =
-                txtQr.value.trim();
-
-
-            console.log(
-                "FULL QR:",
-                fullQr
+            showError(
+                "QR Code is empty."
             );
 
+            return;
+        }
 
-            if (!fullQr) {
+
+        // ==========================================
+        // GET param1
+        // ==========================================
+
+        let qrData = "";
+
+        try {
+
+            const url = new URL(fullQr);
+
+            qrData = url.searchParams.get("param1");
+
+            if (!qrData) {
 
                 showError(
-                    "QR Code is empty."
+                    "param1 data မတွေ့ပါ။"
                 );
 
                 return;
             }
 
+        }
+        catch (error) {
 
-            // ==========================================
-            // GET param1 DATA
-            // ==========================================
+            console.error(
+                "QR URL parse error:",
+                error
+            );
 
-            let qrData = "";
+            showError(
+                "Invalid QR Code."
+            );
 
-
-            try {
-
-                const url =
-                    new URL(fullQr);
-
-
-                qrData =
-                    url.searchParams.get("param1");
+            return;
+        }
 
 
-                if (!qrData) {
+        // ==========================================
+        // SHOW QR DATA
+        // ==========================================
 
+        txtQr.value = qrData;
+
+
+        // ==========================================
+        // GET SELECTED OFFICE
+        // ==========================================
+
+        const issueOffice = officeSelect.val();
+
+        console.log(
+            "Selected Office:",
+            issueOffice
+        );
+
+        if (!issueOffice) {
+
+            showInfo(
+                "ရုံးအမည် တစ်ခုကိုရွေးချယ်ပါ"
+            );
+
+            officeSelect.select2("open");
+
+            return;
+        }
+
+
+        // ==========================================
+        // REQUEST
+        // ==========================================
+
+        const requestData = {
+
+            QRcode: qrData,
+
+            OfficeCode: issueOffice
+
+        };
+
+
+        console.log(
+            "Request:",
+            requestData
+        );
+
+
+        // ==========================================
+        // POST CONTROLLER
+        // ==========================================
+
+        $.ajax({
+
+            url: "/IssuedCard/ScanQRCode",
+
+            type: "POST",
+
+            contentType:
+                "application/json; charset=utf-8",
+
+            data:
+                JSON.stringify(requestData),
+
+
+            // ======================================
+            // SUCCESS
+            // ======================================
+
+            success: function (res) {
+
+                console.log("FULL RESPONSE =", res);
+
+                if (!res.success) {
                     showError(
-                        "param1 data မတွေ့ပါ။"
+                        res.message || "QR processing failed."
                     );
 
+                    txtQr.focus();
                     return;
                 }
 
+                const data = res.appointment;
 
-            }
-            catch (error) {
+                if (!data) {
+                    showError("Appointment data မရပါ။");
+                    return;
+                }
 
-                console.error(
-                    "QR URL parse error:",
-                    error
-                );
-                return;
-            }
+                console.log("Appointment Data =", data);
 
+                // ==================================
+                // TEXTBOXES
+                // ==================================
 
-            // ==========================================
-            // SHOW DATA ONLY IN QR TEXTBOX
-            // ==========================================
-
-            txtQr.value = qrData;
-
-
-            console.log(
-                "QR DATA ONLY:",
-                qrData
-            );
-
-
-            // ==========================================
-            // GET OFFICE
-            // ==========================================
-
-            const issueOffice =
-                officeSelect.val();
-
-
-            console.log(
-                "OFFICE:",
-                issueOffice
-            );
-
-
-            if (!issueOffice) {
-
-                showInfo(
-                    "ရုံးအမည် တစ်ခုကိုရွေးချယ်ပါ"
+                $("#packageCode").val(
+                    data.pCode ?? ""
                 );
 
-                officeSelect.select2("open");
+                $("#appointmentNo").val(
+                    data.applicantid ?? ""
+                );
 
-                return;
-            }
+                $("#uid").val(
+                    data.uid ?? ""
+                );
 
+                $("#mName").val(
+                    data.mName ?? ""
+                );
 
-            // ==========================================
-            // REQUEST DTO
-            // ==========================================
+                $("#eName").val(
+                    data.eName ?? ""
+                );
 
-            const requestData = {
+                $("#fatherName").val(
+                    data.fatherName ?? ""
+                );
 
-                QRcode: qrData,
+                $("#dob").val(
+                    data.dob
+                        ? data.dob.substring(0, 10)
+                        : ""
+                );
 
-                OfficeCode: issueOffice
+                $("#nrc").val(
+                    data.nrc ?? ""
+                );
 
-            };
+                $("#bloodType").val(
+                    data.blood ?? ""
+                );
 
+                $("#phoneNo").val(
+                    data.phno ?? ""
+                );
 
-            console.log(
-                "SEND TO CONTROLLER:",
-                requestData
-            );
+                $("#currentAddress").val(
+                    data.address ?? ""
+                );
 
 
-            // ==========================================
-            // POST CONTROLLER
-            // ==========================================
+                // ==================================
+                // GENDER
+                // ==================================
 
-            $.ajax({
+                $("#Male").prop("checked", false);
+                $("#Female").prop("checked", false);
 
-                url:
-                    "/IssuedCard/ScanQRCode",
+                if (data.gender === "Male") {
+                    $("#Male").prop("checked", true);
+                }
+                else if (data.gender === "Female") {
+                    $("#Female").prop("checked", true);
+                }
 
-                type:
-                    "POST",
 
-                contentType:
-                    "application/json; charset=utf-8",
+                // ==================================
+                // OFFICE
+                // ==================================
 
-                data:
-                    JSON.stringify(requestData),
+                const returnedOffice =
+                    data.cardIssueOffice ??
+                    res.issueOffice ??
+                    "";
 
+                console.log("Returned Office:", returnedOffice);
 
-                // ======================================
-                // SUCCESS
-                // ======================================
+                if (returnedOffice) {
 
-                success:
-                    function (res) {
+                    const officeExists =
+                        officeSelect.find(
+                            "option[value='" + returnedOffice + "']"
+                        ).length > 0;
 
-                        console.log(
-                            "SERVER RESPONSE:",
-                            res
-                        );
+                    console.log(
+                        "Office exists:",
+                        officeExists
+                    );
 
-
-                        if (!res.success) {
-
-                            showError(
-                                res.message ||
-                                "QR processing failed."
-                            );
-
-                            txtQr.focus();
-
-                            return;
-                        }
-
-
-                        // ==================================
-                        // APPOINTMENT DATA
-                        // ==================================
-
-                        const data =
-                            res.appointment;
-
-
-                        if (!data) {
-
-                            showError(
-                                "Appointment data မရပါ။"
-                            );
-
-                            return;
-                        }
-
-
-                        console.log(
-                            "APPOINTMENT DATA:",
-                            data
-                        );
-
-
-                        // ==================================
-                        // FILL TEXTBOXES
-                        // ==================================
-
-                        $("#packageCode").val(
-                            data.package_code ?? ""
-                        );
-
-
-                        const data = res.appointment;
-
-                        console.log("APPOINTMENT DATA:", data);
-
-                        if (!data) {
-                            showError("Appointment data မရပါ။");
-                            return;
-                        }
-
-                        // ==================================
-                        // FILL TEXTBOXES
-                        // ==================================
-
-                        $("#packageCode").val(data.pCode ?? "");
-
-                        $("#appointmentNo").val(data.applicantid ?? "");
-
-                        $("#uid").val(data.uid ?? res.uid ?? "");
-
-                        $("#mName").val(data.mName ?? "");
-
-                        $("#eName").val(data.eName ?? "");
-
-                        $("#fatherName").val(data.fatherName ?? "");
-
-                        $("#dob").val(
-                            data.dob
-                                ? data.dob.substring(0, 10)
-                                : ""
-                        );
-
-                        $("#nrc").val(data.nrc ?? "");
-
-                        $("#bloodType").val(data.blood ?? "");
-
-                        $("#phoneNo").val(data.phno ?? "");
-
-                        $("#currentAddress").val(data.address ?? "");
-
-
-                        // ==================================
-                        // GENDER
-                        // ==================================
-
-                        if (
-                            data.gender === "Male"
-                        ) {
-
-                            $("#Male")
-                                .prop(
-                                    "checked",
-                                    true
-                                );
-
-                        }
-
-
-                        else if (
-                            data.gender === "Female"
-                        ) {
-
-                            $("#Female")
-                                .prop(
-                                    "checked",
-                                    true
-                                );
-
-                        }
-
-
-                        // ==================================
-                        // OFFICE
-                        // ==================================
+                    if (officeExists) {
 
                         officeSelect
-                            .val(
-                                res.issueOffice
-                            )
+                            .val(returnedOffice)
                             .trigger("change");
 
+                    }
+                    else {
 
-                        // ==================================
-                        // PHOTO
-                        // ==================================
-
-                        if (data.photo) {
-                            $("#profilePhoto").attr(
-                                "src",
-                                "data:image/jpeg;base64," + data.photo
-                            );
-                        }
-
-
-                        // ==================================
-                        // LOG
-                        // ==================================
-
-                        console.log(
-                            "Queue Token:",
-                            res.queueToken
+                        console.warn(
+                            "Office option not found:",
+                            returnedOffice
                         );
-
-                        console.log(
-                            "UID:",
-                            res.uid
-                        );
-
-                        console.log(
-                            "Office:",
-                            res.issueOffice
-                        );
-
-
-                        console.log(
-                            "Person:",
-                            data.person_name_mm
-                        );
-
-
-                        // ==================================
-                        // SUCCESS MESSAGE
-                        // ==================================
-
-                        showSuccess(
-                            "QR Code data successfully loaded."
-                        );
-
-
-                        txtQr.focus();
-
-                    },
-
-
-                // ======================================
-                // ERROR
-                // ======================================
-
-                error:
-                    function (
-                        xhr,
-                        status,
-                        error
-                    ) {
-
-                        console.error(
-                            "QR ERROR:",
-                            xhr.responseText
-                        );
-
-
-                        let message =
-                            "Server connection failed.";
-
-
-                        try {
-
-                            const response =
-                                JSON.parse(
-                                    xhr.responseText
-                                );
-
-
-                            if (response.message) {
-
-                                message =
-                                    response.message;
-
-                            }
-
-                        }
-                        catch (e) {
-
-                            // response is not JSON
-
-                        }
-
-
-                        showError(
-                            message
-                        );
-
-
-                        txtQr.focus();
 
                     }
+                }
 
-            });
 
-        }
-    );
+                // ==================================
+                // PHOTO
+                // ==================================
+
+                if (data.photo) {
+
+                    $("#profilePhoto").attr(
+                        "src",
+                        "data:image/jpeg;base64," + data.photo
+                    );
+
+                }
+                else {
+
+                    // No photo returned
+                    $("#profilePhoto").attr(
+                        "src",
+                        "/images/profile.png"
+                    );
+
+                }
+
+
+                // ==================================
+                // SUCCESS
+                // ==================================
+
+                showSuccess(
+                    "QR Code data successfully loaded."
+                );
+
+                txtQr.focus();
+            }
+
+        });
+
+    });
 
 
     // ==========================================
@@ -774,18 +402,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function showError(message) {
 
-        if (typeof showAppAlert === "function") {
+        if (
+            typeof showAppAlert === "function"
+        ) {
 
             showAppAlert({
 
-                title:
-                    "Error Message",
+                title: "Error Message",
 
-                type:
-                    "error",
+                type: "error",
 
-                message:
-                    message
+                message: message
 
             });
 
@@ -795,13 +422,14 @@ document.addEventListener("DOMContentLoaded", function () {
             alert(message);
 
         }
-
     }
 
 
     function showInfo(message) {
 
-        if (typeof showAppAlert === "function") {
+        if (
+            typeof showAppAlert === "function"
+        ) {
 
             showAppAlert({
 
@@ -822,13 +450,14 @@ document.addEventListener("DOMContentLoaded", function () {
             alert(message);
 
         }
-
     }
 
 
     function showSuccess(message) {
 
-        if (typeof showAppAlert === "function") {
+        if (
+            typeof showAppAlert === "function"
+        ) {
 
             showAppAlert({
 
@@ -849,7 +478,6 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log(message);
 
         }
-
     }
 
 });

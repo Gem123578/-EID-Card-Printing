@@ -4,15 +4,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebar");
     const menuBtn = document.getElementById("menu-btn");
 
-    if (sidebar && menuBtn) {
+    //if (sidebar && menuBtn) {
 
-        menuBtn.addEventListener("click", function () {
+    //    menuBtn.addEventListener("click", function () {
 
-            sidebar.classList.toggle("active");
+    //        sidebar.classList.toggle("active");
 
-        });
+    //    });
 
-    }
+    //}
 
     //logout button
     const logoutBtn = document.getElementById("logoutBtn");

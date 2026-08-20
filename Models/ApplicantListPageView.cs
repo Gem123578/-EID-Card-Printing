@@ -6,9 +6,9 @@
 
         public bool IsPrinted { get; set; }
 
-        public int CurrentPageNumber { get; set; } 
+        public int? CurrentPageNumber { get; set; } 
 
-        public int ApplicantPerPage { get; set; }
+        public int? ApplicantPerPage { get; set; }
 
         public string OfficeCode { get; set; }
         // Search
@@ -29,7 +29,7 @@
         public List<ApplicantListView> Applicants { get; set; }
 
         //paging
-        public int TotalPages { get; set; }
+        public int? TotalPages { get; set; }
         
 
         public bool HasPreviousPage =>

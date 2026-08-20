@@ -6,12 +6,18 @@
 }
 <link rel="stylesheet"
       href="https://cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css" />
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/3.2.5/css/buttons.dataTables.min.css">
 <link href="~/css/CardPrintingGridForm.css" rel="stylesheet" />
 <link href="~/css/EIDCard.css" rel="stylesheet" />
 
-<form asp-controller="Home" asp-action="CardPrintingGrid" id="cardSearchForm" method="get" class="p-4 border rounded-3 bg-white shadow-sm animated-search-card mb-4">
+<div id="regionalOfficerFilter">
+    <form asp-controller="Home" asp-action="CardPrinted" id="cardSearchForm" method="get" class="p-4 border rounded-3 bg-white shadow-sm animated-search-card mb-4">
     <input type="hidden" name="isSearch" value="true" />
-
+        <input type="hidden"
+               name="IsPrinted"
+               value="true" />
     <div class="row g-4 align-items-end">
 
         <div class="col-md-3">
@@ -37,7 +43,7 @@
 
         <div class="col-md-3">
             <label class="form-label text-color fw-bold">
-                Appointment Date
+                Card Printed Date
             </label>
 
             <div class="input-group">
@@ -112,19 +118,16 @@
 
     </div>
 </form>
+</div>
 
 @if (Model.IsSearch)
 {
     <div class="card shadow" id="tableContainer">
         <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
 
-            <span id="txtTotalCount">
-                Total : @Model.RecordCount
-            </span>
-
             <button type="button"
                     id="generateXmlTopBtn"
-                    class="btn btn-warning fw-bold"
+                    class="btn btn-warning fw-bold ms-auto"
                     onclick="submitPrint()">
                 <i class="fa-solid fa-file-code me-1"></i>
                 CARD PRINT
@@ -161,9 +164,9 @@
                                 </div>
                             </th>
 
-                            <th>အမည်</th>
-
                             <th>Name</th>
+
+                            <th>အမည်</th>
 
                             <th>Sex</th>
 
@@ -175,8 +178,6 @@
 
                             <th>NRC</th>
 
-                            <th>Office Code</th>
-
                             <th id="colDynamicDate">
                                 Printed Date
                             </th>
@@ -184,6 +185,81 @@
                             <th class="text-center">
                                 Action
                             </th>
+
+                        </tr>
+
+                        <!-- Column Search -->
+                        <tr class="filter-row">
+
+                            <!-- Checkbox column -->
+                            <th></th>
+
+                            <!-- အမည် -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column ="1"
+                                       placeholder="Search အမည်">
+                            </th>
+
+                            <!-- Name -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="2"
+                                       placeholder="Search Name">
+                            </th>
+
+                            <!-- Sex -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="3"
+                                       placeholder="Search Sex">
+                            </th>
+
+                            <!-- DOB -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="4"
+                                       placeholder="Search Date of Birth">
+                            </th>
+
+                            <!-- UID -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="5"
+                                       placeholder="Search UID">
+                            </th>
+
+                            <!-- DOE -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="6"
+                                       placeholder="Search Date of Expiry">
+                            </th>
+
+                            <!-- NRC -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="7"
+                                       placeholder="Search NRC">
+                            </th>
+
+                            <!-- Printed Date -->
+                            <th>
+                                <input type="text"
+                                       class="column-search"
+                                       data-column="8"
+                                       placeholder="Search Printed Date">
+                            </th>
+
+                            <!-- Action -->
+                            <th></th>
 
                         </tr>
 
@@ -221,7 +297,7 @@
                                 </td>
 
                                 <td>
-                                    @(applicant.DOB?.ToString("yyyy-MM-dd") ?? "-")
+                                    @(applicant.DOB?.ToString("yyyy-MM-dd"))
                                 </td>
 
                                 <td>
@@ -229,19 +305,16 @@
                                 </td>
 
                                 <td>
-                                    @(applicant.DOE.ToString("yyyy-MM-dd") ?? "-")
+                                    @(applicant.DOE?.ToString("yyyy-MM-dd"))
                                 </td>
 
                                 <td>
                                     @applicant.NRC
                                 </td>
 
-                                <td>
-                                    @applicant.OfficeCode
-                                </td>
 
                                 <td>
-                                    @(applicant.PrintedDate?.ToString("yyyy-MM-dd") ?? "-")
+                                    @(applicant.PrintedDate?.ToString("yyyy-MM-dd"))
                                 </td>
 
                                 <td class="text-center">
@@ -250,12 +323,14 @@
                                        {
                                            applicantId = applicant.ApplicantId,
                                            uid = applicant.UId,
-                                           officeCode = Model.OfficeCode
+                                           officeCode = applicant.OfficeCode,
+                                           IsPrinted = 1
                                        })"
                                class="btn btn-sm btn-outline-success me-1 preview-card-btn"
                                data-applicant-id="@applicant.ApplicantId"
                                data-uid="@applicant.UId"
-                               data-office-code="@Model.OfficeCode"
+                               data-office-code="@applicant.OfficeCode"
+                               data-is-printed="1"
                                title="Print Preview">
 
                                         <i class="fa-solid fa-print me-1"></i>
@@ -347,7 +422,7 @@
 
     </div>
 }
-@if (Model.IsSearch && Model.TotalPages > 1)
+@* @if (Model.IsSearch && Model.TotalPages > 1)
 {
     <div class="pagination-wrapper d-flex justify-content-between align-items-center p-3 border-top">
 
@@ -367,7 +442,7 @@
 
                     @if (Model.HasPreviousPage)
                     {
-                        <a href="@Url.Action("CardPrintingGrid","Home",
+                        <a href="@Url.Action("CardPrinted","Home",
                                                               new
                                                               {
                                                                   isSearch = true,
@@ -375,7 +450,7 @@
                                                                   ApplicantPerPage = Model.ApplicantPerPage,
                                                                   SearchTerm = Model.SearchTerm,
                                                                   OfficeCode = Model.OfficeCode,
-                                                                  IsPrinted = 1,
+                                                                  IsPrinted = Model.IsPrinted,
                                                                   SelectedDate = Model.SelectedDate,
                                                                   FromDate = Model.FromDate?.ToString("yyyy-MM-dd"),
                                                                   ToDate = Model.ToDate?.ToString("yyyy-MM-dd")
@@ -408,7 +483,7 @@
 
                     @if (Model.HasNextPage)
                     {
-                        <a href="@Url.Action("CardPrintingGrid","Home",
+                        <a href="@Url.Action("CardPrinted","Home",
                                                               new
                                                               {
                                                                   isSearch = true,
@@ -441,19 +516,40 @@
         </nav>
 
     </div>
-}
+} *@
 @section Scripts {
 
     <script>
+        const isPrintedPage = 1;
         const markPrintedUrl = '@Url.Action("MarkAsPrinted", "CardPrint")';
 
         const generateXmlUrl = '@Url.Action("GenerateEidXml", "XMLPrint")';
 
         const eidCardPrintUrl =
         '@Url.Action("EIDCardPrint", "CardPrint")';
-    </script>
 
 
-    <script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
+            const serverApplicants = @Html.Raw(
+                    Newtonsoft.Json.JsonConvert.SerializeObject(
+                            Model.Applicants ??
+                            new List<EIDCardPrint.Models.ApplicantListView>()
+                    )
+            );
+
+</script>
+<script src="https://cdn.datatables.net/2.3.3/js/dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.print.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.5/js/buttons.pdf.min.js"></script>
     <script src="~/js/CardPrintingGrid.js"></script>
 }

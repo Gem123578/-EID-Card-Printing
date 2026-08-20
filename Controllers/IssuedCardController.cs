@@ -101,6 +101,7 @@ namespace EIDCardPrint.Controllers
                         message = "Appointment information not found."
                     });
                 }
+                Console.Write(appointment);
                 return Ok(new
                 {
                     success = true,

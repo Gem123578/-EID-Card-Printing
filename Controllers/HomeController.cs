@@ -45,6 +45,7 @@ namespace EIDCardPrint.Controllers
                 {
                     HttpContext.Session.SetString("ApiToken", response.Token ?? string.Empty);
                     HttpContext.Session.SetString("Permission", JsonConvert.SerializeObject(response.User.Permissions));
+                    HttpContext.Session.SetString("OfficeCode",response.User.OfficeCode ?? string.Empty);
                     return RedirectToAction("CardPrintingGrid", "Home");
                 }
 
@@ -62,71 +63,107 @@ namespace EIDCardPrint.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CardPrintingGrid(ApplicantListPageView dataModel , bool  isSearch = false)
+        public async Task<IActionResult> CardPrintingGrid(ApplicantListPageView dataModel,bool isSearch = false)
         {
+            Console.WriteLine(dataModel);
             var token = HttpContext.Session.GetString("ApiToken");
 
             if (string.IsNullOrEmpty(token))
             {
                 return RedirectToAction("Login");
             }
-            if (dataModel.CurrentPageNumber < 1)
-            {
-                dataModel.CurrentPageNumber = 1;
-            }
-            if (dataModel.ApplicantPerPage < 1)
-            {
-                dataModel.ApplicantPerPage = 10;
-            }
+
+            //current user office
+
+            var currentOfficeCode = HttpContext.Session.GetString("OfficeCode")?
+                    .Trim()
+                    .ToUpper();
 
 
-            if (!isSearch)
+            
+
+            if (currentOfficeCode == "HO")
             {
-                var emptyModel = new ApplicantListPageView
+                if (!isSearch)
                 {
-                    Applicants = new List<ApplicantListView>(),
-                    RecordCount = 0,
+                    if (!isSearch)
+                    {
+                        // HO initial load
+                        // Today နဲ့ API ခေါ်မယ်
+                        dataModel.SelectedDate = "today";
+                        dataModel.FromDate = DateTime.Today;
+                        dataModel.ToDate = DateTime.Today;
+                    }
 
-                    CurrentPageNumber = 1,
-                    ApplicantPerPage = dataModel.ApplicantPerPage,
-                    TotalPages = 0,
-                    IsSearch = false,
-                    SearchTerm = null,
-                    OfficeCode = dataModel.OfficeCode,
-                    OfficeName = null,
-                    IsPrinted = false,
-                    SelectedDate = null,
-                    FromDate = null,
-                    ToDate = null
-                };
-
-                return View(emptyModel);
+                }
             }
 
-            var (fromDate, toDate) = await _dateRangeService.GetDateRange(dataModel.SelectedDate,dataModel.FromDate, dataModel.ToDate);
+
+            if (currentOfficeCode != "HO")
+            {
+                isSearch = true;
+
+                // IMPORTANT
+                // User ရဲ့ OfficeCode ကိုပဲ သုံးမယ်
+                dataModel.OfficeCode = currentOfficeCode;
+            }
+            else
+            {
+                // HO user
+                dataModel.OfficeCode = dataModel.OfficeCode;
+            }
+
+            // ============================================================
+            // DATE RANGE
+            // ============================================================
+
+            var (fromDate, toDate) =
+                await _dateRangeService.GetDateRange(
+                    dataModel.SelectedDate,
+                    dataModel.FromDate,
+                    dataModel.ToDate
+                );
 
             dataModel.FromDate = fromDate;
             dataModel.ToDate = toDate;
 
+            // ============================================================
+            // API REQUEST
+            // ============================================================
+
             var request = new ApplicantListRequest
             {
-                CurrentPageNumber = dataModel.CurrentPageNumber,
-                ApplicantPerPage = dataModel.ApplicantPerPage,
+                //CurrentPageNumber =
+                //    dataModel.CurrentPageNumber,
 
-                IsPrinted = dataModel.IsPrinted == true ? 1 : 0,
-                // Search
-                SearchTerm = dataModel.SearchTerm,
+                //ApplicantPerPage =
+                //    dataModel.ApplicantPerPage,
 
-                // Office Code
-                OfficeCode = dataModel.OfficeCode,
+                IsPrinted =
+                    dataModel.IsPrinted == true
+                        ? 1
+                        : 0,
 
-                // Date
-                FromDate = dataModel.FromDate?
-                    .ToString("yyyy-MM-dd"),
+                SearchTerm =
+                    dataModel.SearchTerm,
 
-                ToDate = dataModel.ToDate?
-                    .ToString("yyyy-MM-dd")
-            };  
+                OfficeCode =
+                    currentOfficeCode == "HO"
+                        ? dataModel.OfficeCode
+                        : currentOfficeCode,
+
+                FromDate =
+                    dataModel.FromDate?
+                        .ToString("yyyy-MM-dd"),
+
+                ToDate =
+                    dataModel.ToDate?
+                        .ToString("yyyy-MM-dd")
+            };
+
+            // ============================================================
+            // CALL API
+            // ============================================================
 
             var result =
                 await _applicantService.GetApplicants(request);
@@ -143,185 +180,305 @@ namespace EIDCardPrint.Controllers
                 );
             }
 
-            var applicants = result.Data
-                .Select(x => new ApplicantListView
+            // ============================================================
+            // MAP DATA
+            // ============================================================
+
+            var applicants =
+                result.Data
+                    .Select(x => new ApplicantListView
+                    {
+                        ApplicantId =
+                            x.ApplicationId.ToString(),
+
+                        UId =
+                            x.Uid.ToString(),
+
+                        NRC =
+                            x.Nrc,
+
+                        Gender =
+                            x.Gender,
+
+                        DOB =
+                            x.BirthDate,
+
+                        DOE =
+                            x.DOE,
+
+                        PersonNameMM =
+                            x.PersonNameMm,
+
+                        PersonNameEN =
+                            x.PersonNameEn,
+
+                        PrintedDate =
+                            x.PrintedDate,
+
+                        Photo =
+                            x.Photo
+                    })
+                    .ToList();
+
+            // ============================================================
+            // VIEW MODEL
+            // ============================================================
+
+            var viewModel =
+                new ApplicantListPageView
                 {
-                    ApplicantId = x.ApplicationId.ToString(),
-                    UId = x.Uid.ToString(),
-                    NRC = x.Nrc,
-                    Gender = x.Gender,
-                    DOB = x.BirthDate,
-                    PersonNameMM = x.PersonNameMm,
-                    PersonNameEN = x.PersonNameEn,
-                    PrintedDate = x.PrintedDate,
-                    Photo = x.Photo
-                })
-                .ToList();
+                    RecordCount =
+                        result.RecordCount,
 
-            var viewModel = new ApplicantListPageView
-            {
-                RecordCount = result.RecordCount,
+                    //CurrentPageNumber = request.CurrentPageNumber ?? 1,
 
-                CurrentPageNumber = request.CurrentPageNumber,
+                    //ApplicantPerPage = request.ApplicantPerPage ?? result.RecordCount,
 
-                ApplicantPerPage = request.ApplicantPerPage,
+                    //TotalPages = 1,
 
-                TotalPages = request.ApplicantPerPage > 0? (int)Math.Ceiling((double)result.RecordCount / request.ApplicantPerPage): 0,
+                    Applicants =
+                        applicants,
 
-                Applicants = applicants,
+                    IsSearch =
+                        true,
 
-                IsSearch = true,
+                    IsPrinted =
+                        dataModel.IsPrinted,
 
-                IsPrinted = dataModel.IsPrinted ,
+                    SearchTerm =
+                        dataModel.SearchTerm,
 
-                SearchTerm = dataModel.SearchTerm,
+                    OfficeCode =
+                        request.OfficeCode,
 
-                OfficeCode = dataModel.OfficeCode,
+                    OfficeName =
+                        dataModel.OfficeName,
 
-                OfficeName = dataModel.OfficeName,
+                    SelectedDate =
+                        dataModel.SelectedDate,
 
-                SelectedDate = dataModel.SelectedDate,
+                    FromDate =
+                        dataModel.FromDate,
 
-                FromDate = dataModel.FromDate,
-
-                ToDate = dataModel.ToDate
-            };
+                    ToDate =
+                        dataModel.ToDate
+                };
 
             ModelState.Clear();
+
+            return View(viewModel);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult>CardPrinted(ApplicantListPageView dataModel,bool isSearch = false)
+        {
+            // ============================================================
+            // CHECK LOGIN
+            // ============================================================
+
+            var token =
+                HttpContext.Session.GetString("ApiToken");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login");
+            }
+
+
+            // ============================================================
+            // CURRENT USER OFFICE
+            // ============================================================
+
+            var currentOfficeCode =
+                HttpContext.Session.GetString("OfficeCode")?
+                    .Trim()
+                    .ToUpper();
+
+
+
+            if (currentOfficeCode == "HO")
+            {
+                if (!isSearch)
+                {
+                    dataModel.SelectedDate = "today";
+
+                    dataModel.FromDate =
+                        DateTime.Today;
+
+                    dataModel.ToDate =
+                        DateTime.Today;
+
+                    dataModel.IsPrinted = true;
+                }
+                }
+            else
+            {
+
+                isSearch = true;
+
+                dataModel.OfficeCode = currentOfficeCode;
+            }
+
+
+            var (fromDate, toDate) =
+                await _dateRangeService.GetDateRange(
+                    dataModel.SelectedDate,
+                    dataModel.FromDate,
+                    dataModel.ToDate
+                );
+
+            dataModel.FromDate = fromDate;
+            dataModel.ToDate = toDate;
+
+
+            var request =
+                new ApplicantListRequest
+                {
+                    //CurrentPageNumber =
+                    //    dataModel.CurrentPageNumber,
+
+                    //ApplicantPerPage =
+                    //    dataModel.ApplicantPerPage,
+
+                    IsPrinted = 1,
+
+                    SearchTerm =
+                        dataModel.SearchTerm,
+
+
+                    OfficeCode =
+                        currentOfficeCode == "HO"
+                            ? dataModel.OfficeCode
+                            : currentOfficeCode,
+
+                    FromDate =
+                        dataModel.FromDate?
+                            .ToString("yyyy-MM-dd"),
+
+                    ToDate =
+                        dataModel.ToDate?
+                            .ToString("yyyy-MM-dd")
+                };
+
+            var result =
+                await _applicantService.GetApplicants(request);
+
+
+
+            if (result == null)
+            {
+                throw new Exception(
+                    "API result is NULL"
+                );
+            }
+
+            if (result.Data == null)
+            {
+                throw new Exception(
+                    $"API Data is NULL. RecordCount = {result.RecordCount}"
+                );
+            }
+
+
+            var applicants =
+                result.Data
+                    .Select(x => new ApplicantListView
+                    {
+                        ApplicantId =
+                            x.ApplicationId.ToString(),
+
+                        UId =
+                            x.Uid.ToString(),
+
+                        NRC =
+                            x.Nrc,
+
+                        Gender =
+                            x.Gender,
+
+                        DOB =
+                            x.BirthDate,
+
+                        DOE =
+                            x.DOE,
+
+                        PersonNameMM =
+                            x.PersonNameMm,
+
+                        PersonNameEN =
+                            x.PersonNameEn,
+
+                        PrintedDate =
+                            x.PrintedDate,
+
+                        Photo =
+                            x.Photo
+                    })
+                    .ToList();
+
+
+            // ============================================================
+            // VIEW MODEL
+            // ============================================================
+
+            var viewModel =
+                new ApplicantListPageView
+                {
+                    RecordCount =
+                        result.RecordCount,
+
+                    //CurrentPageNumber = request.CurrentPageNumber ?? 1,
+
+                    //ApplicantPerPage = request.ApplicantPerPage ?? result.RecordCount,
+
+                    //TotalPages = 1,
+
+                    Applicants =
+                        applicants,
+
+                    IsSearch = true,
+
+                    // IMPORTANT
+                    // CardPrinted page => always true
+                    IsPrinted = true,
+
+                    SearchTerm =
+                        dataModel.SearchTerm,
+
+                    OfficeCode =
+                        request.OfficeCode,
+
+                    OfficeName =
+                        dataModel.OfficeName,
+
+                    SelectedDate =
+                        dataModel.SelectedDate,
+
+                    FromDate =
+                        dataModel.FromDate,
+
+                    ToDate =
+                        dataModel.ToDate
+                };
+
+
+            ModelState.Clear();
+
             return View(viewModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> CardPrinted(ApplicantListPageView dataModel, bool isSearch = false)
+        public IActionResult GetCurrentOfficer()
         {
-            var token = HttpContext.Session.GetString("ApiToken");
+            var officeCode =
+                HttpContext.Session.GetString("OfficeCode");
 
-            if (string.IsNullOrEmpty(token))
+            return Json(new
             {
-                return RedirectToAction("Login");
-            }
-            if (dataModel.CurrentPageNumber < 1)
-            {
-                dataModel.CurrentPageNumber = 1;
-            }
-            if (dataModel.ApplicantPerPage < 1)
-            {
-                dataModel.ApplicantPerPage = 10;
-            }
-
-
-            if (!isSearch)
-            {
-                var emptyModel = new ApplicantListPageView
-                {
-                    Applicants = new List<ApplicantListView>(),
-                    RecordCount = 0,
-
-                    CurrentPageNumber = 1,
-                    ApplicantPerPage = dataModel.ApplicantPerPage,
-                    TotalPages = 0,
-                    IsSearch = false,
-                    SearchTerm = null,
-                    OfficeCode = dataModel.OfficeCode,
-                    OfficeName = null,
-                    IsPrinted = true,
-                    SelectedDate = null,
-                    FromDate = null,
-                    ToDate = null
-                };
-
-                return View(emptyModel);
-            }
-
-            var (fromDate, toDate) = await _dateRangeService.GetDateRange(dataModel.SelectedDate, dataModel.FromDate, dataModel.ToDate);
-
-            dataModel.FromDate = fromDate;
-            dataModel.ToDate = toDate;
-
-            var request = new ApplicantListRequest
-            {
-                CurrentPageNumber = dataModel.CurrentPageNumber,
-                ApplicantPerPage = dataModel.ApplicantPerPage,
-
-                IsPrinted = 1,
-                // Search
-                SearchTerm = dataModel.SearchTerm,
-
-                // Office Code
-                OfficeCode = dataModel.OfficeCode,
-
-                // Date
-                FromDate = dataModel.FromDate?
-                    .ToString("yyyy-MM-dd"),
-
-                ToDate = dataModel.ToDate?
-                    .ToString("yyyy-MM-dd")
-            };
-
-            var result =
-                await _applicantService.GetApplicants(request);
-
-            if (result == null)
-            {
-                throw new Exception("API result is NULL");
-            }
-
-            if (result.Data == null)
-            {
-                throw new Exception(
-                    $"API Data is NULL. RecordCount = {result.RecordCount}"
-                );
-            }
-
-            var applicants = result.Data
-                .Select(x => new ApplicantListView
-                {
-                    ApplicantId = x.ApplicationId.ToString(),
-                    UId = x.Uid.ToString(),
-                    NRC = x.Nrc,
-                    Gender = x.Gender,
-                    DOB = x.BirthDate,
-                    PersonNameMM = x.PersonNameMm,
-                    PersonNameEN = x.PersonNameEn,
-                    PrintedDate = x.PrintedDate,
-                    Photo = x.Photo
-                })
-                .ToList();
-
-            var viewModel = new ApplicantListPageView
-            {
-                RecordCount = result.RecordCount,
-
-                CurrentPageNumber = request.CurrentPageNumber,
-
-                ApplicantPerPage = request.ApplicantPerPage,
-
-                TotalPages = request.ApplicantPerPage > 0 ? (int)Math.Ceiling((double)result.RecordCount / request.ApplicantPerPage) : 0,
-
-                Applicants = applicants,
-
-                IsSearch = true,
-
-                IsPrinted = dataModel.IsPrinted,
-
-                SearchTerm = dataModel.SearchTerm,
-
-                OfficeCode = dataModel.OfficeCode,
-
-                OfficeName = dataModel.OfficeName,
-
-                SelectedDate = dataModel.SelectedDate,
-
-                FromDate = dataModel.FromDate,
-
-                ToDate = dataModel.ToDate
-            };
-
-            ModelState.Clear();
-            return View(viewModel);
+                office_code = officeCode
+            });
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> GetOffices()

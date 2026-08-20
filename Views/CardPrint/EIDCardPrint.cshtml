@@ -81,7 +81,7 @@
 
                         <div class="field">
                             <label>Date of Expiry</label>
-                            <span>@(Model.DOE.ToString("dd-MM-yyyy") ?? "")</span>
+                            <span>@(Model.DOE?.ToString("dd-MM-yyyy") ?? "")</span>
                         </div>
 
                     </div>

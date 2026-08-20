@@ -79,7 +79,7 @@ namespace EIDCardPrint.Utils
                 SetField(
                     document,
                     "DateOfExpiry",
-                    model.DOE.ToString("yyyyMMdd")
+                    model.DOE?.ToString("yyyyMMdd")
                 );
 
                 SetField(

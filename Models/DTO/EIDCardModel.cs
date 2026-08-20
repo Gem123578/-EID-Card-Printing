@@ -20,6 +20,6 @@
 
         public DateTime? ToDate { get; set; }
 
-        public string FolderPath { get; set; }
+        public int IsPrinted { get; set; }
     }
 }

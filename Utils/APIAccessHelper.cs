@@ -53,7 +53,7 @@ namespace EIDCardPrint.Utils
                     {
                         string body = JsonConvert.SerializeObject(request.Data);
 
-                        Debug.WriteLine($"Request Body: {body}");
+                        //Debug.WriteLine($"Request Body: {body}");
 
                         requestMessage.Content = new StringContent(
                             body,
@@ -76,7 +76,9 @@ namespace EIDCardPrint.Utils
                     response.EnsureSuccessStatusCode();
 
                     var result = JsonConvert.DeserializeObject<T>(json);
-                    Debug.WriteLine($"DESERIALIZED: {JsonConvert.SerializeObject(result)}");
+
+                    //Debug.WriteLine($"DESERIALIZED: {JsonConvert.SerializeObject(result)}");
+
                     return result;
                 }
             }
