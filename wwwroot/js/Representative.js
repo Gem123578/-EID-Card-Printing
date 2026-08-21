@@ -39,8 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const offices = await response.json();
 
-            console.log("Offices:", offices);
-
             // Clear existing options
             officeSelect.empty();
 
@@ -75,18 +73,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 width: "100%"
             });
 
-            console.log(
-                "Office options loaded:",
-                officeSelect.find("option").length
-            );
 
         }
         catch (error) {
 
-            console.error(
-                "Office API Error:",
-                error
-            );
 
             showError(
                 "Office list loading failed."
@@ -145,10 +135,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         catch (error) {
 
-            console.error(
-                "QR URL parse error:",
-                error
-            );
 
             showError(
                 "Invalid QR Code."
@@ -171,17 +157,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const issueOffice = officeSelect.val();
 
-        console.log(
-            "Selected Office:",
-            issueOffice
-        );
 
         if (!issueOffice) {
 
             showInfo(
                 "ရုံးအမည် တစ်ခုကိုရွေးချယ်ပါ"
             );
-
+            txtQr.value = "";
             officeSelect.select2("open");
 
             return;
@@ -200,11 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         };
 
-
-        console.log(
-            "Request:",
-            requestData
-        );
 
 
         // ==========================================
@@ -230,7 +207,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             success: function (res) {
 
-                console.log("FULL RESPONSE =", res);
 
                 if (!res.success) {
                     showError(
@@ -247,8 +223,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     showError("Appointment data မရပါ။");
                     return;
                 }
-
-                console.log("Appointment Data =", data);
 
                 // ==================================
                 // TEXTBOXES
@@ -325,7 +299,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     res.issueOffice ??
                     "";
 
-                console.log("Returned Office:", returnedOffice);
 
                 if (returnedOffice) {
 
@@ -333,11 +306,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         officeSelect.find(
                             "option[value='" + returnedOffice + "']"
                         ).length > 0;
-
-                    console.log(
-                        "Office exists:",
-                        officeExists
-                    );
 
                     if (officeExists) {
 
@@ -384,10 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // SUCCESS
                 // ==================================
 
-                showSuccess(
-                    "QR Code data successfully loaded."
-                );
-
+                disableAppointmentFields();
                 txtQr.focus();
             }
 
@@ -481,3 +446,68 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+
+//issue card
+document.addEventListener("DOMContentLoaded", function () {
+
+    const page = document.getElementById("issueCardPage");
+
+    if (!page) return;
+
+    const successMessage =
+        page.dataset.successMessage;
+
+    if (successMessage) {
+
+        showAppAlert({
+            title: "အောင်မြင်ပါသည်",
+            message: successMessage,
+            type: "success",
+            confirmText: "OK",
+            showCancel: false
+        });
+
+    }
+
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const modalElement =
+        document.getElementById("representativeModal");
+
+    const saveBtn =
+        document.getElementById("saveRepresentativeBtn");
+
+    if (!modalElement || !saveBtn) {
+        return;
+    }
+
+    saveBtn.addEventListener("click", function () {
+
+        const modal =
+            bootstrap.Modal.getOrCreateInstance(modalElement);
+
+        modal.hide();
+    });
+
+});
+
+function disableAppointmentFields() {
+
+    $("#packageCode").prop("readonly", true);
+    $("#appointmentNo").prop("readonly", true);
+    $("#uid").prop("readonly", true);
+    $("#mName").prop("readonly", true);
+    $("#eName").prop("readonly", true);
+    $("#fatherName").prop("readonly", true);
+    $("#dob").prop("readonly", true);
+    $("#nrc").prop("readonly", true);
+    $("#bloodType").prop("readonly", true);
+    $("#phoneNo").prop("readonly", true);
+    $("#currentAddress").prop("readonly", true);
+
+    // Gender Radio Buttons
+    $("#Male").prop("readonly", true);
+    $("#Female").prop("readonly", true);
+}

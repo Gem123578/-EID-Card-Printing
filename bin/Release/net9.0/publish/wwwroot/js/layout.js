@@ -4,15 +4,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const sidebar = document.getElementById("sidebar");
     const menuBtn = document.getElementById("menu-btn");
 
-    if (sidebar && menuBtn) {
+    //if (sidebar && menuBtn) {
 
-        menuBtn.addEventListener("click", function () {
+    //    menuBtn.addEventListener("click", function () {
 
-            sidebar.classList.toggle("active");
+    //        sidebar.classList.toggle("active");
 
-        });
+    //    });
 
-    }
+    //}
 
     //logout button
     const logoutBtn = document.getElementById("logoutBtn");
@@ -121,9 +121,10 @@ function showAppAlert(options = {}) {
 
     messageElement.textContent = message;
 
-    confirmBtn.textContent = confirmText;
 
     cancelBtn.textContent = cancelText;
+
+    confirmBtn.textContent = confirmText;
 
     //confirm button classes
 
@@ -239,9 +240,9 @@ function Logout() {
 
         message: "Are you sure you want to logout?",
 
-        confirmText: "Yes",
-
         cancelText: "No",
+
+        confirmText: "Yes",
 
         showCancel: true,
 

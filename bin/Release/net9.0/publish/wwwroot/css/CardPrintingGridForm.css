@@ -52,7 +52,7 @@ body {
         width: 60%;
         height: 2px;
         background: linear-gradient( 90deg, transparent, rgba(13, 110, 253, 0.9), transparent );
-        animation: searchCardShine 4s ease-in-out infinite;
+        /*animation: searchCardShine 4s ease-in-out infinite;*/
     }
 
     .animated-search-card::after {
@@ -84,16 +84,6 @@ body {
         opacity: 1;
         transform: translateY(0) scale(1);
         filter: blur(0);
-    }
-}
-
-@keyframes searchCardShine {
-    0% {
-        left: -100%;
-    }
-
-    45%, 100% {
-        left: 150%;
     }
 }
 
@@ -303,21 +293,9 @@ body {
         height: 100%;
         background: linear-gradient( 90deg, transparent, rgba(255,255,255,.12), transparent );
         transform: skewX(-20deg);
-        animation: tableHeaderShine 5s ease-in-out infinite;
+        /*animation: tableHeaderShine 5s ease-in-out infinite;*/
         pointer-events: none;
     }
-
-
-@keyframes tableHeaderShine {
-
-    0%, 55% {
-        left: -120%;
-    }
-
-    75%, 100% {
-        left: 150%;
-    }
-}
 
 
 /* TOTAL COUNT*/
@@ -649,35 +627,40 @@ body {
 
 /* CLEAR DATE BUTTON*/
 
-#clearDateRange {
+.date-range-wrapper {
+    position: relative;
+    width: 280px;
+}
+
+#dateRangeFilter {
+    width: 100%;
+    padding-right: 35px;
+}
+
+.date-clear-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1;
+    color: #333;
+    cursor: pointer;
     display: none;
-    border-radius: 0 10px 10px 0;
-    transition: transform .25s ease, color .25s ease, background-color .25s ease;
+    z-index: 20;
 }
 
-    #clearDateRange.show {
+    .date-clear-btn.show {
         display: block;
-        animation: clearButtonPop .3s ease;
     }
 
-    #clearDateRange:hover {
-        color: #fff;
-        background: var(--danger);
-        transform: scale(1.03);
+    .date-clear-btn:hover {
+        color: #000;
     }
-
-@keyframes clearButtonPop {
-    from {
-        opacity: 0;
-        transform: scale(.7) rotate(-20deg);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) rotate(0);
-    }
-}
-
 
 /* SELECT2*/
 
@@ -1179,3 +1162,35 @@ body {
         transition: none !important;
     }
 }
+
+#regionalOfficerFilter {
+    display: none;
+}
+
+/*search for column*/
+.filter-row th {
+    padding: 6px !important;
+    background: #f8f9fa !important;
+}
+
+.column-search {
+    width: 100%;
+    min-width: 100px;
+    padding: 7px 9px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    outline: none;
+    font-size: 13px;
+    background: #ffffff;
+    transition: all .2s ease;
+}
+
+    .column-search:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37, 99, 235, .15);
+    }
+
+    .column-search::placeholder {
+        color: #9ca3af;
+        font-size: 12px;
+    }

@@ -27,18 +27,18 @@
             <ul>
 
                 <li>
-                    <a class="@(ViewContext.RouteData.Values["Action"].ToString() == "CardPrintingGrid" ? "active" : "")"
-                        asp-controller="Home" asp-action="CardPrintingGrid">
+                    <a class="@(ViewContext.RouteData.Values["Action"].ToString() == "Personalization" ? "active" : "")"
+                       asp-controller="Home" asp-action="Personalization">
                         <i class="fa-solid fa-print"></i>
-                        <span>Card Printing</span>
+                        <span>Personalization</span>
                     </a>
                 </li>
 
                 <li>
-                    <a class="@(ViewContext.RouteData.Values["Action"].ToString() == "CardPrinted" ? "active" : "")"
-                       asp-controller="Home" asp-action="CardPrinted">
+                    <a class="@(ViewContext.RouteData.Values["Action"].ToString() == "PrintedCards" ? "active" : "")"
+                       asp-controller="Home" asp-action="PrintedCards">
                         <i class="fa-solid fa-print"></i>
-                        <span>Card Printed</span>
+                        <span>Printed Cards</span>
                     </a>
                 </li>
 
@@ -122,16 +122,18 @@
             </div>
 
             <div class="app-alert-actions">
+                <button id="globalAlertConfirmBtn"
+                        class="app-alert-btn app-alert-btn-confirm">
+                    OK
+                </button>
+
                 <button id="globalAlertCancelBtn"
                         class="app-alert-btn app-alert-btn-cancel"
                         onclick="closeAppAlert()">
                     Cancel
                 </button>
 
-                <button id="globalAlertConfirmBtn"
-                        class="app-alert-btn app-alert-btn-confirm">
-                    OK
-                </button>
+                
             </div>
 
         </div>

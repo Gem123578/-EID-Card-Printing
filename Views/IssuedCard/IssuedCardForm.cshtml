@@ -8,216 +8,469 @@
 <link href="~/css/IssuedCard.css" rel="stylesheet" />
 
 <div class="container mt-4">
-    
-    @using (Html.BeginForm("IssuedCardForm", "IssuedCard", FormMethod.Post, new { @class = "p-3 border rounded" }))
-    {   
-        <div>
 
-            <div class="row g-2">
+    @using (Html.BeginForm(
+        "IssuedCardForm",
+        "IssuedCard",
+        FormMethod.Post,
+        new { @class = "p-3 border rounded", id = "issuedCardForm" }))
+    {
+        <div class="row g-2">
 
-                <div class="col-md-3 text-start">
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">ရုံးအမည်</label>
-                        <div class="col-sm-8">
-                            <select asp-for="OfficeCode"
-                                    id="officeSelect"
-                                    name="OfficeCode"
-                                    class="form-control animated-input">
-                            </select>
-                        </div>
-                    </div>
+            <!-- LEFT -->
+            <div class="col-md-3 text-start">
 
-                    <div class="col-md-12 align-items-center d-flex flex-column text-start">
-                        <img src="~/images/profile.png" id="profilePhoto" class="photo img-thumbnail" alt="Profile" />
-                        <label class="text-color  col-form-label">ဓာတ်ပုံ</label>
-                    </div>
+                <div class="row mb-3">
+                    <label class="text-color col-sm-4 col-form-label">
+                        ရုံးအမည်
+                    </label>
 
-                    <div class="form-check form-check-inline align-items-center">
-                        @Html.RadioButtonFor(m => m.RepPeople, true, new { @class = "form-check-input", id = "relationship" ,data_bs_toggle = "modal",data_bs_target = "#representativeModal" })
-                        <label class="form-check-label text-color" for="relationship">ကိုယ်စားလှယ်</label>
+                    <div class="col-sm-8">
+                        <select asp-for="OfficeCode"
+                                id="officeSelect"
+                                class="form-control animated-input">
+                        </select>
                     </div>
                 </div>
 
+                <div class="col-md-12 align-items-center d-flex flex-column text-start">
 
-                <!--right list-->
-                <div class="col-md-6">
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">QR No.</label>
-                        <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.QRCode, new
+                    <img src="~/images/profile.png"
+                         id="profilePhoto"
+                         class="photo img-thumbnail"
+                         alt="Profile" />
+
+                    <label class="text-color col-form-label">
+                        ဓာတ်ပုံ
+                    </label>
+
+                </div>
+
+                <div class="form-check form-check-inline align-items-center">
+
+                    @Html.RadioButtonFor(
+                    m => m.IsRepresentative,
+                                true,
+                                new
                                 {
-                                     @class = "form-control",
-                                     id = "qrInput",
-                                     autocomplete = "off"
+                                    @class = "form-check-input",
+                                    id = "relationship",
+                                    data_bs_toggle = "modal",
+                                    data_bs_target = "#representativeModal"
                                 })
-                        </div>
-                    </div>
 
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">Packaged No</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.PackagedNo, new { @class = "form-control", id = "packageCode" })
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">Appointment No</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.AppointNo, new { @class = "form-control", id = "appointmentNo" })
-                        </div>
-                       
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">UID No</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.UID, new { @class = "form-control", id = "uid" })
-                        </div>
-                        
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">အမည်(မြန်မာ)</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.MName, new { @class = "form-control", id = "mName" })
-                        </div>
-                        
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">အမည်(အဂ်လိပ်)</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.EName, new { @class = "form-control", id = "eName" })
-                        </div>
-                        
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">အဖအမည်(မြန်မာ)</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.FatherName, new { @class = "form-control", id = "fatherName" })
-                        </div>
-                        
-                    </div>
-                    <div class="row mb-3">
-                        <div class="offset-sm-4 col-sm-8">
-                            <div class="form-check form-check-inline">
-                                @Html.RadioButtonFor(m => m.Gender, "Male",new { @class = "form-check-input", id = "Male" })
-                                <label class="form-check-label text-color" for="Male">ကျား</label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                @Html.RadioButtonFor(m => m.Gender, "Female",new { @class = "form-check-input", id = "Female" })
-                                <label class="form-check-label text-color" for="Female">မ</label>
-                            </div>
-                        </div>
-                        
-                    </div>
-                   
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">မွေးဖွားသည့်ရက်</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.DOB, new { @class = "form-control", id = "dob" })
-                        </div>
-                       
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">ကတ်ပြားအမှတ်</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.NRC, new { @class = "form-control", id = "nrc" })
-                        </div>
-                       
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">သွေးအမျိုးအစား</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.BloodType, new { @class = "form-control", id = "bloodType" })
-                        </div>
-                        
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">ဖုန်းနံပါတ်</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.Phno, new { @class = "form-control", id = "phoneNo" })
-                        </div>
-                       
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">နေရပ်လိပ်စာ</label>
-                        <div class="col-sm-8">
-                        @Html.TextBoxFor(m => m.Address, new { @class = "form-control", id = "currentAddress" })
-                            
-                        </div>
-                    </div>
-
-                    <div class="text-end mt-3">
-                        <button type="issue" class="btn btn-primary px-4">Issue</button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    }
-        <div class="modal fade" id="representativeModal" tabindex="-1">
-
-         <div class="modal-dialog ">
-
-             <div class="modal-content">
-
-                 <div class="modal-header">
-                     <h5 class="modal-title"> ကိုယ်စားလှယ်</h5>
-                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                 </div>
-
-
-                 <div class="modal-body">
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">အမည်</label>
-                        <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.RepPeople.RName, new { @class = "form-control" })
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">မှတ်ပုံတင်နံပါတ်</label>
-                        <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.RepPeople.RNRC, new { @class = "form-control" })
-                        </div>
-                    </div>
-                    
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">တော်စပ်ပုံ</label>
-                        <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.RepPeople.Relationship, new { @class = "form-control" })
-                        </div>
-                    </div>
-
-                    <div class="row mb-3">
-                        <label class="text-color col-sm-4 col-form-label">ဖုန်းနံပါတ်</label>
-                        <div class="col-sm-8">
-                            @Html.TextBoxFor(m => m.RepPeople.PhoneNo, new { @class = "form-control" })
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveRepresentative()">OK</button>
-
-                </div>
+                <label class="form-check-label text-color"
+                       for="relationship">
+                    ကိုယ်စားလှယ်
+                </label>
 
             </div>
 
         </div>
+
+
+        <!-- RIGHT -->
+        <div class="col-md-6">
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    QR No.
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.QRCode,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "qrInput",
+                                            autocomplete = "off"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    Packaged No
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.PackagedNo,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "packageCode"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    Appointment No
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.AppointNo,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "appointmentNo"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    UID No
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.UID,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "uid"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    အမည်(မြန်မာ)
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.MName,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "mName"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    အမည်(အဂ်လိပ်)
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.EName,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "eName"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    အဖအမည်(မြန်မာ)
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.FatherName,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "fatherName"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <div class="offset-sm-4 col-sm-8">
+
+                    @Html.RadioButtonFor(
+                                        m => m.Gender,
+                                        "Male",
+                                        new
+                                        {
+                                            @class = "form-check-input",
+                                            id = "Male"
+                                        })
+
+                    <label for="Male"
+                           class="form-check-label text-color">
+                        ကျား
+                    </label>
+
+
+                    @Html.RadioButtonFor(
+                                        m => m.Gender,
+                                        "Female",
+                                        new
+                                        {
+                                            @class = "form-check-input",
+                                            id = "Female"
+                                        })
+
+                    <label for="Female"
+                           class="form-check-label text-color">
+                        မ
+                    </label>
+
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    မွေးဖွားသည့်ရက်
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.DOB,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "dob"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    ကတ်ပြားအမှတ်
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.NRC,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "nrc"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    သွေးအမျိုးအစား
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.BloodType,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "bloodType"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    ဖုန်းနံပါတ်
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.Phno,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "phoneNo"
+                                        })
+                </div>
+            </div>
+
+
+            <div class="row mb-3">
+                <label class="text-color col-sm-4 col-form-label">
+                    နေရပ်လိပ်စာ
+                </label>
+
+                <div class="col-sm-8">
+                    @Html.TextBoxFor(
+                                        m => m.Address,
+                                        new
+                                        {
+                                            @class = "form-control",
+                                            id = "currentAddress"
+                                        })
+                </div>
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- REPRESENTATIVE MODAL -->
+            <!-- MUST BE INSIDE FORM -->
+            <!-- ============================= -->
+
+            <div class="modal fade"
+                 id="representativeModal"
+                 tabindex="-1">
+
+                <div class="modal-dialog">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header">
+
+                            <h5 class="modal-title">
+                                ကိုယ်စားလှယ်
+                            </h5>
+
+                            <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+
+                        <div class="modal-body">
+
+                            <div class="row mb-3">
+
+                                <label class="text-color col-sm-4 col-form-label">
+                                    အမည်
+                                </label>
+
+                                <div class="col-sm-8">
+
+                                    @Html.TextBoxFor(
+                                                                        m => m.RepPeople.RName,
+                                                                        new
+                                                                        {
+                                                                            @class = "form-control",
+                                                                            id = "repName"
+                                                                        })
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row mb-3">
+
+                                <label class="text-color col-sm-4 col-form-label">
+                                    မှတ်ပုံတင်နံပါတ်
+                                </label>
+
+                                <div class="col-sm-8">
+
+                                    @Html.TextBoxFor(
+                                                                        m => m.RepPeople.RNRC,
+                                                                        new
+                                                                        {
+                                                                            @class = "form-control",
+                                                                            id = "repNrc"
+                                                                        })
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row mb-3">
+
+                                <label class="text-color col-sm-4 col-form-label">
+                                    တော်စပ်ပုံ
+                                </label>
+
+                                <div class="col-sm-8">
+
+                                    @Html.TextBoxFor(
+                                                                        m => m.RepPeople.Relationship,
+                                                                        new
+                                                                        {
+                                                                            @class = "form-control",
+                                                                            id = "repRelationship"
+                                                                        })
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="row mb-3">
+
+                                <label class="text-color col-sm-4 col-form-label">
+                                    ဖုန်းနံပါတ်
+                                </label>
+
+                                <div class="col-sm-8">
+
+                                    @Html.TextBoxFor(
+                                                                        m => m.RepPeople.PhoneNo,
+                                                                        new
+                                                                        {
+                                                                            @class = "form-control",
+                                                                            id = "repPhone"
+                                                                        })
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="modal-footer">
+
+                            <button type="button"
+                                    class="btn btn-secondary"
+                                    data-bs-dismiss="modal">
+                                Close
+                            </button>
+
+                            <button type="button"
+                                    id="saveRepresentativeBtn"
+                                    class="btn btn-primary">
+                                OK
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ISSUE -->
+            <div class="text-end mt-3">
+
+                <div id="issueCardPage"
+                     data-success-message="@TempData["SuccessMessage"]">
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary px-4">
+                    Issue
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
-</div>
+        }
 
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/Representative.js"></script>

@@ -121,9 +121,10 @@ function showAppAlert(options = {}) {
 
     messageElement.textContent = message;
 
-    confirmBtn.textContent = confirmText;
 
     cancelBtn.textContent = cancelText;
+
+    confirmBtn.textContent = confirmText;
 
     //confirm button classes
 
@@ -239,9 +240,9 @@ function Logout() {
 
         message: "Are you sure you want to logout?",
 
-        confirmText: "Yes",
-
         cancelText: "No",
+
+        confirmText: "Yes",
 
         showCancel: true,
 

@@ -36,6 +36,10 @@ builder.Services.AddScoped<IQRCodeServices, QRCodeServices>();
 
 builder.Services.AddScoped<IAppointmentServices, AppointmentServices>();
 
+builder.Services.AddScoped<IChangeIssueStatusServices, ChangeIssueStatusServices>();
+
+builder.Services.AddScoped<IReceiveCardServices, ReceiveCardServices>();
+
 
 
 builder.Services.AddHttpContextAccessor();

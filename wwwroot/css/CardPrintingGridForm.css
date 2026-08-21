@@ -87,16 +87,6 @@ body {
     }
 }
 
-/*@keyframes searchCardShine {
-    0% {
-        left: -100%;
-    }
-
-    45%, 100% {
-        left: 150%;
-    }
-}
-*/
 
 /* FORM LABEL*/
 
@@ -306,18 +296,6 @@ body {
         /*animation: tableHeaderShine 5s ease-in-out infinite;*/
         pointer-events: none;
     }
-/*
-
-@keyframes tableHeaderShine {
-
-    0%, 55% {
-        left: -120%;
-    }
-
-    75%, 100% {
-        left: 150%;
-    }
-}*/
 
 
 /* TOTAL COUNT*/
@@ -649,35 +627,40 @@ body {
 
 /* CLEAR DATE BUTTON*/
 
-#clearDateRange {
+.date-range-wrapper {
+    position: relative;
+    width: 280px;
+}
+
+#dateRangeFilter {
+    width: 100%;
+    padding-right: 35px;
+}
+
+.date-clear-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+    line-height: 1;
+    color: #333;
+    cursor: pointer;
     display: none;
-    border-radius: 0 10px 10px 0;
-    transition: transform .25s ease, color .25s ease, background-color .25s ease;
+    z-index: 20;
 }
 
-    #clearDateRange.show {
+    .date-clear-btn.show {
         display: block;
-        animation: clearButtonPop .3s ease;
     }
 
-    #clearDateRange:hover {
-        color: #fff;
-        background: var(--danger);
-        transform: scale(1.03);
+    .date-clear-btn:hover {
+        color: #000;
     }
-
-@keyframes clearButtonPop {
-    from {
-        opacity: 0;
-        transform: scale(.7) rotate(-20deg);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) rotate(0);
-    }
-}
-
 
 /* SELECT2*/
 

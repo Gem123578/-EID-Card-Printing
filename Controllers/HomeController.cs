@@ -46,7 +46,7 @@ namespace EIDCardPrint.Controllers
                     HttpContext.Session.SetString("ApiToken", response.Token ?? string.Empty);
                     HttpContext.Session.SetString("Permission", JsonConvert.SerializeObject(response.User.Permissions));
                     HttpContext.Session.SetString("OfficeCode",response.User.OfficeCode ?? string.Empty);
-                    return RedirectToAction("CardPrintingGrid", "Home");
+                    return RedirectToAction("Personalization", "Home");
                 }
 
                 
@@ -63,7 +63,7 @@ namespace EIDCardPrint.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> CardPrintingGrid(ApplicantListPageView dataModel,bool isSearch = false)
+        public async Task<IActionResult> Personalization(ApplicantListPageView dataModel,bool isSearch = false)
         {
             Console.WriteLine(dataModel);
             var token = HttpContext.Session.GetString("ApiToken");
@@ -271,7 +271,7 @@ namespace EIDCardPrint.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult>CardPrinted(ApplicantListPageView dataModel,bool isSearch = false)
+        public async Task<IActionResult>PrintedCards(ApplicantListPageView dataModel,bool isSearch = false)
         {
             // ============================================================
             // CHECK LOGIN

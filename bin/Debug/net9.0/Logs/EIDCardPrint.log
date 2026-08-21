@@ -1,4 +1,24 @@
-2026-08-20 10:24:43,592 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/get-appointment-info
+2026-08-21 12:25:45,689 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/get-appointment-info
 System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
    at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
-   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request)
+   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 76
+2026-08-21 12:26:04,712 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/get-appointment-info
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 76
+2026-08-21 12:26:21,468 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/get-appointment-info
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 76
+2026-08-21 12:34:19,866 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/get-appointment-info
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 76
+2026-08-21 14:42:20,726 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/get-appointment-info
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 78
+2026-08-21 14:46:21,914 ERROR EIDCardPrint.Utils.APIAccessHelper - API Exception: http://192.168.13.225:8001/api/change-issue-status-perso
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 500 (Internal Server Error).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at EIDCardPrint.Utils.APIAccessHelper.SendRequestAsync[T](RequestDto request) in D:\$uper\EIDCardPrint\Utils\APIAccessHelper.cs:line 78

@@ -474,7 +474,6 @@ function initCardDataTable() {
                                 'copy',
                                 'excel',
                                 'csv',
-                                'pdf',
                                 'print'
                             ]
                         }
@@ -509,16 +508,16 @@ function initCardDataTable() {
             lengthMenu: "Show_MENU_ Entries",
 
             info:
-                "Showing _START_ to _END_ of _TOTAL_ applicants",
+                "Showing _START_ to _END_ of _TOTAL_",
 
             infoEmpty:
-                "Record မရှိပါ",
+                "Showing _START_ to _END_ of _TOTAL_",
 
             zeroRecords:
-                "ရှာဖွေမှုနှင့် ကိုက်ညီသော Record မရှိပါ",
+                "No Data",
 
             emptyTable:
-                "Applicant မရှိပါ",
+                "No Data",
 
             paginate: {
 
@@ -584,26 +583,192 @@ function initSearchForm() {
 
     $('#cardSearchForm')
         .off('submit.cardSearch')
-        .on('submit.cardSearch', function () {
+        .on('submit.cardSearch', async function (e) {
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            const form = this;
 
             const searchInput =
                 document.getElementById('SearchTerm');
 
-
             if (searchInput) {
-
                 searchInput.value =
                     searchInput.value
                         .trim()
                         .replace(/\s+/g, ' ');
+            }
+
+            // Previous selected checkbox clear
+            clearSelectedApplicants();
+
+            const submitButton =
+                $(form).find('button[type="submit"]');
+
+            const originalHtml =
+                submitButton.html();
+
+            try {
+
+                submitButton.prop('disabled', true);
+
+                submitButton.html(`
+                    <span class="spinner-border spinner-border-sm me-1"></span>
+                    Searching...
+                `);
+
+                // Form data
+                const formData =
+                    new FormData(form);
+
+                // GET query string
+                const params =
+                    new URLSearchParams(formData);
+
+                const url =
+                    form.action +
+                    '?' +
+                    params.toString();
+
+                console.log('Search URL:', url);
+
+                // IMPORTANT:
+                // Controller ကို normal browser navigation မလုပ်ဘဲ
+                // fetch နဲ့ request လုပ်မယ်
+                const response =
+                    await fetch(url, {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        `HTTP Error: ${response.status}`
+                    );
+
+                }
+
+                const html =
+                    await response.text();
+
+                // Returned Razor View ထဲက serverApplicants ကို extract
+                const applicants =
+                    extractApplicantsFromHtml(html);
+
+                // DataTable only update
+                loadApplicantDataToTable(
+                    applicants
+                );
+
+                // table ပြ
+                $('#tableContainer').show();
+
+
+            }
+            catch (error) {
+
+                console.error(
+                    'Applicant Search Error:',
+                    error
+                );
+
+                showWarning(
+                    error.message ||
+                    'Search လုပ်၍ မရပါ။'
+                );
+
+            }
+            finally {
+
+                submitButton.prop(
+                    'disabled',
+                    false
+                );
+
+                submitButton.html(
+                    originalHtml
+                );
 
             }
 
+        });
 
-            // Clear selected applicants
-            clearSelectedApplicants();
+}
+
+function extractApplicantsFromHtml(html) {
+
+    try {
+
+        const parser =
+            new DOMParser();
+
+        const doc =
+            parser.parseFromString(
+                html,
+                'text/html'
+            );
+
+        const scripts =
+            doc.querySelectorAll('script');
+
+        let applicants = [];
+
+        scripts.forEach(function (script) {
+
+            const text =
+                script.textContent || '';
+
+            if (
+                text.includes('const serverApplicants')
+            ) {
+
+                const match =
+                    text.match(
+                        /const\s+serverApplicants\s*=\s*(\[[\s\S]*?\]);/
+                    );
+
+                if (match && match[1]) {
+
+                    try {
+
+                        applicants =
+                            JSON.parse(match[1]);
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            'serverApplicants JSON Parse Error:',
+                            error
+                        );
+
+                    }
+
+                }
+
+            }
 
         });
+
+        return Array.isArray(applicants)
+            ? applicants
+            : [];
+
+    }
+    catch (error) {
+
+        console.error(
+            'Extract Applicant Error:',
+            error
+        );
+
+        return [];
+
+    }
 
 }
 async function fetchOffices() {
@@ -747,31 +912,220 @@ function initDateRange() {
         return;
     }
 
+    /*
+     * ---------------------------------------------------------
+     * Helper: Date value set
+     * ---------------------------------------------------------
+     */
+    function setDateRangeValues(start, end, rangeType) {
+
+        if (
+            !start ||
+            !end ||
+            !moment.isMoment(start) ||
+            !moment.isMoment(end) ||
+            !start.isValid() ||
+            !end.isValid()
+        ) {
+
+            console.error(
+                'Invalid Date Range:',
+                start,
+                end
+            );
+
+            return false;
+        }
+
+        const fromDate =
+            start.format('YYYY-MM-DD');
+
+        const toDate =
+            end.format('YYYY-MM-DD');
+
+
+        $('#dateRangeType').val(
+            rangeType || 'custom'
+        );
+
+        $('#fromDate').val(
+            fromDate
+        );
+
+        $('#toDate').val(
+            toDate
+        );
+
+        $('#dateRangeFilter').val(
+            `${fromDate} - ${toDate}`
+        );
+
+        $('#clearDateRange').addClass('show');
+
+
+        console.log(
+            'Date Range Set:',
+            {
+                rangeType: rangeType,
+                fromDate: fromDate,
+                toDate: toDate
+            }
+        );
+
+        return true;
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * Today
+     * ---------------------------------------------------------
+     */
+    const today =
+        moment().startOf('day');
+
+
+    /*
+     * ---------------------------------------------------------
+     * Existing Model Date
+     * ---------------------------------------------------------
+     */
+    let initialFrom =
+        $('#fromDate').val();
+
+    let initialTo =
+        $('#toDate').val();
+
+
+    let startDate;
+    let endDate;
+
+
+    /*
+     * Server မှ date valid ဖြစ်ရင် အသုံးပြု
+     */
+    if (
+        initialFrom &&
+        initialTo &&
+        moment(
+            initialFrom,
+            'YYYY-MM-DD',
+            true
+        ).isValid() &&
+        moment(
+            initialTo,
+            'YYYY-MM-DD',
+            true
+        ).isValid()
+    ) {
+
+        startDate =
+            moment(
+                initialFrom,
+                'YYYY-MM-DD',
+                true
+            );
+
+        endDate =
+            moment(
+                initialTo,
+                'YYYY-MM-DD',
+                true
+            );
+
+    }
+    else {
+
+        /*
+         * Initial page မှာ Today
+         */
+        startDate =
+            today.clone();
+
+        endDate =
+            today.clone();
+
+        setDateRangeValues(
+            startDate,
+            endDate,
+            'today'
+        );
+
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * Destroy old daterangepicker
+     * ---------------------------------------------------------
+     */
+    if (
+        dateFilter.data(
+            'daterangepicker'
+        )
+    ) {
+
+        dateFilter
+            .data(
+                'daterangepicker'
+            )
+            .remove();
+
+    }
+
+
+    /*
+     * ---------------------------------------------------------
+     * Date Range Picker
+     * ---------------------------------------------------------
+     */
     dateFilter.daterangepicker({
 
         autoUpdateInput: false,
+
         autoApply: false,
+
         opens: 'left',
+
         drops: 'down',
+
         parentEl: 'body',
+
         linkedCalendars: false,
+
         showDropdowns: true,
+
+        /*
+         * IMPORTANT
+         * Picker ကို valid moment object ပေး
+         */
+        startDate:
+            startDate.clone(),
+
+        endDate:
+            endDate.clone(),
+
 
         ranges: {
 
             'Today': [
-                moment(),
-                moment()
+                moment().startOf('day'),
+                moment().endOf('day')
             ],
 
             'Last 7 Days': [
-                moment().subtract(6, 'days'),
                 moment()
+                    .subtract(6, 'days')
+                    .startOf('day'),
+
+                moment().endOf('day')
             ],
 
             'This Month': [
-                moment().startOf('month'),
                 moment()
+                    .startOf('month'),
+
+                moment().endOf('day')
             ],
 
             'Last Year': [
@@ -786,107 +1140,260 @@ function initDateRange() {
 
         }
 
-    }, function (start, end, label) {
-
-        let rangeType = 'custom';
-
-        switch (label) {
-
-            case 'Today':
-                rangeType = 'today';
-                break;
-
-            case 'Last 7 Days':
-                rangeType = 'last7';
-                break;
-
-            case 'This Month':
-                rangeType = 'thisMonth';
-                break;
-
-            case 'Last Year':
-                rangeType = 'lastYear';
-                break;
-        }
-
-        $('#dateRangeType').val(rangeType);
-
-        $('#fromDate').val(
-            start.format('YYYY-MM-DD')
-        );
-
-        $('#toDate').val(
-            end.format('YYYY-MM-DD')
-        );
-
-        $('#dateRangeFilter').val(
-            start.format('YYYY-MM-DD') +
-            ' - ' +
-            end.format('YYYY-MM-DD')
-        );
-
-        $('#clearDateRange').addClass('show');
-
     });
 
 
+    /*
+     * ---------------------------------------------------------
+     * Apply
+     * ---------------------------------------------------------
+     */
+    dateFilter
+        .off(
+            'apply.daterangepicker.cardDate'
+        )
+        .on(
+            'apply.daterangepicker.cardDate',
+            function (ev, picker) {
 
-    const urlParams =
-        new URLSearchParams(
-            window.location.search
+                /*
+                 * Picker date ကို direct ယူ
+                 */
+                let start =
+                    picker.startDate;
+
+                let end =
+                    picker.endDate;
+
+
+                /*
+                 * Invalid date protection
+                 */
+                if (
+                    !start ||
+                    !end ||
+                    !moment.isMoment(start) ||
+                    !moment.isMoment(end) ||
+                    !start.isValid() ||
+                    !end.isValid()
+                ) {
+
+                    console.error(
+                        'Invalid picker date:',
+                        {
+                            start: start,
+                            end: end
+                        }
+                    );
+
+                    showWarning(
+                        'Date Range မမှန်ကန်ပါ။'
+                    );
+
+                    return;
+
+                }
+
+
+                /*
+                 * Default = custom
+                 */
+                let rangeType =
+                    'custom';
+
+
+                /*
+                 * Today
+                 */
+                if (
+                    start.isSame(
+                        moment(),
+                        'day'
+                    ) &&
+                    end.isSame(
+                        moment(),
+                        'day'
+                    )
+                ) {
+
+                    rangeType =
+                        'today';
+
+                }
+
+
+                /*
+                 * Last 7 Days
+                 */
+                else if (
+                    start.isSame(
+                        moment()
+                            .subtract(
+                                6,
+                                'days'
+                            ),
+                        'day'
+                    ) &&
+                    end.isSame(
+                        moment(),
+                        'day'
+                    )
+                ) {
+
+                    rangeType =
+                        'last7';
+
+                }
+
+
+                /*
+                 * This Month
+                 */
+                else if (
+                    start.isSame(
+                        moment()
+                            .startOf('month'),
+                        'day'
+                    ) &&
+                    end.isSame(
+                        moment(),
+                        'day'
+                    )
+                ) {
+
+                    rangeType =
+                        'thisMonth';
+
+                }
+
+
+                /*
+                 * Last Year
+                 */
+                else if (
+                    start.isSame(
+                        moment()
+                            .subtract(
+                                1,
+                                'year'
+                            )
+                            .startOf('year'),
+                        'day'
+                    ) &&
+                    end.isSame(
+                        moment()
+                            .subtract(
+                                1,
+                                'year'
+                            )
+                            .endOf('year'),
+                        'day'
+                    )
+                ) {
+
+                    rangeType =
+                        'lastYear';
+
+                }
+
+
+                /*
+                 * Set FromDate / ToDate
+                 */
+                setDateRangeValues(
+                    start,
+                    end,
+                    rangeType
+                );
+
+            }
         );
 
 
-    const hasSearchParameters =
-        urlParams.has('SearchTerm') ||
-        urlParams.has('OfficeCode') ||
-        urlParams.has('FromDate') ||
-        urlParams.has('ToDate') ||
-        urlParams.has('SelectedDate') ||
-        urlParams.has('DateRangeType');
+    /*
+     * ---------------------------------------------------------
+     * Cancel
+     * ---------------------------------------------------------
+     */
+    dateFilter
+        .off(
+            'cancel.daterangepicker.cardDate'
+        )
+        .on(
+            'cancel.daterangepicker.cardDate',
+            function () {
+
+                console.log(
+                    'Date selection cancelled.'
+                );
+
+            }
+        );
 
 
-    let fromDate =
+    /*
+     * ---------------------------------------------------------
+     * Clear
+     * ---------------------------------------------------------
+     */
+    $('#clearDateRange')
+        .off(
+            'click.cardDateClear'
+        )
+        .on(
+            'click.cardDateClear',
+            function () {
+
+                $('#dateRangeFilter').val('');
+
+                $('#dateRangeType').val('');
+
+                $('#fromDate').val('');
+
+                $('#toDate').val('');
+
+                $(this).removeClass('show');
+
+            }
+        );
+
+
+    /*
+     * ---------------------------------------------------------
+     * Initial display
+     * ---------------------------------------------------------
+     */
+    const currentFrom =
         $('#fromDate').val();
 
-    let toDate =
+    const currentTo =
         $('#toDate').val();
 
 
-    if (!hasSearchParameters) {
-
-        const today = moment().format('YYYY-MM-DD');
-
-        $('#fromDate').val(today);
-        $('#toDate').val(today);
-        $('#dateRangeType').val('today');
+    if (
+        currentFrom &&
+        currentTo &&
+        moment(
+            currentFrom,
+            'YYYY-MM-DD',
+            true
+        ).isValid() &&
+        moment(
+            currentTo,
+            'YYYY-MM-DD',
+            true
+        ).isValid()
+    ) {
 
         $('#dateRangeFilter').val(
-            today + ' - ' + today
+            `${currentFrom} - ${currentTo}`
         );
 
-        $('#clearDateRange').addClass('show');
+        $('#clearDateRange').addClass(
+            'show'
+        );
 
-       /* loadTodayApplicants();*/
     }
-
-
-
-    $('#clearDateRange')
-        .off('click.cardDateClear')
-        .on('click.cardDateClear', function () {
-
-            $('#dateRangeFilter').val('');
-
-            $('#dateRangeType').val('');
-
-            $('#fromDate').val('');
-
-            $('#toDate').val('');
-
-            $(this).removeClass('show');
-
-        });
 
 }
 

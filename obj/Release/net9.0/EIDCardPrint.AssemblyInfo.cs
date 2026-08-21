@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EIDCardPrint")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f887924394ceaeec106a9013665168b4d1284019")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a386c35db56ef1fc284eb3100161e192e2f2758f")]
 [assembly: System.Reflection.AssemblyProductAttribute("EIDCardPrint")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EIDCardPrint")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
